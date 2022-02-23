@@ -1,1 +1,1 @@
-make 2>&1 | tee ./make_log/`date +%Y%m%d%H%M%S`
+make 2>&1 | tee ./make_log/${LOGNAME}

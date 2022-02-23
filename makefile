@@ -40,6 +40,9 @@ fclean: clean
 re: fclean all
 
 docker:
-	@./docker_start.sh
+	@LOGNAME=`date +%Y%m%d%H%M%S` && ./docker_start.sh $${LOGNAME} && echo "log: "./make_log/$${LOGNAME}
+
+log_clean:
+	rm -rf ./make_log
 
 .PHONY : all clean fclean re docker
