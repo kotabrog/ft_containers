@@ -39,4 +39,7 @@ fclean: clean
 
 re: fclean all
 
-.PHONY : all clean fclean re
+docker:
+	@./docker_start.sh
+
+.PHONY : all clean fclean re docker
