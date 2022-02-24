@@ -1,12 +1,14 @@
 NAME := ft_containers
 
 SOURCES_FOLDER = srcs/
-SOURCES = main.cpp
+SOURCES = main.cpp\
+		  Tester.cpp
 
 SOURCES_PREFIXED = $(addprefix $(SOURCES_FOLDER), $(SOURCES))
 
 INCLUDES_FOLDER = inc/
-INCLUDES = main.hpp
+INCLUDES = Tester.hpp\
+		   iterator_traits.hpp
 
 INCLUDES_PREFIXED = $(addprefix $(INCLUDES_FOLDER), $(INCLUDES))
 
