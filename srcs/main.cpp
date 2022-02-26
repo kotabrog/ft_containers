@@ -142,7 +142,6 @@ void iterators_traits_test()
         tester.print("pointer value:", *p);
         tester.print("reference value:", r);
         tester.if_print("iterator_category:",
-                        // typeid(t) == typeid(ft::random_access_iterator_tag),
                         typeid(t) == typeid(std::random_access_iterator_tag),
                         "random_access_iterator_tag",
                         "other type");
@@ -165,7 +164,7 @@ void iterators_traits_test()
         tester.print("pointer value:", *p);
         tester.print("reference value:", r);
         tester.if_print("iterator_category:",
-                        typeid(t) == typeid(ft::random_access_iterator_tag),
+                        typeid(t) == typeid(std::random_access_iterator_tag),
                         "random_access_iterator_tag",
                         "other type");
     }
@@ -181,7 +180,7 @@ void iterators_traits_test()
         tester.print("pointer value:", *p);
         tester.print("reference value:", r);
         tester.if_print("iterator_category:",
-                        typeid(t) == typeid(ft::random_access_iterator_tag),
+                        typeid(t) == typeid(std::random_access_iterator_tag),
                         "random_access_iterator_tag",
                         "other type");
         // The following will result in a compilation error

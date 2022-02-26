@@ -15,8 +15,8 @@
     - 時間計測
   - 実装するものの本物の挙動の確認
   - 具体的な確認するもの
-    - std::allocator
-    - iterators_traits
+    - [x] std::allocator
+    - [x] iterators_traits
     - reverse_iterator
     - enable_if
     - is_integral
@@ -29,6 +29,16 @@
   - 個別のテストの作成
   - イメージづけのためのヘッダーファイルの作成
 - 中身の作成
+  - [x] iterators_traits
+  - reverse_iterator
+  - enable_if
+  - is_integral
+  - equal/lexicographical compare
+  - std::pair
+  - std::make_pair
+  - vector
+  - map
+  - stack
 
 ## issue
 
