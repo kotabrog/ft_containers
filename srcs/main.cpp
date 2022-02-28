@@ -1,10 +1,11 @@
-#if 0 //CREATE A REAL STL EXAMPLE
+#if 1 //CREATE A REAL STL EXAMPLE
     #include <map>
     #include <stack>
     #include <vector>
     namespace ft = std;
 #else
     #include "iterator_traits.hpp"
+    #include "enable_if.hpp"
     // #include <map.hpp>
     // #include <stack.hpp>
     // #include <vector.hpp>
@@ -52,6 +53,7 @@ public:
 
 void default_test()
 {
+    tester.print("");
     std::cout << "----------------------" << std::endl;
     std::cout << "default test" << std::endl;
     ft::vector<std::string> vector_str;
@@ -190,6 +192,54 @@ void iterators_traits_test()
     }
 }
 
+template<typename T>
+void enable_if_test_support(T t1, typename ft::enable_if<true, T>::type t2, Tester& tester)
+{
+    tester.print("value1:", t1);
+    tester.print("value2:", t2);
+
+    if (typeid(int) == typeid(typename ft::enable_if<true, T>::type))
+        tester.print("type: int");
+    else if (typeid(std::string) == typeid(typename ft::enable_if<true, T>::type))
+        tester.print("type: std::string");
+}
+
+template<typename T>
+void enable_if_test_support(T t1, typename ft::enable_if<false, T>::type t2, Tester& tester)
+{
+    tester.print("error:", t1);
+    tester.print("error:", t2);
+}
+
+void enable_if_test()
+{
+    Tester tester;
+    tester.print("");
+    tester.print("----------------------");
+    tester.print("enable_if_test test");
+    {
+        tester.print("");
+        enable_if_test_support(1, 2, tester);
+    }
+    {
+        std::string str = "string";
+        tester.print("");
+        enable_if_test_support(str, str, tester);
+    }
+    {
+        tester.print("");
+        if (typeid(ft::enable_if<true>::type) == typeid(void))
+            tester.print("enable_if default type: void");
+        else
+            tester.print("enable_if default type: other");
+    }
+}
+
+void is_integral_test()
+{
+    
+}
+
 int main(int argc, char** argv) {
     if (argc != 2)
     {
@@ -201,6 +251,10 @@ int main(int argc, char** argv) {
     const int seed = atoi(argv[1]);
     srand(seed);
 
+    Tester tester;
+    tester.print("test start");
+
     // default_test();
-    iterators_traits_test();
+    // iterators_traits_test();
+    enable_if_test();
 }

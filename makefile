@@ -8,7 +8,8 @@ SOURCES_PREFIXED = $(addprefix $(SOURCES_FOLDER), $(SOURCES))
 
 INCLUDES_FOLDER = inc/
 INCLUDES = Tester.hpp\
-		   iterator_traits.hpp
+		   iterator_traits.hpp\
+		   enable_if.hpp\
 
 INCLUDES_PREFIXED = $(addprefix $(INCLUDES_FOLDER), $(INCLUDES))
 
@@ -18,7 +19,8 @@ OBJECTS = $(addprefix $(OBJECTS_FOLDER), $(OBJECT))
 DEPENDENCIES = $(OBJECTS:.o=.d)
 
 CXX := clang++
-CXXFLAGS := -Wall -Wextra -Werror -std=c++98
+CXXFLAGS := -Wall -Wextra -Werror
+# CXXFLAGS := -Wall -Wextra -Werror -std=c++98
 
 $(OBJECTS_FOLDER)%.o : $(SOURCES_FOLDER)%.cpp
 	@mkdir -p $(OBJECTS_FOLDER)
