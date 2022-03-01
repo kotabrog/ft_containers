@@ -19,7 +19,7 @@
     - [x] iterators_traits
     - reverse_iterator
     - [x] enable_if
-    - is_integral
+    - [x] is_integral
     - equal/lexicographical compare
     - std::pair
     - std::make_pair
@@ -32,7 +32,7 @@
   - [x] iterators_traits
   - reverse_iterator
   - [x] enable_if
-  - is_integral
+  - [x] is_integral
   - equal/lexicographical compare
   - std::pair
   - std::make_pair

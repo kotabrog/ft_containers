@@ -1,11 +1,12 @@
-#if 1 //CREATE A REAL STL EXAMPLE
+#if 0 //CREATE A REAL STL EXAMPLE
     #include <map>
     #include <stack>
     #include <vector>
     namespace ft = std;
 #else
-    #include "iterator_traits.hpp"
+    #include "is_integral.hpp"
     #include "enable_if.hpp"
+    #include "iterator_traits.hpp"
     // #include <map.hpp>
     // #include <stack.hpp>
     // #include <vector.hpp>
@@ -216,7 +217,7 @@ void enable_if_test()
     Tester tester;
     tester.print("");
     tester.print("----------------------");
-    tester.print("enable_if_test test");
+    tester.print("enable_if test");
     {
         tester.print("");
         enable_if_test_support(1, 2, tester);
@@ -237,7 +238,32 @@ void enable_if_test()
 
 void is_integral_test()
 {
-    
+    Tester tester;
+    tester.print("");
+    tester.print("----------------------");
+    tester.print("is_integral test");
+    tester.print("ft::is_integral<int>::value:", ft::is_integral<int>::value);
+    tester.print("ft::is_integral<int>():", ft::is_integral<int>());
+    tester.print("ft::is_integral<int>::type::value:", ft::is_integral<int>::type::value);
+    tester.if_print("ft::is_integral<int>::value_type:", (typeid(ft::is_integral<int>::value_type) == typeid(bool)), "bool", "other");
+    tester.if_print("bool:", ft::is_integral<bool>::value, "true", "false");
+    tester.if_print("char:", ft::is_integral<char>::value, "true", "false");
+    tester.if_print("wchar_t:", ft::is_integral<wchar_t>::value, "true", "false");
+    tester.if_print("short:", ft::is_integral<short>::value, "true", "false");
+    tester.if_print("int:", ft::is_integral<int>::value, "true", "false");
+    tester.if_print("long:", ft::is_integral<long>::value, "true", "false");
+    tester.if_print("signed char:", ft::is_integral<signed char>::value, "true", "false");
+    tester.if_print("unsigned char:", ft::is_integral<unsigned char>::value, "true", "false");
+    tester.if_print("unsigned short:", ft::is_integral<unsigned short>::value, "true", "false");
+    tester.if_print("unsigned int:", ft::is_integral<unsigned int>::value, "true", "false");
+    tester.if_print("unsigned long:", ft::is_integral<unsigned long>::value, "true", "false");
+    tester.if_print("bool:", ft::is_integral<bool>::value, "true", "false");
+    tester.if_print("const unsigned long:", ft::is_integral<const unsigned long>::value, "true", "false");
+    tester.if_print("volatile unsigned long:", ft::is_integral<volatile unsigned long>::value, "true", "false");
+    tester.if_print("const volatile unsigned long:", ft::is_integral<const volatile unsigned long>::value, "true", "false");
+    tester.if_print("Tester:", ft::is_integral<Tester>::value, "true", "false");
+    tester.if_print("const Tester:", ft::is_integral<const Tester>::value, "true", "false");
+    tester.if_print("int*:", ft::is_integral<int*>::value, "true", "false");
 }
 
 int main(int argc, char** argv) {
@@ -256,5 +282,6 @@ int main(int argc, char** argv) {
 
     // default_test();
     // iterators_traits_test();
-    enable_if_test();
+    // enable_if_test();
+    is_integral_test();
 }
