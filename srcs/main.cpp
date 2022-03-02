@@ -1,4 +1,4 @@
-#if 0 //CREATE A REAL STL EXAMPLE
+#if 1 //CREATE A REAL STL EXAMPLE
     #include <map>
     #include <stack>
     #include <vector>
@@ -116,6 +116,7 @@ void default_test()
     std::cout << std::endl;
 }
 */
+
 void iterators_traits_test()
 {
     Tester tester;
@@ -266,7 +267,47 @@ void is_integral_test()
     tester.if_print("int*:", ft::is_integral<int*>::value, "true", "false");
 }
 
-int main(int argc, char** argv) {
+bool equal_test_support(int x, int y)
+{
+    return x - 1 <= y && y <= x + 1;
+}
+
+void equal_test()
+{
+    Tester tester;
+    tester.print("");
+    tester.print("----------------------");
+    tester.print("equal test");
+    // ft::vector<int> v1;
+    // ft::vector<int> v2;
+    std::vector<int> v1;
+    std::vector<int> v2;
+    for (int i = 0; i < 6; ++i)
+    {
+        v1.push_back(i);
+        v2.push_back(i);
+    }
+    v2[5] += 1;
+    tester.if_print("v1:[0,1,2,3,4,5], v2:[0,1,2,3,4,6], ft::equal(v1.begin(), v1.end(), v2.begin()):",
+                    ft::equal(v1.begin(), v1.end(), v2.begin()), "true", "false");
+    tester.if_print("equal_test_support: return x - 1 <= y && y <= x + 1;,\n\tft::equal(v1.begin(), v1.end(), v2.begin(), equal_test_support):",
+                    ft::equal(v1.begin(), v1.end(), v2.begin(), equal_test_support), "true", "false");
+    v2[5] -= 1;
+    tester.if_print("v1:[0,1,2,3,4,5], v2:[0,1,2,3,4,5], ft::equal(v1.begin(), v1.end(), v2.begin()):",
+                    ft::equal(v1.begin(), v1.end(), v2.begin()), "true", "false");
+    tester.if_print("v1:[0,1,2,3,4,5], v2:[0,1,2,3,4,5], ft::equal(v1.begin(), v1.end(), v2.begin(), v2.end()):",
+                    ft::equal(v1.begin(), v1.end(), v2.begin(), v2.end()), "true", "false");
+    v2.push_back(6);
+    tester.if_print("v1:[0,1,2,3,4,5], v2:[0,1,2,3,4,5,6], ft::equal(v1.begin(), v1.end(), v2.begin()):",
+                    ft::equal(v1.begin(), v1.end(), v2.begin()), "true", "false");
+    tester.if_print("v1:[0,1,2,3,4,5], v2:[0,1,2,3,4,5,6], ft::equal(v1.begin(), v1.end(), v2.begin(), v2.end()):",
+                    ft::equal(v1.begin(), v1.end(), v2.begin(), v2.end()), "true", "false");
+    tester.if_print("v1:[0,1,2,3,4,5], v2:[0,1,2,3,4,5,6], ft::equal(v2.begin(), v2.end(), v1.begin()):",
+                    ft::equal(v2.begin(), v2.end(), v1.begin()), "true", "false");
+}
+
+int main(int argc, char** argv)
+{
     if (argc != 2)
     {
         std::cerr << "Usage: ./test seed" << std::endl;
@@ -283,5 +324,6 @@ int main(int argc, char** argv) {
     // default_test();
     // iterators_traits_test();
     // enable_if_test();
-    is_integral_test();
+    // is_integral_test();
+    equal_test();
 }
