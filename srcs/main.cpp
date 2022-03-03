@@ -1,9 +1,12 @@
-#if 1 //CREATE A REAL STL EXAMPLE
+#if 0 //CREATE A REAL STL EXAMPLE
     #include <map>
     #include <stack>
     #include <vector>
     namespace ft = std;
 #else
+    #include "pair.hpp"
+    #include "lexicographical_compare.hpp"
+    #include "equal.hpp"
     #include "is_integral.hpp"
     #include "enable_if.hpp"
     #include "iterator_traits.hpp"
@@ -306,6 +309,87 @@ void equal_test()
                     ft::equal(v2.begin(), v2.end(), v1.begin()), "true", "false");
 }
 
+void lexicographical_test()
+{
+    Tester tester;
+    tester.print("");
+    tester.print("----------------------");
+    tester.print("lexicographical test");
+    std::string str1 = "hello";
+    std::string str2 = "hellO";
+    std::string str3 = "hellooo";
+    tester.if_print("hello and hellO default:",
+                    std::lexicographical_compare(str1.begin(), str1.end(), str2.begin(), str2.end()),
+                    "true", "false");
+    tester.if_print("hello and hellooo default:",
+                    std::lexicographical_compare(str1.begin(), str1.end(), str3.begin(), str3.end()),
+                    "true", "false");
+    tester.if_print("hellO and hello default:",
+                    std::lexicographical_compare(str2.begin(), str2.end(), str1.begin(), str1.end()),
+                    "true", "false");
+    tester.if_print("hellooo and hello default:",
+                    std::lexicographical_compare(str3.begin(), str3.end(), str1.begin(), str1.end()),
+                    "true", "false");
+    tester.if_print("hello and hellO greater:",
+                    std::lexicographical_compare(str1.begin(), str1.end(), str2.begin(), str2.end(), std::greater<char>()),
+                    "true", "false");
+    tester.if_print("hello and hellooo greater:",
+                    std::lexicographical_compare(str1.begin(), str1.end(), str3.begin(), str3.end(), std::greater<char>()),
+                    "true", "false");
+    tester.if_print("hellO and hello greater:",
+                    std::lexicographical_compare(str2.begin(), str2.end(), str1.begin(), str1.end(), std::greater<char>()),
+                    "true", "false");
+    tester.if_print("hellooo and hello greater:",
+                    std::lexicographical_compare(str3.begin(), str3.end(), str1.begin(), str1.end(), std::greater<char>()),
+                    "true", "false");
+}
+
+void pair_test()
+{
+    Tester tester;
+    tester.print("");
+    tester.print("----------------------");
+    tester.print("pair test");
+    ft::pair<int, std::string> p1;
+    ft::pair<int, std::string> p2(1, "hello");
+    ft::pair<int, std::string> p3(p2);
+    ft::pair<int, std::string> p4(1, "hoy");
+    tester.if_print("first_type is int:", typeid(ft::pair<int, std::string>::first_type) == typeid(int), "true", "false");
+    tester.if_print("second_type is string:", typeid(ft::pair<int, std::string>::second_type) == typeid(std::string), "true", "false");
+    tester.print("ft::pair<int, std::string> p1");
+    tester.print("p1.first:", p1.first);
+    tester.print("p1.second:", p1.second);
+    tester.print("ft::pair<int, std::string> p2(1, \"hello\")");
+    tester.print("p2.first:", p2.first);
+    tester.print("p2.second:", p2.second);
+    tester.print("ft::pair<int, std::string> p3(p2)");
+    tester.print("p3.first:", p3.first);
+    tester.print("p3.second:", p3.second);
+    tester.print("ft::pair<int, std::string> p4(1, \"hoy\")");
+    tester.print("p4.first:", p4.first);
+    tester.print("p4.second:", p4.second);
+    p3 = p1;
+    tester.print("p3 = p1");
+    tester.print("p3.first:", p3.first);
+    tester.print("p3.second:", p3.second);
+    tester.print("compare");
+    tester.if_print("p1 == p2:", p1 == p2, "true", "false");
+    tester.if_print("p1 != p2:", p1 != p2, "true", "false");
+    tester.if_print("p1 < p2:", p1 < p2, "true", "false");
+    tester.if_print("p1 <= p2:", p1 <= p2, "true", "false");
+    tester.if_print("p1 > p2:", p1 > p2, "true", "false");
+    tester.if_print("p1 >= p2:", p1 >= p2, "true", "false");
+    tester.if_print("p1 == p2:", p1 == p2, "true", "false");
+    tester.if_print("p4 != p2:", p4 != p2, "true", "false");
+    tester.if_print("p4 < p2:", p4 < p2, "true", "false");
+    tester.if_print("p4 <= p2:", p4 <= p2, "true", "false");
+    tester.if_print("p4 > p2:", p4 > p2, "true", "false");
+    tester.if_print("p4 >= p2:", p4 >= p2, "true", "false");
+    // The following will result in a compilation error
+    // ft::pair<int, const std::string> p5(p1);
+    // tester.if_print("p1 == p5:", p1 == p5, "true", "false");
+}
+
 int main(int argc, char** argv)
 {
     if (argc != 2)
@@ -325,5 +409,7 @@ int main(int argc, char** argv)
     // iterators_traits_test();
     // enable_if_test();
     // is_integral_test();
-    equal_test();
+    // equal_test();
+    // lexicographical_test();
+    pair_test();
 }

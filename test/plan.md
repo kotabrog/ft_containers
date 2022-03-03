@@ -20,8 +20,8 @@
     - reverse_iterator
     - [x] enable_if
     - [x] is_integral
-    - equal/lexicographical compare
-    - std::pair
+    - [x] equal/lexicographical compare
+    - [x] std::pair
     - std::make_pair
     - vector
     - map
@@ -33,8 +33,8 @@
   - reverse_iterator
   - [x] enable_if
   - [x] is_integral
-  - equal/lexicographical compare
-  - std::pair
+  - [x] equal/lexicographical compare
+  - [x] std::pair
   - std::make_pair
   - vector
   - map
