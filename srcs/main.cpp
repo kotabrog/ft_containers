@@ -390,6 +390,24 @@ void pair_test()
     // tester.if_print("p1 == p5:", p1 == p5, "true", "false");
 }
 
+void make_pair_test()
+{
+    Tester tester;
+    tester.print("");
+    tester.print("----------------------");
+    tester.print("make_pair test");
+    ft::pair<int, std::string> p1;
+    p1 = ft::make_pair(1, "string");
+    const int value = 10;
+    ft::pair<const int, int> p2 = ft::make_pair(value, 10);
+    tester.print("ft::make_pair(1, \"string\")");
+    tester.print("first:", p1.first);
+    tester.print("second:", p1.second);
+    tester.print("ft::make_pair(value, 10), value(=10) is const int");
+    tester.print("first:", p2.first);
+    tester.print("second:", p2.second);
+}
+
 int main(int argc, char** argv)
 {
     if (argc != 2)
@@ -411,5 +429,6 @@ int main(int argc, char** argv)
     // is_integral_test();
     // equal_test();
     // lexicographical_test();
-    pair_test();
+    // pair_test();
+    make_pair_test();
 }

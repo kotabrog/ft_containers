@@ -22,7 +22,7 @@
     - [x] is_integral
     - [x] equal/lexicographical compare
     - [x] std::pair
-    - std::make_pair
+    - [x] std::make_pair
     - vector
     - map
     - stack
@@ -35,7 +35,7 @@
   - [x] is_integral
   - [x] equal/lexicographical compare
   - [x] std::pair
-  - std::make_pair
+  - [x] std::make_pair
   - vector
   - map
   - stack
