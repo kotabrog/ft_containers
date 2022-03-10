@@ -17,7 +17,7 @@
   - 具体的な確認するもの
     - [x] std::allocator
     - [x] iterators_traits
-    - reverse_iterator
+    - [x] reverse_iterator
     - [x] enable_if
     - [x] is_integral
     - [x] equal/lexicographical compare
@@ -30,7 +30,7 @@
   - イメージづけのためのヘッダーファイルの作成
 - 中身の作成
   - [x] iterators_traits
-  - reverse_iterator
+  - [x] reverse_iterator
   - [x] enable_if
   - [x] is_integral
   - [x] equal/lexicographical compare

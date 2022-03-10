@@ -1,9 +1,10 @@
-#if 0 //CREATE A REAL STL EXAMPLE
+#if 0//CREATE A REAL STL EXAMPLE
     #include <map>
     #include <stack>
     #include <vector>
     namespace ft = std;
 #else
+    #include "reverse_iterator.hpp"
     #include "pair.hpp"
     #include "lexicographical_compare.hpp"
     #include "equal.hpp"
@@ -22,8 +23,8 @@
 #include <stdlib.h>
 #include "Tester.hpp"
 
-// 仮
 #include <vector>
+#include <map>
 
 #define MAX_RAM 4294967296
 #define BUFFER_SIZE 4096
@@ -129,7 +130,6 @@ void iterators_traits_test()
     {
         tester.print("");
         tester.print("template< class Iter > struct iterator_traits");
-        // ft::vector<int> vec;
         std::vector<int> vec;
         for (int i = 0; i < 5; i++)
         {
@@ -281,8 +281,6 @@ void equal_test()
     tester.print("");
     tester.print("----------------------");
     tester.print("equal test");
-    // ft::vector<int> v1;
-    // ft::vector<int> v2;
     std::vector<int> v1;
     std::vector<int> v2;
     for (int i = 0; i < 6; ++i)
@@ -408,6 +406,165 @@ void make_pair_test()
     tester.print("second:", p2.second);
 }
 
+void reverse_iterator_test()
+{
+    Tester tester;
+    tester.print("");
+    tester.print("----------------------");
+    tester.print("reverse_iterator test");
+    tester.print("");
+    tester.print("member types test");
+    tester.print("std::reverse_iterator<std::vector<int>::iterator>");
+    tester.if_print("iterator_type:",
+                    typeid(ft::reverse_iterator<std::vector<int>::iterator>::iterator_type) == typeid(std::vector<int>::iterator),
+                    "std::vector<int>::iterator", "other");
+    tester.if_print("iterator_category:",
+                    typeid(ft::reverse_iterator<std::vector<int>::iterator>::iterator_category) == typeid(std::iterator_traits<std::vector<int>::iterator>::iterator_category),
+                    "std::iterator_traits<std::vector<int>::iterator>::iterator_category", "other");
+    tester.if_print("value_type:",
+                    typeid(ft::reverse_iterator<std::vector<int>::iterator>::value_type) == typeid(std::iterator_traits<std::vector<int>::iterator>::value_type),
+                    "std::iterator_traits<std::vector<int>::iterator>::value_type", "other");
+    tester.if_print("difference_type:",
+                    typeid(ft::reverse_iterator<std::vector<int>::iterator>::difference_type) == typeid(std::iterator_traits<std::vector<int>::iterator>::difference_type),
+                    "std::iterator_traits<std::vector<int>::iterator>::difference_type", "other");
+    tester.if_print("pointer:",
+                    typeid(ft::reverse_iterator<std::vector<int>::iterator>::pointer) == typeid(std::iterator_traits<std::vector<int>::iterator>::pointer),
+                    "std::iterator_traits<std::vector<int>::iterator>::pointer", "other");
+    tester.if_print("reference:",
+                    typeid(ft::reverse_iterator<std::vector<int>::iterator>::reference) == typeid(std::iterator_traits<std::vector<int>::iterator>::reference),
+                    "std::iterator_traits<std::vector<int>::iterator>::reference", "other");
+    tester.print("");
+    tester.print("member function test");
+    std::vector<int> vec1;
+    for (int i = 0; i < 5; ++i)
+    {
+        vec1.push_back(i);
+        tester.print("vec", i, vec1[i]);
+    }
+    tester.print("");
+    tester.print("constructor test");
+    {
+        ft::reverse_iterator<std::vector<int>::iterator> ri1;
+        ft::reverse_iterator<std::vector<int>::iterator> ri2(vec1.begin());
+        ft::reverse_iterator<std::vector<int>::iterator> ri3(vec1.end());
+        ft::reverse_iterator<std::vector<int>::iterator> ri4(ri2);
+        tester.print("std::reverse_iterator<std::vector<int>::iterator> ri(vec.rbegin())");
+        int index = 0;
+        for (; ri3 != ri4; ++ri3)
+        {
+            tester.print("*ri", index++, *ri3);
+        }
+    }
+    tester.print("");
+    tester.print("operator= test");
+    {
+        ft::reverse_iterator<std::vector<int>::iterator> ri1(vec1.end());
+        ft::reverse_iterator<std::vector<int>::iterator> ri2;
+        ri2 = ri1;
+        tester.if_print("ri1 = vec.end(), ri2 = ri1 ->", ri2 == ri1, "ri2 == ri1", "ri2 != ri1");
+    }
+    tester.print("");
+    tester.print("base test");
+    {
+        ft::reverse_iterator<std::vector<int>::iterator> ri(vec1.begin() + 1);
+        tester.if_print("ri = vec.begin() + 1 ->", vec1.begin() + 1 == ri.base(), "ri.base() == vec.begin() + 1", "ri.base() != vec.begin() + 1");
+    }
+    tester.print("");
+    tester.print("operator*, -> test");
+    {
+
+        ft::reverse_iterator<std::vector<int>::iterator> ri1(vec1.end());
+        tester.print("ri = vec.end(), *ri", *ri1);
+        std::map<int, int> map1;
+        map1[0] = 1;
+        ft::reverse_iterator<std::map<int, int>::iterator> ri2(map1.begin());
+        tester.print("std::map<int, int> map1, map1[0] = 1");
+        tester.print("map ri->first:", ri2->first);
+        tester.print("map ri->second:", ri2->second);
+    }
+    tester.print("");
+    tester.print("[] test");
+    {
+        ft::reverse_iterator<std::vector<int>::iterator> ri(vec1.end());
+        for (std::size_t i = 0; i != vec1.size(); ++i)
+        {
+            tester.print("ri[i]:", i, ri[i]);
+        }
+    }
+    tester.print("");
+    tester.print("operator++, +=, +, --, -=, - test");
+    {
+        ft::reverse_iterator<std::vector<int>::iterator> ri(vec1.end());
+        tester.print("*ri++:", *ri++);
+        tester.print("*ri--:", *ri--);
+        tester.print("*ri:", *ri);
+        tester.print("*++ri:", *++ri);
+        tester.print("*--ri:", *--ri);
+        ri = ri + 2;
+        tester.print("ri = ri + 2, *ri:", *ri);
+        ri = ri - 1;
+        tester.print("ri = ri - 1, *ri:", *ri);
+        ri += 1;
+        tester.print("ri += 1, *ri:", *ri);
+        ri -= 2;
+        tester.print("ri -= 2, *ri:", *ri);
+    }
+    tester.print("");
+    tester.print("non member function test");
+    tester.print("operator==, !=, <, <=, <, >= test");
+    {
+        ft::reverse_iterator<std::vector<int>::iterator> ri1(vec1.end());
+        ft::reverse_iterator<std::vector<int>::iterator> x = ri1;
+        ft::reverse_iterator<std::vector<int>::iterator> y = ri1;
+        ft::reverse_iterator<std::vector<int>::iterator> z = ri1 + 2;
+        std::vector<int> vec2(vec1);
+        ft::reverse_iterator<std::vector<int>::const_iterator> ri2(vec2.end());
+        ft::reverse_iterator<std::vector<int>::const_iterator> x2 = ri2;
+        tester.print("ri1 = vec.end()");
+        tester.print("x = ri1");
+        tester.print("y = ri1");
+        tester.print("z = ri1 + 2");
+        tester.print("vec2 = vec");
+        tester.print("ri2 = vec2.end()");
+        tester.print("x2 = ri2");
+        tester.print("*x ==", *x);
+        tester.print("*y ==", *y);
+        tester.print("*z ==", *z);
+        tester.print("*x2 ==", *x2);
+        tester.if_print("x == y:", x == y, "true", "false");
+        tester.if_print("x != y:", x != y, "true", "false");
+        tester.if_print("x <  y:", x <  y, "true", "false");
+        tester.if_print("x <= y:", x <= y, "true", "false");
+        tester.if_print("x == z:", x == z, "true", "false");
+        tester.if_print("x != z:", x != z, "true", "false");
+        tester.if_print("x <  z:", x <  z, "true", "false");
+        tester.if_print("x <= z:", x <= z, "true", "false");
+        tester.if_print("x2 == y:", x2 == y, "true", "false");
+        tester.if_print("x2 != y:", x2 != y, "true", "false");
+        tester.if_print("x2 <  y:", x2 <  y, "true", "false");
+        tester.if_print("x2 <= y:", x2 <= y, "true", "false");
+        tester.if_print("x2 == z:", x2 == z, "true", "false");
+        tester.if_print("x2 != z:", x2 != z, "true", "false");
+        tester.if_print("x2 <  z:", x2 <  z, "true", "false");
+        tester.if_print("x2 <= z:", x2 <= z, "true", "false");
+    }
+    tester.print("");
+    tester.print("operator+ test");
+    {
+        ft::reverse_iterator<std::vector<int>::iterator> ri(vec1.end());
+        ri = 2 + ri;
+        tester.print("ri = 2 + ri, *ri:", *ri);
+    }
+    tester.print("");
+    tester.print("operator- test");
+    {
+        ft::reverse_iterator<std::vector<int>::iterator> ri1(vec1.begin());
+        ft::reverse_iterator<std::vector<int>::iterator> ri2(vec1.end());
+        tester.print("ri1 = vec.begin(), ri2 = vec1.end()");
+        tester.print("ri1 - ri2:", ri1 - ri2);
+    }
+}
+
 int main(int argc, char** argv)
 {
     if (argc != 2)
@@ -430,5 +587,6 @@ int main(int argc, char** argv)
     // equal_test();
     // lexicographical_test();
     // pair_test();
-    make_pair_test();
+    // make_pair_test();
+    reverse_iterator_test();
 }

@@ -28,6 +28,19 @@ public:
     }
 
     /**
+     * @brief The output will look like this: str v1 v2/n
+     * @tparam T Classes that can flow directly to stream
+     * @param str 
+     * @param v1 
+     * @param v2 
+     */
+    template <typename T1, typename T2>
+    void print(std::string str, T1 v1, T2 v2)
+    {
+        std::cout << str << " " << v1 << " " << v2 << std::endl;
+    }
+
+    /**
      * @brief Change the output depending on the authenticity of tf.
      * The output will look like this: str true_str/n or str false_str/n
      * @param str 
