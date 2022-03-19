@@ -1,9 +1,10 @@
-#if 0//CREATE A REAL STL EXAMPLE
+#if 1//CREATE A REAL STL EXAMPLE
     #include <map>
     #include <stack>
     #include <vector>
     namespace ft = std;
 #else
+    #include <vector.hpp>
     #include "reverse_iterator.hpp"
     #include "pair.hpp"
     #include "lexicographical_compare.hpp"
@@ -13,7 +14,6 @@
     #include "iterator_traits.hpp"
     // #include <map.hpp>
     // #include <stack.hpp>
-    // #include <vector.hpp>
 #endif
 
 #include <iostream>
@@ -565,6 +565,82 @@ void reverse_iterator_test()
     }
 }
 
+void vector_test()
+{
+    Tester tester;
+    tester.print("");
+    tester.print("----------------------");
+    tester.print("vector test");
+    tester.print("");
+    tester.print("member types test");
+    tester.print("ft::vector<int>");
+    tester.if_print("value_type:",
+                    typeid(ft::vector<int>::value_type) == typeid(int), "int", "other");
+    tester.if_print("allocator_type:",
+                    typeid(ft::vector<int>::allocator_type) == typeid(std::allocator<int>),
+                    "std::allocator<int>", "other");
+    tester.if_print("allocator_type:",
+                    typeid(ft::vector<int>::size_type) == typeid(std::size_t),
+                    "std::size_t", "other");
+    tester.if_print("difference_type:",
+                    typeid(ft::vector<int>::difference_type) == typeid(std::ptrdiff_t),
+                    "std::ptrdiff_t", "other");
+    tester.if_print("reference:",
+                    typeid(ft::vector<int>::reference) == typeid(ft::vector<int>::value_type&),
+                    "ft::vector<int>::value_type&", "other");
+    tester.if_print("const_reference:",
+                    typeid(ft::vector<int>::const_reference) == typeid(const ft::vector<int>::value_type&),
+                    "const ft::vector<int>::value_type&", "other");
+    tester.if_print("pointer:",
+                    typeid(ft::vector<int>::pointer) == typeid(std::allocator<int>::pointer),
+                    "std::allocator<int>::pointer", "other");
+    tester.if_print("const_pointer:",
+                    typeid(ft::vector<int>::const_pointer) == typeid(std::allocator<int>::const_pointer),
+                    "std::allocator<int>::const_pointer", "other");
+    tester.print("std::vector<int>::iterator");
+    tester.if_print("difference_type:",
+                    typeid(ft::iterator_traits<ft::vector<int>::iterator>::difference_type) == typeid(std::ptrdiff_t),
+                    "std::ptrdiff_t", "other");
+    tester.if_print("value_type:",
+                    typeid(ft::iterator_traits<ft::vector<int>::iterator>::value_type) == typeid(int),
+                    "int", "other");
+    tester.if_print("pointer:",
+                    typeid(ft::iterator_traits<ft::vector<int>::iterator>::pointer) == typeid(int*),
+                    "int*", "other");
+    tester.if_print("reference:",
+                    typeid(ft::iterator_traits<ft::vector<int>::iterator>::reference) == typeid(int&),
+                    "int&", "other");
+    tester.if_print("iterator_category:",
+                    typeid(ft::iterator_traits<ft::vector<int>::iterator>::iterator_category) == typeid(std::random_access_iterator_tag),
+                    "std::random_access_iterator_tag", "other");
+    tester.print("std::vector<int>::const_iterator");
+    tester.if_print("difference_type:",
+                    typeid(ft::iterator_traits<ft::vector<int>::const_iterator>::difference_type) == typeid(std::ptrdiff_t),
+                    "std::ptrdiff_t", "other");
+    tester.if_print("value_type:",
+                    typeid(ft::iterator_traits<ft::vector<int>::const_iterator>::value_type) == typeid(int),
+                    "int", "other");
+    tester.if_print("pointer:",
+                    typeid(ft::iterator_traits<ft::vector<int>::const_iterator>::pointer) == typeid(const int*),
+                    "int*", "other");
+    tester.if_print("reference:",
+                    typeid(ft::iterator_traits<ft::vector<int>::const_iterator>::reference) == typeid(const int&),
+                    "int&", "other");
+    tester.if_print("iterator_category:",
+                    typeid(ft::iterator_traits<ft::vector<int>::const_iterator>::iterator_category) == typeid(std::random_access_iterator_tag),
+                    "std::random_access_iterator_tag", "other");
+    tester.if_print("reverse_iterator:",
+                    typeid(ft::vector<int>::reverse_iterator) == typeid(ft::reverse_iterator<ft::vector<int>::iterator>),
+                    "ft::reverse_iterator<ft::vector<int>::iterator>", "other");
+    tester.if_print("const_reverse_iterator:",
+                    typeid(ft::vector<int>::const_reverse_iterator) == typeid(ft::reverse_iterator<ft::vector<int>::const_iterator>),
+                    "ft::reverse_iterator<ft::vector<int>::const_iterator>", "other");
+    tester.print("");
+    tester.print("member functions test");
+    tester.print("");
+    tester.print("constructor test");
+}
+
 int main(int argc, char** argv)
 {
     if (argc != 2)
@@ -588,5 +664,6 @@ int main(int argc, char** argv)
     // lexicographical_test();
     // pair_test();
     // make_pair_test();
-    reverse_iterator_test();
+    // reverse_iterator_test();
+    vector_test();
 }
