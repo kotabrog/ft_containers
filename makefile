@@ -21,14 +21,19 @@ OBJECT = $(SOURCES:.cpp=.o)
 OBJECTS = $(addprefix $(OBJECTS_FOLDER), $(OBJECT))
 DEPENDENCIES = $(OBJECTS:.o=.d)
 
+FT_EQUAL_STD = 1
+
 CXX := clang++
-CXXFLAGS := -Wall -Wextra -Werror
-# CXXFLAGS := -Wall -Wextra -Werror -std=c++98
+ifeq ($(FT_EQUAL_STD), 1)
+	CXXFLAGS := -Wall -Wextra -Werror
+else
+	CXXFLAGS := -Wall -Wextra -Werror -std=c++98
+endif
 
 $(OBJECTS_FOLDER)%.o : $(SOURCES_FOLDER)%.cpp
 	@mkdir -p $(OBJECTS_FOLDER)
 	@echo "Compiling : $<"
-	@$(CXX) $(CXXFLAGS) -c $< -o $@ -I$(INCLUDES_FOLDER)
+	@$(CXX) $(CXXFLAGS) -D FT_EQUAL_STD=$(FT_EQUAL_STD) -c $< -o $@ -I$(INCLUDES_FOLDER)
 
 $(NAME): $(OBJECTS)
 	@echo "Create    : $(NAME)"

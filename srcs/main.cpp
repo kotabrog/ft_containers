@@ -1,4 +1,4 @@
-#if 1//CREATE A REAL STL EXAMPLE
+#if FT_EQUAL_STD//CREATE A REAL STL EXAMPLE
     #define STD_FLAG 1
     #include <map>
     #include <stack>
@@ -869,6 +869,22 @@ void vector_test()
         tester.print("ft::vector<Test> vec2(vec1);");
         tester.print("ft::vector<Test> vec1(2, Test(3));");
         ft::vector<Test> vec1(2, Test(3));
+        ft::vector<Test> vec2(vec1);
+        tester.print("vec2.size():", vec2.size());
+        tester.print("vec2.capacity():", vec2.capacity());
+        for (std::size_t i = 0; i < vec2.size(); ++i)
+            tester.set_stream(vec2[i].get_data());
+        tester.put_all_stream();
+        vec2[0] = 4;
+        tester.print("change value vec2[0] = 4 -> vec1[0] vec2[]", vec1[0].get_data(), vec2[0].get_data());
+        tester.if_print("vec1.get_allocator() == vec2.get_allocator():",
+                        vec1.get_allocator() == vec2.get_allocator(), "true", "false");
+    }
+    tester.print("");
+    {
+        tester.print("ft::vector<Test> vec2(vec1);");
+        tester.print("const ft::vector<Test> vec1(2, Test(3));");
+        const ft::vector<Test> vec1(2, Test(3));
         ft::vector<Test> vec2(vec1);
         tester.print("vec2.size():", vec2.size());
         tester.print("vec2.capacity():", vec2.capacity());
