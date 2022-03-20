@@ -30,25 +30,63 @@ private:
     iterator _end_of_storage;
     Alloc _alloc;
 
+    typename Alloc::template rebind<value_type>::other
+    _get_alloc()
+    {
+        return typename Alloc::template rebind<value_type>::other();
+    }
+
+    template <typename Iter>
+    typename Alloc::template rebind<typename iterator_traits<Iter>::value_type>::other
+    _get_alloc_by_iter(Iter)
+    {
+        return typename Alloc::template rebind<typename iterator_traits<Iter>::value_type>::other();
+    }
+
+    // template <typename V>
+    // typename Alloc::template rebind<V>::other
+    // _get_alloc_by_value(const V&)
+    // {
+    //     return typename Alloc::template rebind<V>::other();
+    // }
+
+    template <typename Iter>
+    void _destroy(Iter iter)
+    {
+        _get_alloc_by_iter(iter).destroy(iter);
+    }
+
     void _destroy(iterator start, iterator last)
     {
         for (; start < last; ++start)
-            _alloc.destroy(start);
+            _destroy(start);
     }
 
     pointer _allocate(size_type n)
     {
         if (n == 0)
             return pointer();
-        return _alloc.allocate(n);
+        return _get_alloc().allocate(n);
     }
 
-    void _create_storage(size_type n)
+    template <typename Iter, typename V>
+    void _construct(Iter iter, const V& value)
     {
-        _start = _allocate(n);
-        _last = _start;
-        _end_of_storage = _start + n;
+        _get_alloc_by_iter(iter).construct(iter, value);
     }
+
+    template <typename Iter>
+    void _deallocate(Iter iter, size_type n)
+    {
+        _get_alloc_by_iter(iter).deallocate(iter, n);
+    }
+
+    // void _create_storage(size_type n)
+    // {
+    //     _start = _allocate(n);
+    //     _last = _start;
+    //     _end_of_storage = _start + n;
+    // }
 
     void _fill_value(iterator start,
                      size_type n,
@@ -58,7 +96,7 @@ private:
         try
         {
             for (; n > 0; --n, ++temp)
-                _alloc.construct(temp, value);
+                _construct(temp, value);
         }
         catch(const std::exception& e)
         {
@@ -74,7 +112,7 @@ private:
         try
         {
             for (; start != last; ++start, ++temp)
-                _alloc.construct(temp, *start);
+                _construct(temp, *start);
         }
         catch(const std::exception& e)
         {
@@ -140,7 +178,7 @@ public:
     {
         _destroy(_start, _last);
         if (size() > 0)
-            _alloc.deallocate(_start, capacity());
+            _deallocate(_start, capacity());
     }
 
     Alloc get_allocator() const
@@ -192,7 +230,7 @@ public:
     {
         if (_last != _end_of_storage)
         {
-            _alloc.construct(_last, value);
+            _construct(_last, value);
             ++_last;
         }
         else

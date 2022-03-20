@@ -5,6 +5,13 @@
 
 // https://cpprefjp.github.io/reference/memory/allocator.html
 
+template <typename Alloc, typename Iter>
+typename Alloc::template rebind<typename std::iterator_traits<Iter>::value_type>::other
+get_alloc_by_iter(Alloc, Iter)
+{
+    return typename Alloc::template rebind<typename std::iterator_traits<Iter>::value_type>::other();
+}
+
 int main(int argc, char** argv)
 {
     auto alc = std::allocator<int>();
@@ -26,4 +33,9 @@ int main(int argc, char** argv)
 
     // 領域を解放する
     alc.deallocate(arr, 10);
+
+    char* arr2;
+    std::allocator<int>::template rebind<char>::other alc2 = get_alloc_by_iter(alc, arr2);
+    arr2 = alc2.allocate(10);
+    alc2.deallocate(arr2, 10);
 }

@@ -22,8 +22,8 @@ OBJECTS = $(addprefix $(OBJECTS_FOLDER), $(OBJECT))
 DEPENDENCIES = $(OBJECTS:.o=.d)
 
 CXX := clang++
-# CXXFLAGS := -Wall -Wextra -Werror
-CXXFLAGS := -Wall -Wextra -Werror -std=c++98
+CXXFLAGS := -Wall -Wextra -Werror
+# CXXFLAGS := -Wall -Wextra -Werror -std=c++98
 
 $(OBJECTS_FOLDER)%.o : $(SOURCES_FOLDER)%.cpp
 	@mkdir -p $(OBJECTS_FOLDER)

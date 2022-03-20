@@ -1,4 +1,4 @@
-#if 0//CREATE A REAL STL EXAMPLE
+#if 1//CREATE A REAL STL EXAMPLE
     #define STD_FLAG 1
     #include <map>
     #include <stack>
@@ -582,6 +582,60 @@ public:
     int get_data() const {return data;}
 };
 
+class ErrorTest
+{
+private:
+    int data;
+    Tester tester;
+public:
+    static int init_num;
+    ErrorTest() : data(0)
+    {
+        if (init_num++ % 3 == 0)
+            throw std::bad_alloc();
+        tester.print("construct:", data);
+    }
+    ErrorTest(int x) : data(x)
+    {
+        if (init_num++ % 3 == 0)
+            throw std::bad_alloc();
+        tester.print("construct:", data);
+    }
+    ErrorTest(const ErrorTest& temp) : data(temp.data)
+    {
+        if (init_num++ % 3 == 0)
+            throw std::bad_alloc();
+        tester.print("construct:", data);
+    }
+    ErrorTest& operator=(const ErrorTest& temp) {this->data = temp.data; return *this;}
+    ~ErrorTest() {tester.print("destruct:", data);}
+
+    int get_data() const {return data;}
+};
+
+int ErrorTest::init_num = 0;
+
+template<class T>
+class ErrorAlocator : public std::allocator<T>
+{
+public:
+    template <typename U>
+    struct rebind {
+        typedef ErrorAlocator<U> other;
+    };
+
+    static int construct_num;
+    void construct(typename std::allocator<T>::pointer p, const T& value)
+    {
+        if (construct_num++ % 3 == 0)
+            throw std::bad_alloc();
+        new((void*)p) T(value);
+    }
+};
+
+template<typename Test>
+int ErrorAlocator<Test>::construct_num = 1;
+
 void vector_test()
 {
     Tester tester;
@@ -714,6 +768,42 @@ void vector_test()
         for (int i = 0; i < count; ++i)
             tester.set_stream(vec[i].get_data());
         tester.put_all_stream();
+    }
+    /*
+    allocater.construct内でエラーが起きるためaborteで終了する
+    tester.print("");
+    {
+        tester.print("ft::vector<ErrorTest> vec(count, value); error test");
+        int count = 3;
+        ErrorTest value(1);
+        tester.print("count:", count);
+        tester.print("value:", value.get_data());
+        try
+        {
+            ft::vector<ErrorTest> vec(count, value);
+        }
+        catch (const std::exception& e)
+        {
+            tester.print(e.what());
+        }
+    }
+    */
+    tester.print("");
+    {
+        tester.print("ft::vector<Test> vec(count, value, alloc); error test");
+        int count = 4;
+        Test value(1);
+        ErrorAlocator<Test> alloc;
+        tester.print("count:", count);
+        tester.print("value:", value.get_data());
+        try
+        {
+            ft::vector<Test, ErrorAlocator<Test> > vec(count, value, alloc);
+        }
+        catch (const std::exception& e)
+        {
+            tester.print(e.what());
+        }
     }
     tester.print("");
     {
