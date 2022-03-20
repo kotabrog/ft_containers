@@ -1,9 +1,11 @@
-#if 1//CREATE A REAL STL EXAMPLE
+#if 0//CREATE A REAL STL EXAMPLE
+    #define STD_FLAG 1
     #include <map>
     #include <stack>
     #include <vector>
     namespace ft = std;
 #else
+    #define STD_FLAG 0
     #include <vector.hpp>
     #include "reverse_iterator.hpp"
     #include "pair.hpp"
@@ -565,6 +567,21 @@ void reverse_iterator_test()
     }
 }
 
+class Test
+{
+private:
+    int data;
+    Tester tester;
+public:
+    Test() : data(0) {tester.print("construct:", data);}
+    Test(int x) : data(x) {tester.print("construct:", data);}
+    Test(const Test& temp) : data(temp.data) {tester.print("construct:", data);}
+    Test& operator=(const Test& temp) {this->data = temp.data; return *this;}
+    ~Test() {tester.print("destruct:", data);}
+
+    int get_data() const {return data;}
+};
+
 void vector_test()
 {
     Tester tester;
@@ -636,9 +653,143 @@ void vector_test()
                     typeid(ft::vector<int>::const_reverse_iterator) == typeid(ft::reverse_iterator<ft::vector<int>::const_iterator>),
                     "ft::reverse_iterator<ft::vector<int>::const_iterator>", "other");
     tester.print("");
-    tester.print("member functions test");
+    tester.print("member functions test\n");
+    tester.print("test class is a wrapper for int\n");
+    tester.print("constructor and destructor test");
+    {
+        ft::vector<Test> vec;
+        tester.print("std::vector<Test> vec; vec.size() ->", vec.size());
+    }
     tester.print("");
-    tester.print("constructor test");
+    {
+        std::allocator<Test> alloc;
+        ft::vector<Test> vec(alloc);
+        std::allocator<Test> temp = vec.get_allocator();
+        tester.if_print("ft::vector<Test> vec(alloc); vec.get_allocator() == alloc:",
+                        alloc == temp, "true", "false");
+    }
+    tester.print("");
+    {
+        tester.print("ft::vector<Test> vec(count);");
+        int count = 3;
+        tester.print("count:", count);
+#if STD_FLAG
+        ft::vector<Test> vec(count, Test());
+#else
+        ft::vector<Test> vec(count);
+#endif
+        tester.print("vec.size():", vec.size());
+        tester.print("vec.capacity():", vec.capacity());
+        for (int i = 0; i < count; ++i)
+            tester.set_stream(vec[i].get_data());
+        tester.put_all_stream();
+    }
+    tester.print("");
+    {
+        tester.print("ft::vector<Test> vec(count, value);");
+        int count = 3;
+        Test value(1);
+        tester.print("count:", count);
+        tester.print("value:", value.get_data());
+        ft::vector<Test> vec(count, value);
+        tester.print("vec.size():", vec.size());
+        tester.print("vec.capacity():", vec.capacity());
+        for (int i = 0; i < count; ++i)
+            tester.set_stream(vec[i].get_data());
+        tester.put_all_stream();
+    }
+    tester.print("");
+    {
+        tester.print("ft::vector<Test> vec(count, value, alloc);");
+        std::allocator<Test> alloc;
+        int count = 3;
+        Test value(1);
+        tester.print("count:", count);
+        tester.print("value:", value.get_data());
+        ft::vector<Test> vec(count, value, alloc);
+        tester.print("vec.size():", vec.size());
+        tester.print("vec.capacity():", vec.capacity());
+        tester.if_print("vec.get_allocator() == alloc:",
+                        alloc == vec.get_allocator(), "true", "false");
+        for (int i = 0; i < count; ++i)
+            tester.set_stream(vec[i].get_data());
+        tester.put_all_stream();
+    }
+    tester.print("");
+    {
+        tester.print("ft::vector<Test> vec2(vec1.begin(), vec1.end());");
+        tester.print("ft::vector<Test> vec1(5, Test(3));");
+        ft::vector<Test> vec1(5, Test(3));
+        ft::vector<Test> vec2(vec1.begin(), vec1.end());
+        tester.print("vec2.size():", vec2.size());
+        tester.print("vec2.capacity():", vec2.capacity());
+        for (std::size_t i = 0; i < vec2.size(); ++i)
+            tester.set_stream(vec2[i].get_data());
+        tester.put_all_stream();
+    }
+    tester.print("");
+    {
+        tester.print("ft::vector<int> vec2(vec1.begin(), vec1.end());");
+        tester.print("ft::vector<int> vec1(5, 3);");
+        ft::vector<int> vec1(5, 3);
+        ft::vector<int> vec2(vec1.begin(), vec1.end());
+        tester.print("vec2.size():", vec2.size());
+        tester.print("vec2.capacity():", vec2.capacity());
+        for (std::size_t i = 0; i < vec2.size(); ++i)
+            tester.set_stream(vec2[i]);
+        tester.put_all_stream();
+        vec2[0] = 4;
+        tester.print("change value vec2[0] = 4 -> vec1[0] vec2[]", vec1[0], vec2[0]);
+    }
+    /*
+    コンストラクタが余分に呼ばれてしまう。
+    allocatorのconstructを使用する限り避けられない？
+    tester.print("");
+    {
+        tester.print("ft::vector<Test> vec2(vec1.begin(), vec1.end());");
+        tester.print("ft::vector<int> vec1(2, 3);");
+        ft::vector<int> vec1(2, 3);
+        ft::vector<Test> vec2(vec1.begin(), vec1.end());
+        tester.print("vec2.size():", vec2.size());
+        tester.print("vec2.capacity():", vec2.capacity());
+        for (std::size_t i = 0; i < vec2.size(); ++i)
+            tester.set_stream(vec2[i].get_data());
+        tester.put_all_stream();
+        vec2[0] = 4;
+        tester.print("change value vec2[0] = 4 -> vec1[0] vec2[]", vec1[0], vec2[0].get_data());
+    }
+    */
+    tester.print("");
+    {
+        tester.print("ft::vector<Test> vec2(vec1.begin(), vec1.end(), alloc);");
+        tester.print("ft::vector<Test> vec1(5, Test(3));");
+        ft::vector<Test> vec1(5, Test(3));
+        std::allocator<Test> alloc;
+        ft::vector<Test> vec2(vec1.begin(), vec1.end(), alloc);
+        tester.print("vec2.size():", vec2.size());
+        tester.print("vec2.capacity():", vec2.capacity());
+        tester.if_print("vec2.get_allocator() == alloc:",
+                        alloc == vec2.get_allocator(), "true", "false");
+        for (std::size_t i = 0; i < vec2.size(); ++i)
+            tester.set_stream(vec2[i].get_data());
+        tester.put_all_stream();
+    }
+    tester.print("");
+    {
+        tester.print("ft::vector<Test> vec2(vec1);");
+        tester.print("ft::vector<Test> vec1(2, Test(3));");
+        ft::vector<Test> vec1(2, Test(3));
+        ft::vector<Test> vec2(vec1);
+        tester.print("vec2.size():", vec2.size());
+        tester.print("vec2.capacity():", vec2.capacity());
+        for (std::size_t i = 0; i < vec2.size(); ++i)
+            tester.set_stream(vec2[i].get_data());
+        tester.put_all_stream();
+        vec2[0] = 4;
+        tester.print("change value vec2[0] = 4 -> vec1[0] vec2[]", vec1[0].get_data(), vec2[0].get_data());
+        tester.if_print("vec1.get_allocator() == vec2.get_allocator():",
+                        vec1.get_allocator() == vec2.get_allocator(), "true", "false");
+    }
 }
 
 int main(int argc, char** argv)

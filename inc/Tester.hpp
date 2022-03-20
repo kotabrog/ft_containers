@@ -3,11 +3,12 @@
 
 #include <string>
 #include <iostream>
+#include <sstream>
 
 class Tester
 {
 private:
-
+    std::stringstream ss;
 public:
     /**
      * @brief The output will look like this: str/n
@@ -54,6 +55,23 @@ public:
             std::cout << str << " " << true_str << std::endl;
         else
             std::cout << str << " " << false_str << std::endl;
+    }
+
+    /**
+     * @brief Filling a stream with data
+     * @param data 
+     */
+    template <typename T>
+    void set_stream(T data)
+    {
+        ss << data << " ";
+    }
+
+    void put_all_stream()
+    {
+        std::cout << ss.str() << std::endl;
+        ss.str("");
+        ss.clear();
     }
 };
 
