@@ -708,7 +708,7 @@ void vector_test()
                     "ft::reverse_iterator<ft::vector<int>::const_iterator>", "other");
     tester.print("");
     tester.print("member functions test\n");
-    tester.print("test class is a wrapper for int\n");
+    tester.print("Test class is a wrapper for int\n");
     tester.print("constructor and destructor test");
     {
         ft::vector<Test> vec;
@@ -895,6 +895,111 @@ void vector_test()
         tester.print("change value vec2[0] = 4 -> vec1[0] vec2[]", vec1[0].get_data(), vec2[0].get_data());
         tester.if_print("vec1.get_allocator() == vec2.get_allocator():",
                         vec1.get_allocator() == vec2.get_allocator(), "true", "false");
+    }
+    tester.print("");
+    tester.print("operator= test");
+    {
+        tester.print("ft::vector<Test> vec1(2, Test(3));");
+        tester.print("ft::vector<Test> vec2;");
+        ft::vector<Test> vec1(2, Test(3));
+        ft::vector<Test> vec2;
+        tester.if_print("vec1.get_allocator() == vec2.get_allocator():",
+                        vec1.get_allocator() == vec2.get_allocator(), "true", "false");
+        tester.print("vec2 = vec1;");
+        vec2 = vec1;
+        tester.print("vec2.size():", vec2.size());
+        tester.print("vec2.capacity():", vec2.capacity());
+        for (std::size_t i = 0; i < vec2.size(); ++i)
+            tester.set_stream(vec2[i].get_data());
+        tester.put_all_stream();
+        vec2[0] = 4;
+        tester.print("change value vec2[0] = 4 -> vec1[0] vec2[]", vec1[0].get_data(), vec2[0].get_data());
+        tester.if_print("vec1.get_allocator() == vec2.get_allocator():",
+                        vec1.get_allocator() == vec2.get_allocator(), "true", "false");
+    }
+    tester.print("");
+    {
+        tester.print("ft::vector<Test> vec1(2, Test(3));");
+        tester.print("ft::vector<Test> vec2(1, Test(2));");
+        ft::vector<Test> vec1(2, Test(3));
+        ft::vector<Test> vec2(1, Test(2));
+        tester.print("vec2 = vec1;");
+        vec2 = vec1;
+        tester.print("vec2.size():", vec2.size());
+        tester.print("vec2.capacity():", vec2.capacity());
+        for (std::size_t i = 0; i < vec2.size(); ++i)
+            tester.set_stream(vec2[i].get_data());
+        tester.put_all_stream();
+        vec2[0] = 4;
+        tester.print("change value vec2[0] = 4 -> vec1[0] vec2[]", vec1[0].get_data(), vec2[0].get_data());
+    }
+    tester.print("");
+    {
+        tester.print("ft::vector<Test> vec1(2, Test(3));");
+        tester.print("ft::vector<Test> vec2(3, Test(2));");
+        ft::vector<Test> vec1(2, Test(3));
+        ft::vector<Test> vec2(3, Test(2));
+        tester.print("vec2 = vec1;");
+        vec2 = vec1;
+        tester.print("vec2.size():", vec2.size());
+        tester.print("vec2.capacity():", vec2.capacity());
+        for (std::size_t i = 0; i < vec2.size(); ++i)
+            tester.set_stream(vec2[i].get_data());
+        tester.put_all_stream();
+        vec2[0] = 4;
+        tester.print("change value vec2[0] = 4 -> vec1[0] vec2[]", vec1[0].get_data(), vec2[0].get_data());
+    }
+    tester.print("");
+    {
+        tester.print("ft::vector<Test> vec1(2, Test(3));");
+        tester.print("ft::vector<Test> vec2(1, Test(2));");
+        tester.print("vec2.reserve(10)");
+        ft::vector<Test> vec1(2, Test(3));
+        ft::vector<Test> vec2(1, Test(2));
+        vec2.reserve(10);
+        tester.print("vec2 = vec1;");
+        vec2 = vec1;
+        tester.print("vec2.size():", vec2.size());
+        tester.print("vec2.capacity():", vec2.capacity());
+        for (std::size_t i = 0; i < vec2.size(); ++i)
+            tester.set_stream(vec2[i].get_data());
+        tester.put_all_stream();
+        vec2[0] = 4;
+        tester.print("change value vec2[0] = 4 -> vec1[0] vec2[]", vec1[0].get_data(), vec2[0].get_data());
+    }
+    tester.print("");
+    {
+        tester.print("ft::vector<Test> vec1(2, Test(3));");
+        tester.print("ft::vector<Test> vec2(1, Test(2));");
+        tester.print("vec1.reserve(10)");
+        ft::vector<Test> vec1(2, Test(3));
+        ft::vector<Test> vec2(1, Test(2));
+        vec1.reserve(10);
+        tester.print("vec2 = vec1;");
+        vec2 = vec1;
+        tester.print("vec2.size():", vec2.size());
+        tester.print("vec2.capacity():", vec2.capacity());
+        for (std::size_t i = 0; i < vec2.size(); ++i)
+            tester.set_stream(vec2[i].get_data());
+        tester.put_all_stream();
+        vec2[0] = 4;
+        tester.print("change value vec2[0] = 4 -> vec1[0] vec2[]", vec1[0].get_data(), vec2[0].get_data());
+    }
+    tester.print("");
+    {
+        tester.print("const ft::vector<Test> vec1(2, Test(3));");
+        tester.print("ft::vector<Test> vec2(1, Test(2));");
+        const ft::vector<Test> vec1(2, Test(3));
+        ft::vector<Test> vec2(1, Test(2));
+        tester.print("vec2 = vec1;");
+        vec2 = vec1;
+        tester.print("vec2.size():", vec2.size());
+        tester.print("vec2.capacity():", vec2.capacity());
+        for (std::size_t i = 0; i < vec2.size(); ++i)
+            tester.set_stream(vec2[i].get_data());
+        tester.put_all_stream();
+        vec2[0] = 4;
+        tester.print("change value vec2[0] = 4 -> vec1[0] vec2[]", vec1[0].get_data(), vec2[0].get_data());
     }
 }
 

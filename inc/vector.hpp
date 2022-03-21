@@ -2,6 +2,7 @@
 #define VECTOR_HPP
 
 #include <memory>
+#include <limits>
 #include "iterator.hpp"
 #include "is_integral.hpp"
 #include "reverse_iterator.hpp"
@@ -31,14 +32,14 @@ private:
     Alloc _alloc;
 
     typename Alloc::template rebind<value_type>::other
-    _get_alloc()
+    _get_alloc() const
     {
         return typename Alloc::template rebind<value_type>::other();
     }
 
     template <typename Iter>
     typename Alloc::template rebind<typename iterator_traits<Iter>::value_type>::other
-    _get_alloc_by_iter(Iter)
+    _get_alloc_by_iter(Iter) const
     {
         return typename Alloc::template rebind<typename iterator_traits<Iter>::value_type>::other();
     }
@@ -81,6 +82,21 @@ private:
         _get_alloc_by_iter(iter).deallocate(iter, n);
     }
 
+    template<class Iter>
+    iterator _copy(Iter start, Iter last, iterator dest)
+    {
+        for (; start != last; ++start, ++dest)
+            *dest = *start;
+        return dest;
+    }
+
+    void _destroy_and_deallocate()
+    {
+        _destroy(_start, _last);
+        if (capacity() > 0)
+            _deallocate(_start, capacity());
+    }
+
     // void _create_storage(size_type n)
     // {
     //     _start = _allocate(n);
@@ -88,7 +104,7 @@ private:
     //     _end_of_storage = _start + n;
     // }
 
-    void _fill_value(iterator start,
+    void _construct_by_value(iterator start,
                      size_type n,
                      const value_type& value)
     {
@@ -106,7 +122,7 @@ private:
     }
 
     template<class Iter>
-    void _copy(Iter start, Iter last, iterator dest)
+    void _construct_by_iterator(Iter start, Iter last, iterator dest)
     {
         iterator temp = dest;
         try
@@ -121,10 +137,34 @@ private:
         }
     }
 
+    template<class Iter>
+    iterator _allocate_and_copy(size_type n, Iter start, Iter last)
+    {
+        iterator temp = _allocate(n);
+        try
+        {
+            _construct_by_iterator(start, last, temp);
+        }
+        catch(const std::exception& e)
+        {
+            _deallocate(temp, n);
+            throw;
+        }
+        return temp;
+    }
+
     void _value_init(size_type count, const T& value)
     {
         _start = _allocate(count);
-        _fill_value(_start, count, value);
+        try
+        {
+            _construct_by_value(_start, count, value);
+        }
+        catch(const std::exception& e)
+        {
+            _deallocate(_start, count);
+            throw;
+        }
         _last = _start + count;
         _end_of_storage = _last;
     }
@@ -139,8 +179,7 @@ private:
     void _iter_init(Iter start, Iter last, false_type)
     {
         typename iterator_traits<Iter>::difference_type dist = distance(start, last);
-        _start = _allocate(dist);
-        _copy(start, last, _start);
+        _start = _allocate_and_copy(dist, start, last);
         _last = _start + dist;
         _end_of_storage = _last;
     }
@@ -176,9 +215,34 @@ public:
 
     ~vector()
     {
-        _destroy(_start, _last);
-        if (size() > 0)
-            _deallocate(_start, capacity());
+        _destroy_and_deallocate();
+    }
+
+    vector& operator=(const vector& other)
+    {
+        if (&other != this)
+        {
+            const size_type other_len = other.size();
+            if (other_len > capacity())
+            {
+                iterator temp = _allocate_and_copy(other_len, other._start, other._last);
+                _destroy_and_deallocate();
+                _start = temp;
+                _end_of_storage = temp + other_len;
+            }
+            else if (size() >= other_len)
+            {
+                _destroy(_copy(other._start, other._last, _start),
+                         _last);
+            }
+            else
+            {
+                _copy(other._start, other._start + size(), _start);
+                _construct_by_iterator(other._start + size(), other._last, _last);
+            }
+            _last = _start + other_len;
+        }
+        return *this;
     }
 
     Alloc get_allocator() const
@@ -219,6 +283,28 @@ public:
     size_type size() const
     {
         return _last - _start;
+    }
+
+    size_type max_size() const
+    {
+        const size_t diff_max = std::numeric_limits<std::ptrdiff_t>::max() / sizeof(value_type);
+        const size_t alloc_max = _get_alloc().max_size();
+        return std::min(diff_max, alloc_max);
+    }
+
+    void reserve(size_type new_cap)
+    {
+        if (new_cap > max_size())
+            throw std::length_error("vector::reserve");
+        if (capacity() < new_cap)
+        {
+            const size_type old_size = size();
+            iterator temp = _allocate_and_copy(new_cap, _start, _last);
+            _destroy_and_deallocate();
+            _start = temp;
+            _last = temp + old_size;
+            _end_of_storage = temp + new_cap;
+        }
     }
 
     size_type capacity() const

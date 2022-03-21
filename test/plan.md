@@ -24,6 +24,7 @@
     - [x] std::pair
     - [x] std::make_pair
     - vector
+      - コンストラクタで大量に確保
     - map
     - stack
   - 個別のテストの作成
