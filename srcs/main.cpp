@@ -319,28 +319,28 @@ void lexicographical_test()
     std::string str2 = "hellO";
     std::string str3 = "hellooo";
     tester.if_print("hello and hellO default:",
-                    std::lexicographical_compare(str1.begin(), str1.end(), str2.begin(), str2.end()),
+                    ft::lexicographical_compare(str1.begin(), str1.end(), str2.begin(), str2.end()),
                     "true", "false");
     tester.if_print("hello and hellooo default:",
-                    std::lexicographical_compare(str1.begin(), str1.end(), str3.begin(), str3.end()),
+                    ft::lexicographical_compare(str1.begin(), str1.end(), str3.begin(), str3.end()),
                     "true", "false");
     tester.if_print("hellO and hello default:",
-                    std::lexicographical_compare(str2.begin(), str2.end(), str1.begin(), str1.end()),
+                    ft::lexicographical_compare(str2.begin(), str2.end(), str1.begin(), str1.end()),
                     "true", "false");
     tester.if_print("hellooo and hello default:",
-                    std::lexicographical_compare(str3.begin(), str3.end(), str1.begin(), str1.end()),
+                    ft::lexicographical_compare(str3.begin(), str3.end(), str1.begin(), str1.end()),
                     "true", "false");
     tester.if_print("hello and hellO greater:",
-                    std::lexicographical_compare(str1.begin(), str1.end(), str2.begin(), str2.end(), std::greater<char>()),
+                    ft::lexicographical_compare(str1.begin(), str1.end(), str2.begin(), str2.end(), std::greater<char>()),
                     "true", "false");
     tester.if_print("hello and hellooo greater:",
-                    std::lexicographical_compare(str1.begin(), str1.end(), str3.begin(), str3.end(), std::greater<char>()),
+                    ft::lexicographical_compare(str1.begin(), str1.end(), str3.begin(), str3.end(), std::greater<char>()),
                     "true", "false");
     tester.if_print("hellO and hello greater:",
-                    std::lexicographical_compare(str2.begin(), str2.end(), str1.begin(), str1.end(), std::greater<char>()),
+                    ft::lexicographical_compare(str2.begin(), str2.end(), str1.begin(), str1.end(), std::greater<char>()),
                     "true", "false");
     tester.if_print("hellooo and hello greater:",
-                    std::lexicographical_compare(str3.begin(), str3.end(), str1.begin(), str1.end(), std::greater<char>()),
+                    ft::lexicographical_compare(str3.begin(), str3.end(), str1.begin(), str1.end(), std::greater<char>()),
                     "true", "false");
 }
 
@@ -623,6 +623,14 @@ public:
     struct rebind {
         typedef ErrorAlocator<U> other;
     };
+
+    typename std::allocator<T>::pointer
+    allocate(typename std::allocator<T>::size_type n, const void * hint = 0)
+    {
+        if (n >= 100)
+            throw std::bad_alloc();
+        return std::allocator<T>::allocate(n, hint);
+    }
 
     static int construct_num;
     void construct(typename std::allocator<T>::pointer p, const T& value)
@@ -1000,6 +1008,470 @@ void vector_test()
         tester.put_all_stream();
         vec2[0] = 4;
         tester.print("change value vec2[0] = 4 -> vec1[0] vec2[]", vec1[0].get_data(), vec2[0].get_data());
+    }
+    tester.print("");
+    tester.print("assign test");
+    {
+        tester.print("ft::vector<Test> vec;");
+        tester.print("vec.assign(3, Test(2));");
+        ft::vector<Test> vec;
+        vec.assign(3, Test(2));
+        tester.print("vec.size():", vec.size());
+        tester.print("vec.capacity():", vec.capacity());
+        for (std::size_t i = 0; i < vec.size(); ++i)
+            tester.set_stream(vec[i].get_data());
+        tester.put_all_stream();
+    }
+    tester.print("");
+    {
+        tester.print("ft::vector<Test> vec(1, Test(2));");
+        tester.print("vec.assign(2, Test(3));");
+        ft::vector<Test> vec(1, Test(2));
+        vec.assign(2, Test(3));
+        tester.print("vec.size():", vec.size());
+        tester.print("vec.capacity():", vec.capacity());
+        for (std::size_t i = 0; i < vec.size(); ++i)
+            tester.set_stream(vec[i].get_data());
+        tester.put_all_stream();
+    }
+    tester.print("");
+    {
+        tester.print("ft::vector<Test> vec(3, Test(2));");
+        tester.print("vec.assign(2, Test(3));");
+        ft::vector<Test> vec(3, Test(2));
+        vec.assign(2, Test(3));
+        tester.print("vec.size():", vec.size());
+        tester.print("vec.capacity():", vec.capacity());
+        for (std::size_t i = 0; i < vec.size(); ++i)
+            tester.set_stream(vec[i].get_data());
+        tester.put_all_stream();
+    }
+    tester.print("");
+    {
+        tester.print("ft::vector<Test> vec(1, Test(2));");
+        tester.print("vec.reserve(3);");
+        tester.print("vec.assign(2, Test(3));");
+        ft::vector<Test> vec(1, Test(2));
+        vec.reserve(3);
+        vec.assign(2, Test(3));
+        tester.print("vec.size():", vec.size());
+        tester.print("vec.capacity():", vec.capacity());
+        for (std::size_t i = 0; i < vec.size(); ++i)
+            tester.set_stream(vec[i].get_data());
+        tester.put_all_stream();
+    }
+    tester.print("");
+    {
+        tester.print("ft::vector<Test> vec(1, Test(2));");
+        tester.print("vec.reserve(3);");
+        tester.print("vec.assign(2, Test(3));");
+        ft::vector<Test> vec(1, Test(2));
+        vec.reserve(3);
+        vec.assign(2, Test(3));
+        tester.print("vec.size():", vec.size());
+        tester.print("vec.capacity():", vec.capacity());
+        for (std::size_t i = 0; i < vec.size(); ++i)
+            tester.set_stream(vec[i].get_data());
+        tester.put_all_stream();
+    }
+    tester.print("");
+    {
+        tester.print("ft::vector<Test> vec1(2, Test(3));");
+        tester.print("ft::vector<Test> vec2(1, Test(2));");
+        tester.print("vec2.assign(vec1.begin(), vec1.end());");
+        ft::vector<Test> vec1(2, Test(3));
+        ft::vector<Test> vec2(1, Test(2));
+        vec2.assign(vec1.begin(), vec1.end());
+        tester.print("vec2.size():", vec2.size());
+        tester.print("vec2.capacity():", vec2.capacity());
+        for (std::size_t i = 0; i < vec2.size(); ++i)
+            tester.set_stream(vec2[i].get_data());
+        tester.put_all_stream();
+        vec2[0] = 4;
+        tester.print("change value vec2[0] = 4 -> vec1[0] vec2[]", vec1[0].get_data(), vec2[0].get_data());
+    }
+    tester.print("");
+    {
+        tester.print("ft::vector<Test> vec(1, Test(2));");
+        tester.print("vec.assign(2, 3);");
+        ft::vector<Test> vec(1, Test(2));
+        vec.assign(2, 3);
+        tester.print("vec.size():", vec.size());
+        tester.print("vec.capacity():", vec.capacity());
+        for (std::size_t i = 0; i < vec.size(); ++i)
+            tester.set_stream(vec[i].get_data());
+        tester.put_all_stream();
+    }
+    tester.print("");
+    {
+        tester.print("ft::vector<Test> vec1(1, Test(3));");
+        tester.print("ft::vector<Test> vec2(2, Test(2));");
+        tester.print("vec2.assign(vec1.begin(), vec1.end());");
+        ft::vector<Test> vec1(1, Test(3));
+        ft::vector<Test> vec2(2, Test(2));
+        vec2.assign(vec1.begin(), vec1.end());
+        tester.print("vec2.size():", vec2.size());
+        tester.print("vec2.capacity():", vec2.capacity());
+        for (std::size_t i = 0; i < vec2.size(); ++i)
+            tester.set_stream(vec2[i].get_data());
+        tester.put_all_stream();
+        vec2[0] = 4;
+        tester.print("change value vec2[0] = 4 -> vec1[0] vec2[]", vec1[0].get_data(), vec2[0].get_data());
+    }
+    tester.print("");
+    {
+        tester.print("ft::vector<Test> vec1(2, Test(3));");
+        tester.print("ft::vector<Test> vec2(1, Test(2));");
+        tester.print("vec2.reserve(3);");
+        tester.print("vec2.assign(vec1.begin(), vec1.end());");
+        ft::vector<Test> vec1(2, Test(3));
+        ft::vector<Test> vec2(1, Test(2));
+        vec2.reserve(3);
+        vec2.assign(vec1.begin(), vec1.end());
+        tester.print("vec2.size():", vec2.size());
+        tester.print("vec2.capacity():", vec2.capacity());
+        for (std::size_t i = 0; i < vec2.size(); ++i)
+            tester.set_stream(vec2[i].get_data());
+        tester.put_all_stream();
+        vec2[0] = 4;
+        tester.print("change value vec2[0] = 4 -> vec1[0] vec2[]", vec1[0].get_data(), vec2[0].get_data());
+    }
+    tester.print("");
+    tester.print("get_allocator test");
+    {
+        tester.print("std::allocator<Test> alloc;");
+        tester.print("ft::vector<Test> vec(alloc);");
+        std::allocator<Test> alloc;
+        ft::vector<Test> vec(alloc);
+        tester.if_print("vec.get_allocator() == alloc:",
+                        alloc == vec.get_allocator(), "true", "false");
+    }
+    tester.print("");
+    tester.print("at test");
+    {
+        tester.print("ft::vector<int> vec <- 0 1 2 3 4");
+        ft::vector<int> vec;
+        for (int i = 0; i < 5; ++i)
+            vec.push_back(i);
+        for (std::size_t i = 0; i < vec.size(); ++i)
+            tester.set_stream(vec.at(i));
+        tester.put_all_stream();
+        tester.print("access at(5)");
+        try
+        {
+            vec.at(5) = 1;
+        }
+        catch(const std::out_of_range& e)
+        {
+            // tester.print(e.what());
+            tester.print("std::out_of_range error");
+        }
+        vec.at(0) = 1;
+        tester.print("vec.at(0) = 1 -> vec.at(0):", vec.at(0));
+    }
+    tester.print("");
+    {
+        tester.print("const ft::vector<int> vec(2, 3)");
+        const ft::vector<int> vec(2, 3);
+        for (std::size_t i = 0; i < vec.size(); ++i)
+            tester.set_stream(vec.at(i));
+        tester.put_all_stream();
+        tester.print("access at(2)");
+        try
+        {
+            tester.print("at(2):", vec.at(2));
+        }
+        catch(const std::out_of_range& e)
+        {
+            // tester.print(e.what());
+            tester.print("std::out_of_range error");
+        }
+    }
+    tester.print("");
+    tester.print("operator[] test");
+    {
+        tester.print("ft::vector<int> vec <- 0 1 2 3 4");
+        ft::vector<int> vec;
+        for (int i = 0; i < 5; ++i)
+            vec.push_back(i);
+        for (std::size_t i = 0; i < vec.size(); ++i)
+            tester.set_stream(vec[i]);
+        tester.put_all_stream();
+        vec[0] = 1;
+        tester.print("vec[0] = 1 -> vec[0]:", vec[0]);
+    }
+    tester.print("");
+    {
+        tester.print("const ft::vector<int> vec(2, 3)");
+        const ft::vector<int> vec(2, 3);
+        for (std::size_t i = 0; i < vec.size(); ++i)
+            tester.set_stream(vec[i]);
+        tester.put_all_stream();
+    }
+    tester.print("");
+    tester.print("front and back test");
+    {
+        tester.print("ft::vector<int> vec <- 0 1 2 3 4");
+        ft::vector<int> vec;
+        for (int i = 0; i < 5; ++i)
+            vec.push_back(i);
+        tester.print("vec.front():", vec.front());
+        tester.print("vec.back():", vec.back());
+        vec.front() = 1;
+        vec.back() = 1;
+        tester.print("vec.front() = 1 -> vec.front():", vec.front());
+        tester.print("vec.back() = 1 -> vec.back():", vec.back());
+    }
+    tester.print("");
+    {
+        tester.print("const ft::vector<int> vec(2, 3)");
+        const ft::vector<int> vec(2, 3);
+        tester.print("vec.front():", vec.front());
+        tester.print("vec.back():", vec.back());
+    }
+    tester.print("");
+    tester.print("data test");
+    {
+        tester.print("ft::vector<int> vec <- 0 1 2 3 4");
+        tester.print("int* data = vec.data()");
+        tester.print("print data[i]");
+        ft::vector<int> vec;
+        for (int i = 0; i < 5; ++i)
+            vec.push_back(i);
+        int* data = vec.data();
+        for (std::size_t i = 0; i < vec.size(); ++i)
+            tester.set_stream(data[i]);
+        tester.put_all_stream();
+        data[1] = 0;
+        tester.print("data[1] = 0 -> vec[1]:", vec[1]);
+    }
+    tester.print("");
+    {
+        tester.print("const ft::vector<int> vec(3, 1);");
+        tester.print("const int* data = vec.data()");
+        tester.print("print data[i]");
+        const ft::vector<int> vec(3, 1);
+        const int* data = vec.data();
+        for (std::size_t i = 0; i < vec.size(); ++i)
+            tester.set_stream(data[i]);
+        tester.put_all_stream();
+    }
+    tester.print("");
+    {
+        tester.print("ft::vector<int> vec");
+        ft::vector<int> vec;
+        tester.if_print("vec is NULL:", vec.data() == NULL, "true", "false");
+    }
+    tester.print("");
+    {
+        tester.print("ft::vector<Test> vec(2, Test(3))");
+        ft::vector<Test> vec(2, Test(3));
+        tester.print("vec.data()->get_data():", vec.data()->get_data());
+    }
+    tester.print("");
+    tester.print("begin and end test");
+    {
+        tester.print("ft::vector<int> vec <- 0 1 2 3 4");
+        tester.print("ft::vector<int>::iterator begin = vec.begin()");
+        tester.print("ft::vector<int>::iterator end = vec.end()");
+        ft::vector<int> vec;
+        for (int i = 0; i < 5; ++i)
+            vec.push_back(i);
+        ft::vector<int>::iterator begin = vec.begin();
+        ft::vector<int>::iterator end = vec.end();
+        for (; begin != end; ++begin)
+            tester.set_stream(*begin);
+        tester.put_all_stream();
+        begin = vec.begin();
+        *begin = 2;
+        tester.print("*begin = 2 -> vec[0]:", vec[0]);
+    }
+    tester.print("");
+    {
+        tester.print("const ft::vector<int> vec(6, 1)");
+        tester.print("ft::vector<int>::const_iterator begin = vec.begin()");
+        tester.print("ft::vector<int>::const_iterator end = vec.end()");
+        const ft::vector<int> vec(6, 1);
+        ft::vector<int>::const_iterator begin = vec.begin();
+        ft::vector<int>::const_iterator end = vec.end();
+        for (; begin != end; ++begin)
+            tester.set_stream(*begin);
+        tester.put_all_stream();
+        begin = vec.begin();
+    }
+    tester.print("");
+    {
+        tester.print("ft::vector<int> vec");
+        ft::vector<int> vec;
+        tester.if_print("vec.begin() == vec.end():", vec.begin() == vec.end(), "true", "false");
+    }
+    tester.print("");
+    tester.print("rbegin and rend test");
+    {
+        tester.print("ft::vector<int> vec <- 0 1 2 3 4");
+        tester.print("ft::vector<int>::reverse_iterator begin = vec.begin()");
+        tester.print("ft::vector<int>::reverse_iterator end = vec.end()");
+        ft::vector<int> vec;
+        for (int i = 0; i < 5; ++i)
+            vec.push_back(i);
+        ft::vector<int>::reverse_iterator rbegin = vec.rbegin();
+        ft::vector<int>::reverse_iterator rend = vec.rend();
+        for (; rbegin != rend; ++rbegin)
+            tester.set_stream(*rbegin);
+        tester.put_all_stream();
+        rbegin = vec.rbegin();
+        *rbegin = 2;
+        tester.print("*rbegin = 2 -> vec[4]:", vec[4]);
+    }
+    tester.print("");
+    {
+        tester.print("const ft::vector<int> vec(6, 1)");
+        tester.print("ft::vector<int>::const_reverse_iterator rbegin = vec.rbegin()");
+        tester.print("ft::vector<int>::const_reverse_iterator rend = vec.rend()");
+        const ft::vector<int> vec(6, 1);
+        ft::vector<int>::const_reverse_iterator rbegin = vec.rbegin();
+        ft::vector<int>::const_reverse_iterator rend = vec.rend();
+        for (; rbegin != rend; ++rbegin)
+            tester.set_stream(*rbegin);
+        tester.put_all_stream();
+        rbegin = vec.rbegin();
+    }
+    tester.print("");
+    {
+        tester.print("ft::vector<int> vec");
+        ft::vector<int> vec;
+        tester.if_print("vec.rbegin() == vec.rend():", vec.rbegin() == vec.rend(), "true", "false");
+    }
+    tester.print("");
+    tester.print("empty test");
+    {
+        ft::vector<int> vec;
+        tester.print("ft::vector<int> vec;");
+        tester.if_print("vec.empty():", vec.empty(), "true", "false");
+        vec.reserve(10);
+        tester.print("vec.reserve(10);");
+        tester.if_print("vec.empty():", vec.empty(), "true", "false");
+        vec.push_back(1);
+        tester.print("vec.push_back(1);");
+        tester.if_print("vec.empty():", vec.empty(), "true", "false");
+    }
+    tester.print("");
+    tester.print("size test");
+    {
+        ft::vector<int> vec;
+        tester.print("ft::vector<int> vec;");
+        tester.print("vec.size()", vec.size());
+        vec.reserve(10);
+        tester.print("vec.reserve(10);");
+        tester.print("vec.size()", vec.size());
+        vec.push_back(1);
+        tester.print("vec.push_back(1);");
+        tester.print("vec.size()", vec.size());
+    }
+    {
+        ft::vector<int> vec(100, 1);
+        tester.print("ft::vector<int> vec(100, 1);");
+        tester.print("vec.size()", vec.size());
+    }
+    tester.print("");
+    tester.print("max_size test");
+    {
+        ft::vector<char> vec;
+        tester.print("ft::vector<char> vec;");
+        tester.print("vec.max_size()", vec.max_size());
+    }
+    tester.print("");
+    {
+        ft::vector<int> vec;
+        tester.print("ft::vector<int> vec;");
+        tester.print("vec.max_size()", vec.max_size());
+    }
+    tester.print("");
+    {
+        ft::vector<Test> vec;
+        tester.print("ft::vector<Test> vec;");
+        tester.print("vec.max_size()", vec.max_size());
+    }
+    tester.print("");
+    tester.print("reserve and capacity test");
+    {
+        tester.print("ft::vector<Test> vec;");
+        ft::vector<Test> vec;
+        tester.print("vec.capacity():", vec.capacity());
+        tester.print("vec.reserve(10);");
+        vec.reserve(10);
+        tester.print("vec.capacity():", vec.capacity());
+    }
+    tester.print("");
+    {
+        tester.print("ft::vector<Test> vec(3, 1);");
+        ft::vector<Test> vec(3, 1);
+        tester.print("vec.capacity():", vec.capacity());
+        tester.print("vec.size():", vec.size());
+        tester.print("vec.reserve(2);");
+        vec.reserve(2);
+        tester.print("vec.capacity():", vec.capacity());
+        tester.print("vec.size():", vec.size());
+        tester.print("vec.reserve(3);");
+        vec.reserve(3);
+        tester.print("vec.capacity():", vec.capacity());
+        tester.print("vec.size():", vec.size());
+        tester.print("vec.reserve(10);");
+        vec.reserve(10);
+        tester.print("vec.capacity():", vec.capacity());
+        tester.print("vec.size():", vec.size());
+        try
+        {
+            vec.reserve(vec.max_size() + 1);
+        }
+        catch(const std::length_error& e)
+        {
+            tester.print("std::length_error: ", e.what());
+        }
+        catch(const std::exception& e)
+        {
+            tester.print("std::exception: ", e.what());
+        }
+        tester.print("vec.capacity():", vec.capacity());
+        tester.print("vec.size():", vec.size());
+        tester.print("vec[0]:", vec[0].get_data());
+    }
+    tester.print("");
+    {
+        tester.print("ErrorAlocator<Test> alloc;");
+        ErrorAlocator<int> alloc;
+        tester.print("ft::vector<int> vec(alloc);");
+        ft::vector<int, ErrorAlocator<int> > vec(alloc);
+        tester.print("vec.push_back(1);");
+        vec.push_back(1);
+        tester.print("vec.reserve(1000);");
+        try
+        {
+            vec.reserve(1000);
+        }
+        catch(const std::bad_alloc& e)
+        {
+            tester.print("std::bad_alloc: ", e.what());
+        }
+        catch(const std::exception& e)
+        {
+            tester.print("std::exception: ", e.what());
+        }
+        tester.print("vec.capacity():", vec.capacity());
+        tester.print("vec.size():", vec.size());
+        tester.print("vec[0]:", vec[0]);
+    }
+    tester.print("");
+    tester.print("clear test");
+    {
+        tester.print("ft::vector<Test> vec(3, Test(1));");
+        ft::vector<Test> vec(3, Test(1));
+        tester.print("vec.capacity():", vec.capacity());
+        tester.print("vec.size():", vec.size());
+        tester.print("vec.clear();");
+        vec.clear();
+        tester.print("vec.capacity():", vec.capacity());
+        tester.print("vec.size():", vec.size());
     }
 }
 

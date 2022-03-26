@@ -13,6 +13,10 @@ INCLUDES = Tester.hpp\
 		   is_integral.hpp\
 		   equal.hpp\
 		   lexicographical_compare.hpp\
+		   iterator.hpp\
+		   pair.hpp\
+		   reverse_iterator.hpp\
+		   vector.hpp\
 
 INCLUDES_PREFIXED = $(addprefix $(INCLUDES_FOLDER), $(INCLUDES))
 
@@ -21,7 +25,7 @@ OBJECT = $(SOURCES:.cpp=.o)
 OBJECTS = $(addprefix $(OBJECTS_FOLDER), $(OBJECT))
 DEPENDENCIES = $(OBJECTS:.o=.d)
 
-FT_EQUAL_STD = 1
+FT_EQUAL_STD = 0
 
 CXX := clang++
 ifeq ($(FT_EQUAL_STD), 1)

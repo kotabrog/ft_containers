@@ -38,6 +38,8 @@
   - [x] std::pair
   - [x] std::make_pair
   - vector
+    - iteratorの種類に応じた方法
+    - input_iteratorかどうかの確認
   - map
   - stack
 
