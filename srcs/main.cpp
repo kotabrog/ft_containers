@@ -778,7 +778,7 @@ void vector_test()
         tester.put_all_stream();
     }
     /*
-    allocater.construct内でエラーが起きるためaborteで終了する
+    Exit with aborte due to an error in allocater.construct
     tester.print("");
     {
         tester.print("ft::vector<ErrorTest> vec(count, value); error test");
@@ -1473,6 +1473,233 @@ void vector_test()
         tester.print("vec.capacity():", vec.capacity());
         tester.print("vec.size():", vec.size());
     }
+    tester.print("");
+    tester.print("insert test");
+    {
+        tester.print("ft::vector<Test> vec;");
+        ft::vector<Test> vec;
+        tester.print("ft::vector<Test>::iterator pos = vec.insert(vec.begin(), Test(1));");
+        ft::vector<Test>::iterator pos = vec.insert(vec.begin(), Test(1));
+        tester.if_print("pos == vec.begin():", pos == vec.begin(), "true", "false");
+        for (std::size_t i = 0; i < vec.size(); ++i)
+            tester.set_stream(vec[i].get_data());
+        tester.put_all_stream();
+        tester.print("pos = vec.insert(vec.begin(), Test(2));");
+        pos = vec.insert(vec.begin(), Test(2));
+        tester.if_print("pos == vec.begin():", pos == vec.begin(), "true", "false");
+        for (std::size_t i = 0; i < vec.size(); ++i)
+            tester.set_stream(vec[i].get_data());
+        tester.put_all_stream();
+        tester.print("vec.reserve(10);");
+        vec.reserve(10);
+        tester.print("pos = vec.insert(vec.begin() + 1, Test(3));");
+        pos = vec.insert(vec.begin() + 1, Test(3));
+        tester.if_print("pos == vec.begin() + 1:", pos == vec.begin() + 1, "true", "false");
+        for (std::size_t i = 0; i < vec.size(); ++i)
+            tester.set_stream(vec[i].get_data());
+        tester.put_all_stream();
+        tester.print("pos = vec.insert(vec.end(), Test(4));");
+        pos = vec.insert(vec.end(), Test(4));
+        tester.if_print("pos == vec.end() - 1:", pos == vec.end() - 1, "true", "false");
+        for (std::size_t i = 0; i < vec.size(); ++i)
+            tester.set_stream(vec[i].get_data());
+        tester.put_all_stream();
+    }
+    tester.print("");
+    {
+        tester.print("ErrorAlocator<int> alloc;");
+        ErrorAlocator<int> alloc;
+        tester.print("ft::vector<int> vec(alloc);");
+        ft::vector<int, ErrorAlocator<int> > vec(alloc);
+        tester.print("vec.reserve(10);");
+        vec.reserve(10);
+        tester.print("vec.insert(vec.end(), 1);");
+        vec.insert(vec.end(), 1);
+        try
+        {
+            tester.print("vec.insert(vec.end(), 1);");
+            vec.insert(vec.end(), 1);
+        }
+        catch(const std::bad_alloc& e)
+        {
+            tester.print("std::bad_alloc: ", e.what());
+        }
+        catch(const std::exception& e)
+        {
+            tester.print("std::exception: ", e.what());
+        }
+        tester.print("vec.capacity():", vec.capacity());
+        tester.print("vec.size():", vec.size());
+        tester.print("vec[0]:", vec[0]);
+    }
+    // int instead of Test because of the different number of times the constructor is called.
+    tester.print("");
+    {
+        tester.print("ft::vector<int> vec;");
+        ft::vector<int> vec;
+        tester.print("vec.insert(vec.begin(), 2, 1);");
+        vec.insert(vec.begin(), 2, 1);
+        for (std::size_t i = 0; i < vec.size(); ++i)
+            tester.set_stream(vec[i]);
+        tester.put_all_stream();
+        tester.print("vec.insert(vec.begin() + 1, 2, 2);");
+        vec.insert(vec.begin() + 1, 2, 2);
+        for (std::size_t i = 0; i < vec.size(); ++i)
+            tester.set_stream(vec[i]);
+        tester.put_all_stream();
+        tester.print("vec.reserve(100);");
+        vec.reserve(100);
+        tester.print("vec.insert(vec.begin() + 1, 2, 3);");
+        vec.insert(vec.begin() + 1, 2, 3);
+        for (std::size_t i = 0; i < vec.size(); ++i)
+            tester.set_stream(vec[i]);
+        tester.put_all_stream();
+        tester.print("vec.insert(vec.begin() + 4, 2, 4);");
+        vec.insert(vec.begin() + 4, 2, 4);
+        for (std::size_t i = 0; i < vec.size(); ++i)
+            tester.set_stream(vec[i]);
+        tester.put_all_stream();
+    }
+    tester.print("");
+    {
+        tester.print("ft::vector<Test> vec;");
+        ft::vector<Test> vec;
+        tester.print("vec.insert(vec.begin(), 0, Test(1));");
+        vec.insert(vec.begin(), 0, Test(1));
+    }
+    tester.print("");
+    {
+        tester.print("ErrorAlocator<int> alloc;");
+        ErrorAlocator<int> alloc;
+        tester.print("ft::vector<int> vec(1, 1, alloc);");
+        ft::vector<int, ErrorAlocator<int> > vec(1, 1, alloc);
+        tester.print("vec.reserve(10);");
+        vec.reserve(10);
+        try
+        {
+            tester.print("vec.insert(vec.end(), 10, 1);");
+            vec.insert(vec.end(), 10, 1);
+        }
+        catch(const std::bad_alloc& e)
+        {
+            tester.print("std::bad_alloc: ", e.what());
+        }
+        catch(const std::exception& e)
+        {
+            tester.print("std::exception: ", e.what());
+        }
+        tester.print("vec.capacity():", vec.capacity());
+        tester.print("vec.size():", vec.size());
+        tester.print("vec[0]:", vec[0]);
+    }
+    tester.print("");
+    {
+        tester.print("ft::vector<Test> vec(1, 1);");
+        ft::vector<int> vec(1, 1);
+        try
+        {
+            vec.insert(vec.begin(), vec.max_size() - 1, 3);
+        }
+        catch(const std::length_error& e)
+        {
+            tester.print("std::length_error: ", e.what());
+        }
+        catch(const std::exception& e)
+        {
+            tester.print("std::exception: ", e.what());
+        }
+        tester.print("vec.capacity():", vec.capacity());
+        tester.print("vec.size():", vec.size());
+        tester.print("vec[0]:", vec[0]);
+    }
+    // 
+    tester.print("");
+    {
+        tester.print("ft::vector<int> vec;");
+        ft::vector<int> vec;
+        tester.print("ft::vector<int> vec2; <- 0, 1, 2, 3, 4");
+        ft::vector<int> vec2;
+        for (std::size_t i = 0; i < 5; ++i)
+            vec2.push_back(i);
+        tester.print("vec.insert(vec.begin(), vec2.begin(), vec2.begin() + 2);");
+        vec.insert(vec.begin(), vec2.begin(), vec2.begin() + 2);
+        for (std::size_t i = 0; i < vec.size(); ++i)
+            tester.set_stream(vec[i]);
+        tester.put_all_stream();
+        tester.print("vec.insert(vec.begin() + 1, vec2.begin() + 2, vec2.begin() + 4);");
+        vec.insert(vec.begin() + 1, vec2.begin() + 2, vec2.begin() + 4);
+        for (std::size_t i = 0; i < vec.size(); ++i)
+            tester.set_stream(vec[i]);
+        tester.put_all_stream();
+        tester.print("vec.reserve(100);");
+        vec.reserve(100);
+        tester.print("vec.insert(vec.begin() + 1, vec2.begin() + 1, vec2.begin() + 3);");
+        vec.insert(vec.begin() + 1, vec2.begin() + 1, vec2.begin() + 3);
+        for (std::size_t i = 0; i < vec.size(); ++i)
+            tester.set_stream(vec[i]);
+        tester.put_all_stream();
+        tester.print("vec.insert(vec.begin() + 4, vec2.begin() + 3, vec2.begin() + 5);");
+        vec.insert(vec.begin() + 4, vec2.begin() + 3, vec2.begin() + 5);
+        for (std::size_t i = 0; i < vec.size(); ++i)
+            tester.set_stream(vec[i]);
+        tester.put_all_stream();
+    }
+    tester.print("");
+    {
+        tester.print("ft::vector<Test> vec;");
+        ft::vector<Test> vec;
+        tester.print("ft::vector<int> vec2; <- 0, 1, 2, 3, 4");
+        ft::vector<int> vec2;
+        for (std::size_t i = 0; i < 5; ++i)
+            vec2.push_back(i);
+        tester.print("vec.insert(vec.begin(), vec2.begin(), vec2.begin());");
+        vec.insert(vec.begin(), vec2.begin(), vec2.begin());
+    }
+    tester.print("");
+    {
+        tester.print("ErrorAlocator<int> alloc;");
+        ErrorAlocator<int> alloc;
+        tester.print("ft::vector<int> vec(1, 1, alloc);");
+        ft::vector<int, ErrorAlocator<int> > vec(1, 1, alloc);
+        tester.print("ft::vector<int> vec2; <- 0, 1, 2, 3, 4");
+        ft::vector<int> vec2;
+        for (std::size_t i = 0; i < 5; ++i)
+            vec2.push_back(i);
+        tester.print("vec.reserve(10);");
+        vec.reserve(10);
+        try
+        {
+            tester.print("vec.insert(vec.end(), vec2.begin(), vec2.end());");
+            vec.insert(vec.end(), vec2.begin(), vec2.end());
+        }
+        catch(const std::bad_alloc& e)
+        {
+            tester.print("std::bad_alloc: ", e.what());
+        }
+        catch(const std::exception& e)
+        {
+            tester.print("std::exception: ", e.what());
+        }
+        tester.print("vec.capacity():", vec.capacity());
+        tester.print("vec.size():", vec.size());
+        tester.print("vec[0]:", vec[0]);
+    }
+    /*
+    The std::vector implementation calls the constructor one more time
+    tester.print("");
+    {
+        tester.print("ft::vector<Test> vec(4, Test(1));");
+        ft::vector<Test> vec(4, Test(1));
+        tester.print("vec.reserve(10);");
+        vec.reserve(10);
+        tester.print("vec.insert(vec.begin() + 1, 2, Test(2));");
+        vec.insert(vec.begin() + 1, 2, Test(2));
+        for (std::size_t i = 0; i < vec.size(); ++i)
+            tester.set_stream(vec[i].get_data());
+        tester.put_all_stream();
+    }
+    */
+
 }
 
 int main(int argc, char** argv)

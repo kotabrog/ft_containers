@@ -105,6 +105,17 @@ private:
         return start;
     }
 
+    template<class Iter>
+    iterator _reverse_copy(Iter start, Iter last, iterator dest)
+    {
+        --start;
+        --dest;
+        --last;
+        for (; start != last; --dest, --last)
+            *dest = *last;
+        return dest;
+    }
+
     iterator _fill_value(iterator dest,
                          size_type n,
                          const value_type& value)
@@ -279,6 +290,167 @@ private:
     {
         if (n >= size())
             throw std::out_of_range("vector::_range_check n >= size()");
+    }
+
+    void _realloc_insert_by_value(size_type pos,
+                                  const value_type& value,
+                                  size_type n = 1)
+    {
+        size_type total_size = n + size();
+        iterator temp = _allocate(total_size);
+        iterator copied_pos = temp;
+        try
+        {
+            _construct_by_iterator(_start, _start + pos, temp);
+            copied_pos = temp + pos;
+            _construct_by_value(copied_pos, n, value);
+            copied_pos = copied_pos + n;
+            _construct_by_iterator(_start + pos, _last, copied_pos);
+        }
+        catch(const std::exception& e)
+        {
+            _destroy(temp, copied_pos);
+            _deallocate(temp, total_size);
+            throw;
+        }
+        _destroy_and_deallocate();
+        _start = temp;
+        _last = _start + total_size;
+        _end_of_storage = _last;
+    }
+
+    void _insert_by_value(size_type pos,
+                          const value_type& value,
+                          size_type n = 1)
+    {
+        size_type add_iter_num = std::min(n, size() - pos);
+        size_type add_value_num = n - add_iter_num;
+        iterator copied_pos = _last;
+        try
+        {
+            _construct_by_value(_last, add_value_num, value);
+            copied_pos = _last + add_value_num;
+            _construct_by_iterator(_last - add_iter_num, _last, copied_pos);
+        }
+        catch(const std::exception& e)
+        {
+            _destroy(_last, copied_pos);
+            throw;
+        }
+        size_type copy_iter_num = size() - pos > n ? size() - pos - n : 0;
+        size_type copy_value_num = n - add_value_num;
+        _reverse_copy(_start + pos,
+                      _start + pos + copy_iter_num,
+                      _last);
+        _fill_value(_start + pos, copy_value_num, value);
+        _last = _last + n;
+    }
+
+    template<class Iter>
+    void _realloc_insert_by_iter(size_type pos,
+                                 Iter start,
+                                 Iter last,
+                                 size_type count)
+    {
+        size_type total_size = size() + count;
+        iterator temp = _allocate(total_size);
+        iterator copied_pos = temp;
+        try
+        {
+            _construct_by_iterator(_start, _start + pos, temp);
+            copied_pos = temp + pos;
+            _construct_by_iterator(start, last, copied_pos);
+            copied_pos = copied_pos + count;
+            _construct_by_iterator(_start + pos, _last, copied_pos);
+        }
+        catch(const std::exception& e)
+        {
+            _destroy(temp, copied_pos);
+            _deallocate(temp, total_size);
+            throw;
+        }
+        _destroy_and_deallocate();
+        _start = temp;
+        _last = _start + total_size;
+        _end_of_storage = _last;
+    }
+
+    template<class Iter>
+    void _insert_by_iter(size_type pos,
+                        Iter start,
+                        Iter last,
+                        size_type count)
+    {
+        size_type add_origin_num = std::min(count, size() - pos);
+        size_type add_iter_num = count - add_origin_num;
+        size_type copy_iter_num = count - add_iter_num;
+        iterator copied_pos = _last;
+        try
+        {
+            Iter temp = start;
+            for (size_type i = 0; i < copy_iter_num; ++i, ++temp) ;
+            _construct_by_iterator(temp, last, copied_pos);
+            copied_pos = _last + add_iter_num;
+            _construct_by_iterator(_last - add_origin_num, _last, copied_pos);
+        }
+        catch(const std::exception& e)
+        {
+            _destroy(_last, copied_pos);
+            throw;
+        }
+        size_type copy_origin_num = size() - pos > count ? size() - pos - count : 0;
+        _reverse_copy(_start + pos,
+                      _start + pos + copy_origin_num,
+                      _last);
+        _copy(start, last, _start + pos, copy_iter_num);
+        _last = _last + count;
+    }
+
+    size_type _value_insert(iterator pos, size_type count, const T& value)
+    {
+        const size_type n = pos - _start;
+        if (_last + count > _end_of_storage)
+        {
+            _realloc_insert_by_value(n, value, count);
+        }
+        else
+        {
+            _insert_by_value(n, value, count);
+        }
+        return n;
+    }
+
+    template<class Integer>
+    void _iter_insert(iterator pos,
+                      Integer count,
+                      Integer value,
+                      true_type)
+    {
+        if (count > 0)
+        {
+            _value_insert(pos, count, value);
+        }
+    }
+
+    template<class Iter>
+    void _iter_insert(iterator pos,
+                      Iter start,
+                      Iter last,
+                      false_type)
+    {
+        typename iterator_traits<Iter>::difference_type count = distance(start, last);
+        if (count > 0)
+        {
+            const size_type n = pos - _start;
+            if (_last + count > _end_of_storage)
+            {
+                _realloc_insert_by_iter(n, start, last, count);
+            }
+            else
+            {
+                _insert_by_iter(n, start, last, count);
+            }
+        }
     }
 
 public:
@@ -492,6 +664,27 @@ public:
     {
         _destroy(_start, _last);
         _last = _start;
+    }
+
+    iterator insert(iterator pos, const T& value)
+    {
+        const size_type n = _value_insert(pos, 1, value);
+        return _start + n;
+    }
+
+    void insert(iterator pos, size_type count, const T& value)
+    {
+        if (count > 0)
+        {
+            _value_insert(pos, count, value);
+        }
+    }
+
+    template<class Iter>
+    void insert(iterator pos, Iter start, Iter last)
+    {
+        typedef typename is_integral<Iter>::type Integral;
+        _iter_insert(pos, start, last, Integral());
     }
 
     void push_back(const T& value)
