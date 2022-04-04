@@ -687,6 +687,25 @@ public:
         _iter_insert(pos, start, last, Integral());
     }
 
+    iterator erase(iterator pos)
+    {
+        _copy(pos + 1, _last, pos);
+        --_last;
+        _destroy(_last);
+        return pos;
+    }
+
+    iterator erase(iterator start, iterator last)
+    {
+        if (start != last)
+        {
+            _copy(last, _last, start);
+            _destroy(_last - (last - start), _last);
+            _last = _last - (last - start);
+        }
+        return start;
+    }
+
     void push_back(const T& value)
     {
         if (_last != _end_of_storage)
@@ -696,15 +715,14 @@ public:
         }
         else
         {
-            const size_type old_size = size();
-            iterator temp = _allocate_and_copy(old_size + 1, _start, _last);
-            _destroy_and_deallocate();
-            _start = temp;
-            _last = temp + old_size;
-            _end_of_storage = temp + old_size + 1;
-            _construct(_last, value);
-            ++_last;
+            _realloc_insert_by_value(size(), value);
         }
+    }
+
+    void pop_back()
+    {
+        --_last;
+        _destroy(_last);
     }
 };
 } // namespace ft

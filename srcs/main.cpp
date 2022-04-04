@@ -1612,7 +1612,6 @@ void vector_test()
         tester.print("vec.size():", vec.size());
         tester.print("vec[0]:", vec[0]);
     }
-    // 
     tester.print("");
     {
         tester.print("ft::vector<int> vec;");
@@ -1699,7 +1698,142 @@ void vector_test()
         tester.put_all_stream();
     }
     */
-
+    tester.print("");
+    tester.print("erase test");
+    {
+        tester.print("ft::vector<int> vec; <- 0, 1, 2, 3, 4");
+        ft::vector<int> vec;
+        tester.print("vec.reserve(10);");
+        vec.reserve(10);
+        for (std::size_t i = 0; i < 5; ++i)
+            vec.push_back(i);
+        for (std::size_t i = 0; i < vec.size(); ++i)
+            tester.set_stream(vec[i]);
+        tester.put_all_stream();
+        tester.print("vec.capacity():", vec.capacity());
+        tester.print("vec.size():", vec.size());
+        tester.print("ft::vector<int>::iterator iter1 = vec.erase(vec.begin())");
+        ft::vector<int>::iterator iter = vec.erase(vec.begin());
+        tester.if_print("iter == vec.begin():", iter == vec.begin(), "true", "false");
+        tester.print("vec.capacity():", vec.capacity());
+        tester.print("vec.size():", vec.size());
+        iter = vec.erase(vec.end() - 1);
+        tester.if_print("iter == vec.end():", iter == vec.end(), "true", "false");
+        tester.print("vec.capacity():", vec.capacity());
+        tester.print("vec.size():", vec.size());
+        for (std::size_t i = 0; i < vec.size(); ++i)
+            tester.set_stream(vec[i]);
+        tester.put_all_stream();
+    }
+    tester.print("");
+    {
+        tester.print("ft::vector<int> vec; <- 0, 1, 2, 3, 4");
+        ft::vector<int> vec;
+        tester.print("vec.reserve(10);");
+        vec.reserve(10);
+        for (std::size_t i = 0; i < 5; ++i)
+            vec.push_back(i);
+        for (std::size_t i = 0; i < vec.size(); ++i)
+            tester.set_stream(vec[i]);
+        tester.put_all_stream();
+        tester.print("vec.capacity():", vec.capacity());
+        tester.print("vec.size():", vec.size());
+        tester.print("ft::vector<int>::iterator iter = vec.erase(vec.begin() + 1, vec.begin() + 3);");
+        ft::vector<int>::iterator iter = vec.erase(vec.begin() + 1, vec.begin() + 3);
+        tester.if_print("iter == vec.begin() + 1:", iter == vec.begin() + 1, "true", "false");
+        tester.print("vec.capacity():", vec.capacity());
+        tester.print("vec.size():", vec.size());
+        for (std::size_t i = 0; i < vec.size(); ++i)
+            tester.set_stream(vec[i]);
+        tester.put_all_stream();
+        tester.print("iter = vec.erase(vec.begin(), vec.begin());");
+        iter = vec.erase(vec.begin(), vec.begin());
+        tester.if_print("iter == vec.begin():", iter == vec.begin(), "true", "false");
+        tester.print("vec.capacity():", vec.capacity());
+        tester.print("vec.size():", vec.size());
+        tester.print("iter = vec.erase(vec.begin() + 1, vec.end());");
+        iter = vec.erase(vec.begin() + 1, vec.end());
+        tester.if_print("iter == vec.begin() + 1:", iter == vec.begin() + 1, "true", "false");
+        tester.print("vec.capacity():", vec.capacity());
+        tester.print("vec.size():", vec.size());
+        for (std::size_t i = 0; i < vec.size(); ++i)
+            tester.set_stream(vec[i]);
+        tester.put_all_stream();
+    }
+    tester.print("");
+    tester.print("push_back test");
+    {
+        tester.print("ft::vector<Test> vec;");
+        ft::vector<Test> vec;
+        tester.print("vec.push_back(0);");
+        vec.push_back(0);
+        tester.print("vec.capacity():", vec.capacity());
+        /*
+        Commented out because constructor is called at different times
+        tester.print("vec.push_back(1);");
+        vec.push_back(1);
+        tester.print("vec.capacity():", vec.capacity());
+        */
+        for (std::size_t i = 0; i < vec.size(); ++i)
+            tester.set_stream(vec[i].get_data());
+        tester.put_all_stream();
+        tester.print("vec.reserve(10);");
+        vec.reserve(10);
+        tester.print("vec.push_back(2);");
+        vec.push_back(2);
+        tester.print("vec.push_back(3);");
+        vec.push_back(3);
+        tester.print("vec.capacity():", vec.capacity());
+        for (std::size_t i = 0; i < vec.size(); ++i)
+            tester.set_stream(vec[i].get_data());
+        tester.put_all_stream();
+    }
+    tester.print("");
+    {
+        tester.print("ErrorAlocator<Test> alloc;");
+        ErrorAlocator<int> alloc;
+        tester.print("ft::vector<int> vec(alloc);");
+        ft::vector<int, ErrorAlocator<int> > vec(alloc);
+        tester.print("vec.push_back(1);");
+        vec.push_back(1);
+        tester.print("vec.reserve(1000);");
+        try
+        {
+            vec.push_back(2);
+        }
+        catch(const std::bad_alloc& e)
+        {
+            tester.print("std::bad_alloc: ", e.what());
+        }
+        catch(const std::exception& e)
+        {
+            tester.print("std::exception: ", e.what());
+        }
+        tester.print("vec.capacity():", vec.capacity());
+        tester.print("vec.size():", vec.size());
+        tester.print("vec[0]:", vec[0]);
+    }
+    tester.print("");
+    tester.print("pop_back test");
+    {
+        tester.print("ft::vector<Test> vec; <- 0, 1, 2");
+        ft::vector<Test> vec;
+        vec.reserve(10);
+        for (int i = 0; i < 3; ++i)
+            vec.push_back(Test(i));
+        tester.print("vec.pop_back();");
+        vec.pop_back();
+        tester.print("vec.capacity():", vec.capacity());
+        tester.print("vec.size():", vec.size());
+        tester.print("vec.pop_back();");
+        vec.pop_back();
+        tester.print("vec.capacity():", vec.capacity());
+        tester.print("vec.size():", vec.size());
+        tester.print("vec.pop_back();");
+        vec.pop_back();
+        tester.print("vec.capacity():", vec.capacity());
+        tester.print("vec.size():", vec.size());
+    }
 }
 
 int main(int argc, char** argv)
