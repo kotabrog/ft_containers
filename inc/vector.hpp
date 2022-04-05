@@ -724,6 +724,18 @@ public:
         --_last;
         _destroy(_last);
     }
+
+    void resize(size_type count, T value = T())
+    {
+        if (count > size())
+        {
+            _value_insert(_last, count - size(), value);
+        }
+        else if (count < size())
+        {
+            erase(_last - (size() - count), _last);
+        }
+    }
 };
 } // namespace ft
 

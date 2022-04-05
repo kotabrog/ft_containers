@@ -1796,7 +1796,7 @@ void vector_test()
         ft::vector<int, ErrorAlocator<int> > vec(alloc);
         tester.print("vec.push_back(1);");
         vec.push_back(1);
-        tester.print("vec.reserve(1000);");
+        tester.print("vec.push_back(2);");
         try
         {
             vec.push_back(2);
@@ -1833,6 +1833,74 @@ void vector_test()
         vec.pop_back();
         tester.print("vec.capacity():", vec.capacity());
         tester.print("vec.size():", vec.size());
+    }
+    tester.print("");
+    tester.print("resize test");
+    {
+        // The number of times the constructor is called is different, so check int
+        tester.print("ft::vector<int> vec;");
+        ft::vector<int> vec;
+        tester.print("vec.resize(2);");
+        vec.resize(2);
+        tester.print("vec.capacity():", vec.capacity());
+        tester.print("vec.size():", vec.size());
+        for (std::size_t i = 0; i < vec.size(); ++i)
+            tester.set_stream(vec[i]);
+        tester.put_all_stream();
+        tester.print("vec.resize(1, 1);");
+        vec.resize(1, 1);
+        tester.print("vec.capacity():", vec.capacity());
+        tester.print("vec.size():", vec.size());
+        for (std::size_t i = 0; i < vec.size(); ++i)
+            tester.set_stream(vec[i]);
+        tester.put_all_stream();
+        tester.print("vec.resize(1, 2);");
+        vec.resize(1, 2);
+        tester.print("vec.capacity():", vec.capacity());
+        tester.print("vec.size():", vec.size());
+        for (std::size_t i = 0; i < vec.size(); ++i)
+            tester.set_stream(vec[i]);
+        tester.put_all_stream();
+        tester.print("vec.resize(2, 3);");
+        vec.resize(2, 3);
+        tester.print("vec.capacity():", vec.capacity());
+        tester.print("vec.size():", vec.size());
+        for (std::size_t i = 0; i < vec.size(); ++i)
+            tester.set_stream(vec[i]);
+        tester.put_all_stream();
+        tester.print("vec.resize(3, 4);");
+        vec.resize(3, 4);
+        // Because of the different increase in capacities
+        // tester.print("vec.capacity():", vec.capacity());
+        tester.print("vec.size():", vec.size());
+        for (std::size_t i = 0; i < vec.size(); ++i)
+            tester.set_stream(vec[i]);
+        tester.put_all_stream();
+    }
+    tester.print("");
+    {
+        tester.print("ErrorAlocator<Test> alloc;");
+        ErrorAlocator<int> alloc;
+        tester.print("ft::vector<int> vec(alloc);");
+        ft::vector<int, ErrorAlocator<int> > vec(alloc);
+        tester.print("vec.push_back(1);");
+        vec.push_back(1);
+        tester.print("vec.resize(3, 1);");
+        try
+        {
+            vec.resize(3, 1);
+        }
+        catch(const std::bad_alloc& e)
+        {
+            tester.print("std::bad_alloc: ", e.what());
+        }
+        catch(const std::exception& e)
+        {
+            tester.print("std::exception: ", e.what());
+        }
+        tester.print("vec.capacity():", vec.capacity());
+        tester.print("vec.size():", vec.size());
+        tester.print("vec[0]:", vec[0]);
     }
 }
 
