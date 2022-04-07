@@ -2030,6 +2030,19 @@ void vector_test()
         tester.print("vec1.capacity():", vec1.capacity());
         tester.print("vec2.capacity():", vec2.capacity());
     }
+    tester.print("");
+    tester.print("other test");
+    {
+        tester.print("ft::vector<int> vec <- 0, 1, 2");
+        ft::vector<int> vec;
+        for (int i = 0; i < 3; ++i)
+            vec.push_back(i);
+        tester.print("ft::vector<int>::const_iterator citer = vec.begin();");
+        tester.print("ft::vector<int>::iterator iter = vec.begin();");
+        ft::vector<int>::const_iterator citer = vec.begin();
+        ft::vector<int>::iterator iter = vec.begin();
+        tester.if_print("*iter < *(citer + 1):", *iter < *(citer + 1), "true", "false");
+    }
 }
 
 int main(int argc, char** argv)
