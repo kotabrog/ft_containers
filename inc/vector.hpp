@@ -6,6 +6,8 @@
 #include "iterator.hpp"
 #include "is_integral.hpp"
 #include "reverse_iterator.hpp"
+#include "equal.hpp"
+#include "lexicographical_compare.hpp"
 
 namespace ft
 {
@@ -453,6 +455,14 @@ private:
         }
     }
 
+    template<class U>
+    void _swap(U& a, U&b)
+    {
+        U temp = a;
+        a = b;
+        b = temp;
+    }
+
 public:
     vector(): _start(), _last(), _end_of_storage(), _alloc() {}
 
@@ -736,7 +746,66 @@ public:
             erase(_last - (size() - count), _last);
         }
     }
+
+    void swap(vector& other)
+    {
+        _swap(_start, other._start);
+        _swap(_last, other._last);
+        _swap(_end_of_storage, other._end_of_storage);
+        _swap(_alloc, other._alloc);
+    }
 };
+
+template<typename T, typename Alloc>
+bool operator==(const vector<T, Alloc>& lhs,
+                const vector<T, Alloc>& rhs)
+{
+    return (lhs.size() == rhs.size() &&
+            equal(lhs.begin(), lhs.end(), rhs.begin()));
+}
+
+template<typename T, typename Alloc>
+bool operator!=(const vector<T, Alloc>& lhs,
+                const vector<T, Alloc>& rhs)
+{
+    return !(lhs == rhs);
+}
+
+template<typename T, typename Alloc>
+bool operator<(const vector<T, Alloc>& lhs,
+               const vector<T, Alloc>& rhs)
+{
+    return lexicographical_compare(lhs.begin(), lhs.end(),
+                                   rhs.begin(), rhs.end());
+}
+
+template<typename T, typename Alloc>
+bool operator<=(const vector<T, Alloc>& lhs,
+                const vector<T, Alloc>& rhs)
+{
+    return !(rhs < lhs);
+}
+
+template<typename T, typename Alloc>
+bool operator>(const vector<T, Alloc>& lhs,
+               const vector<T, Alloc>& rhs)
+{
+    return rhs < lhs;
+}
+
+template<typename T, typename Alloc>
+bool operator>=(const vector<T, Alloc>& lhs,
+                const vector<T, Alloc>& rhs)
+{
+    return !(lhs < rhs);
+}
+
+template<typename T, typename Alloc>
+void swap(vector<T, Alloc>& lhs,
+          vector<T, Alloc>& rhs)
+{
+    lhs.swap(rhs);
+}
 } // namespace ft
 
 #endif

@@ -1902,6 +1902,134 @@ void vector_test()
         tester.print("vec.size():", vec.size());
         tester.print("vec[0]:", vec[0]);
     }
+    tester.print("");
+    tester.print("swap test");
+    {
+        tester.print("ft::vector<Test> vec1(2, 1);");
+        ft::vector<Test> vec1(2, 1);
+        tester.print("ft::vector<Test> vec2(3, 2);");
+        ft::vector<Test> vec2(3, 2);
+        tester.print("ft::vector<Test>::iterator iter1 = vec1.begin();");
+        ft::vector<Test>::iterator iter1 = vec1.begin();
+        tester.print("ft::vector<Test>::iterator iter2 = vec2.begin();");
+        ft::vector<Test>::iterator iter2 = vec2.begin();
+        tester.print("ft::vector<Test>::reference value1 = vec1.front();");
+        ft::vector<Test>::reference value1 = vec1.front();
+        tester.print("ft::vector<Test>::reference value2 = vec2.front();");
+        ft::vector<Test>::reference value2 = vec2.front();
+        tester.print("vec1");
+        for (std::size_t i = 0; i < vec1.size(); ++i)
+            tester.set_stream(vec1[i].get_data());
+        tester.put_all_stream();
+        tester.print("vec2");
+        for (std::size_t i = 0; i < vec2.size(); ++i)
+            tester.set_stream(vec2[i].get_data());
+        tester.put_all_stream();
+        tester.print("iter1:", iter1->get_data());
+        tester.print("iter2:", iter2->get_data());
+        tester.print("value1:", value1.get_data());
+        tester.print("value2:", value2.get_data());
+        tester.print("vec1.capacity():", vec1.capacity());
+        tester.print("vec2.capacity():", vec2.capacity());
+        tester.print("vec1.swap(vec2);");
+        vec1.swap(vec2);
+        tester.print("vec1");
+        for (std::size_t i = 0; i < vec1.size(); ++i)
+            tester.set_stream(vec1[i].get_data());
+        tester.put_all_stream();
+        tester.print("vec2");
+        for (std::size_t i = 0; i < vec2.size(); ++i)
+            tester.set_stream(vec2[i].get_data());
+        tester.put_all_stream();
+        tester.print("iter1:", iter1->get_data());
+        tester.print("iter2:", iter2->get_data());
+        tester.print("value1:", value1.get_data());
+        tester.print("value2:", value2.get_data());
+        tester.print("vec1.capacity():", vec1.capacity());
+        tester.print("vec2.capacity():", vec2.capacity());
+    }
+    tester.print("");
+    tester.print("operator==,!=,<,<=,>,>= test");
+    {
+        ft::vector<int> vec1;
+        ft::vector<int> vec2;
+        ft::vector<int> vec3;
+        ft::vector<int> vec4;
+    
+        for (int i = 0; i < 3; ++i)
+            vec1.push_back(i);
+        for (int i = 0; i < 4; ++i)
+            vec2.push_back(i);
+        for (int i = 0; i < 3; ++i)
+            vec3.push_back(i + 1);
+        for (int i = 0; i < 3; ++i)
+            vec4.push_back(i);
+
+        tester.if_print("vec1 == vec2:", vec1 == vec2, "true", "false");
+        tester.if_print("vec1 != vec2:", vec1 != vec2, "true", "false");
+        tester.if_print("vec1 < vec2:", vec1 < vec2, "true", "false");
+        tester.if_print("vec1 <= vec2:", vec1 <= vec2, "true", "false");
+        tester.if_print("vec1 > vec2:", vec1 > vec2, "true", "false");
+        tester.if_print("vec1 >= vec2:", vec1 >= vec2, "true", "false");
+        tester.if_print("vec1 == vec3:", vec1 == vec3, "true", "false");
+        tester.if_print("vec1 != vec3:", vec1 != vec3, "true", "false");
+        tester.if_print("vec1 < vec3:", vec1 < vec3, "true", "false");
+        tester.if_print("vec1 <= vec3:", vec1 <= vec3, "true", "false");
+        tester.if_print("vec1 > vec3:", vec1 > vec3, "true", "false");
+        tester.if_print("vec1 >= vec3:", vec1 >= vec3, "true", "false");
+        tester.if_print("vec1 == vec4:", vec1 == vec4, "true", "false");
+        tester.if_print("vec1 != vec4:", vec1 != vec4, "true", "false");
+        tester.if_print("vec1 < vec4:", vec1 < vec4, "true", "false");
+        tester.if_print("vec1 <= vec4:", vec1 <= vec4, "true", "false");
+        tester.if_print("vec1 > vec4:", vec1 > vec4, "true", "false");
+        tester.if_print("vec1 >= vec4:", vec1 >= vec4, "true", "false");
+    }
+    tester.print("");
+    tester.print("ft::swap test");
+    {
+        tester.print("ft::vector<Test> vec1(2, 1);");
+        ft::vector<Test> vec1(2, 1);
+        tester.print("ft::vector<Test> vec2(3, 2);");
+        ft::vector<Test> vec2(3, 2);
+        tester.print("ft::vector<Test>::iterator iter1 = vec1.begin();");
+        ft::vector<Test>::iterator iter1 = vec1.begin();
+        tester.print("ft::vector<Test>::iterator iter2 = vec2.begin();");
+        ft::vector<Test>::iterator iter2 = vec2.begin();
+        tester.print("ft::vector<Test>::reference value1 = vec1.front();");
+        ft::vector<Test>::reference value1 = vec1.front();
+        tester.print("ft::vector<Test>::reference value2 = vec2.front();");
+        ft::vector<Test>::reference value2 = vec2.front();
+        tester.print("vec1");
+        for (std::size_t i = 0; i < vec1.size(); ++i)
+            tester.set_stream(vec1[i].get_data());
+        tester.put_all_stream();
+        tester.print("vec2");
+        for (std::size_t i = 0; i < vec2.size(); ++i)
+            tester.set_stream(vec2[i].get_data());
+        tester.put_all_stream();
+        tester.print("iter1:", iter1->get_data());
+        tester.print("iter2:", iter2->get_data());
+        tester.print("value1:", value1.get_data());
+        tester.print("value2:", value2.get_data());
+        tester.print("vec1.capacity():", vec1.capacity());
+        tester.print("vec2.capacity():", vec2.capacity());
+        tester.print("ft::swap(vec1, vec2);");
+        ft::swap(vec1, vec2);
+        tester.print("vec1");
+        for (std::size_t i = 0; i < vec1.size(); ++i)
+            tester.set_stream(vec1[i].get_data());
+        tester.put_all_stream();
+        tester.print("vec2");
+        for (std::size_t i = 0; i < vec2.size(); ++i)
+            tester.set_stream(vec2[i].get_data());
+        tester.put_all_stream();
+        tester.print("iter1:", iter1->get_data());
+        tester.print("iter2:", iter2->get_data());
+        tester.print("value1:", value1.get_data());
+        tester.print("value2:", value2.get_data());
+        tester.print("vec1.capacity():", vec1.capacity());
+        tester.print("vec2.capacity():", vec2.capacity());
+    }
 }
 
 int main(int argc, char** argv)
