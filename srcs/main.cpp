@@ -2043,6 +2043,17 @@ void vector_test()
         ft::vector<int>::iterator iter = vec.begin();
         tester.if_print("*iter < *(citer + 1):", *iter < *(citer + 1), "true", "false");
     }
+    tester.print("");
+    {
+        tester.print("ft::vector<ft::vector<int>> vec(3);");
+        ft::vector<ft::vector<int> > vec(3);
+        tester.print("vec[1] <- 0, 1, 2");
+        for (int i = 0; i < 3; ++i)
+            vec[1].push_back(i);
+        for (std::size_t i = 0; i < vec[1].size(); ++i)
+            tester.set_stream(vec[1][i]);
+        tester.put_all_stream();
+    }
 }
 
 int main(int argc, char** argv)
