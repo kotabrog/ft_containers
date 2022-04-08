@@ -13,6 +13,8 @@
     - [x] 出力のひな形
     - [x] 値の出力
     - [ ] 時間計測
+      - [x] 選定->clock
+      - [ ] 作成
   - [ ] 実装するものの本物の挙動の確認
     - [x] std::allocator
     - [x] iterators_traits

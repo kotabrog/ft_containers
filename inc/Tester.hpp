@@ -49,7 +49,7 @@ public:
      * @param true_str 
      * @param false_str 
      */
-    void if_print(std::string str, bool tf, std::string true_str, std::string false_str)
+    void if_print(std::string str, bool tf, std::string true_str = "true", std::string false_str = "false")
     {
         if (tf)
             std::cout << str << " " << true_str << std::endl;
@@ -67,6 +67,9 @@ public:
         ss << data << " ";
     }
 
+    /**
+     * @brief Output the data put in by set_stream
+     */
     void put_all_stream()
     {
         std::cout << ss.str() << std::endl;
