@@ -1,0 +1,1 @@
+make time_test 2>&1 | tee ./make_log/${LOGNAME}

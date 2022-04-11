@@ -4,12 +4,38 @@
 #include <string>
 #include <iostream>
 #include <sstream>
+#include <vector>
+#include <time.h>
 
 class Tester
 {
 private:
-    std::stringstream ss;
+    struct StrTime
+    {
+        std::string str;
+        clock_t time;
+        /** Skip output when put_all_time */
+        bool skip;
+    };
+
+    /** Number of hours that can be saved in time measurement */
+    static const size_t TIME_BUF = 1000;
+
+    /** Stream when outputting in batches */
+    std::stringstream _ss;
+    /** Saved time vector */
+    std::vector<StrTime> _time_vec;
+
+    /**
+     * @brief Calculate the elapsed time from the last save time
+     * @param i Index of _time_vec
+     * @return double Elapsed time
+     */
+    double _calc_elapsed_time(size_t i);
+
 public:
+    Tester();
+
     /**
      * @brief The output will look like this: str/n
      * @param str 
@@ -49,13 +75,7 @@ public:
      * @param true_str 
      * @param false_str 
      */
-    void if_print(std::string str, bool tf, std::string true_str = "true", std::string false_str = "false")
-    {
-        if (tf)
-            std::cout << str << " " << true_str << std::endl;
-        else
-            std::cout << str << " " << false_str << std::endl;
-    }
+    void if_print(std::string str, bool tf, std::string true_str = "true", std::string false_str = "false");
 
     /**
      * @brief Filling a stream with data
@@ -64,18 +84,31 @@ public:
     template <typename T>
     void set_stream(T data)
     {
-        ss << data << " ";
+        _ss << data << " ";
     }
 
     /**
      * @brief Output the data put in by set_stream
      */
-    void put_all_stream()
-    {
-        std::cout << ss.str() << std::endl;
-        ss.str("");
-        ss.clear();
-    }
+    void put_all_stream();
+
+    /**
+     * @brief Save description and time
+     * @param str
+     */
+    void set_time(std::string str, bool skip = false);
+
+    /**
+     * @brief Outputs the most recent measurement time
+     * @param verbose 0: Time only, 1: Output with str
+     */
+    void put_recent_time(int verbose = 1);
+
+    /**
+     * @brief Output all measurement results
+     * @param verbose 0: Time only, 1: Output with str
+     */
+    void put_all_time(int verbose = 1);
 };
 
 #endif

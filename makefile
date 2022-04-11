@@ -1,10 +1,17 @@
 NAME := ft_containers
 
+TIMENAME := time_test
+
 SOURCES_FOLDER = srcs/
 SOURCES = main.cpp\
 		  Tester.cpp
 
 SOURCES_PREFIXED = $(addprefix $(SOURCES_FOLDER), $(SOURCES))
+
+TIME_SOURCES = time_test.cpp\
+			   Tester.cpp
+
+TIME_SOURCES_PREFIXED = $(addprefix $(SOURCES_FOLDER), $(SOURCES_PREFIXED))
 
 INCLUDES_FOLDER = inc/
 INCLUDES = Tester.hpp\
@@ -25,6 +32,10 @@ OBJECT = $(SOURCES:.cpp=.o)
 OBJECTS = $(addprefix $(OBJECTS_FOLDER), $(OBJECT))
 DEPENDENCIES = $(OBJECTS:.o=.d)
 
+TIME_OBJECT = $(TIME_SOURCES:.cpp=.o)
+TIME_OBJECTS = $(addprefix $(OBJECTS_FOLDER), $(TIME_OBJECT))
+DEPENDENCIES = $(TIME_OBJECTS:.o=.d)
+
 FT_EQUAL_STD = 0
 
 CXX := clang++
@@ -43,6 +54,10 @@ $(NAME): $(OBJECTS)
 	@echo "Create    : $(NAME)"
 	@$(CXX) $(CXXFLAGS) $(OBJECTS) -o $(NAME)
 
+$(TIMENAME): $(TIME_OBJECTS)
+	@echo "Create    : $(TIMENAME)"
+	@$(CXX) $(CXXFLAGS) $(TIME_OBJECTS) -o $(TIMENAME)
+
 all: $(NAME)
 
 -include $(DEPENDENCIES)
@@ -52,13 +67,17 @@ clean:
 
 fclean: clean
 	@rm -rf $(NAME)
+	@rm -rf $(TIMENAME)
 
 re: fclean all
 
 docker:
 	@LOGNAME=`date +%Y%m%d%H%M%S` && ./docker_start.sh $${LOGNAME} && echo "log: "./make_log/$${LOGNAME}
 
+docker_time:
+	@LOGNAME=`date +%Y%m%d%H%M%S` && ./docker_time_start.sh $${LOGNAME} && echo "log: "./make_log/$${LOGNAME}
+
 log_clean:
 	rm -rf ./make_log
 
-.PHONY : all clean fclean re docker
+.PHONY : all clean fclean re docker docker_time
