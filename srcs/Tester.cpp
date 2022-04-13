@@ -103,3 +103,13 @@ void Tester::put_all_time(int verbose)
         << "sec"
         << std::endl;
 }
+
+double Tester::get_elapsed_time(size_t index)
+{
+    return _calc_elapsed_time(index);
+}
+
+size_t Tester::get_saved_time_size()
+{
+    return _time_vec.size();
+}

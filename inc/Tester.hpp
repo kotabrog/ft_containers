@@ -109,6 +109,19 @@ public:
      * @param verbose 0: Time only, 1: Output with str
      */
     void put_all_time(int verbose = 1);
+
+    /**
+     * @brief Return the elapsed time from the last save time
+     * @param index Index of _time_vec
+     * @return double Elapsed time
+     */
+    double get_elapsed_time(size_t index);
+
+    /**
+     * @brief Returns the size of the stored time
+     * @return size_t 
+     */
+    size_t get_saved_time_size();
 };
 
 #endif

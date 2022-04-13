@@ -299,7 +299,8 @@ private:
                                   size_type n = 1)
     {
         size_type total_size = n + size();
-        iterator temp = _allocate(total_size);
+        size_type allocate_size = std::min(std::max(total_size, size() * 2), max_size());
+        iterator temp = _allocate(allocate_size);
         iterator copied_pos = temp;
         try
         {
@@ -312,13 +313,13 @@ private:
         catch(const std::exception& e)
         {
             _destroy(temp, copied_pos);
-            _deallocate(temp, total_size);
+            _deallocate(temp, allocate_size);
             throw;
         }
         _destroy_and_deallocate();
         _start = temp;
         _last = _start + total_size;
-        _end_of_storage = _last;
+        _end_of_storage = _start + allocate_size;
     }
 
     void _insert_by_value(size_type pos,
