@@ -27,6 +27,8 @@ public:
     virtual void* get_value_ptr();
     virtual const void* get_value_ptr() const;
 
+    void insert_left(_Rb_tree_node_structure* node);
+
     static void debug_node(const _Rb_tree_node_structure* node, int& node_num, std::ofstream& ofs);
     static void debug(const _Rb_tree_node_structure* head, const std::string file_name = "test.dot");
 };
@@ -37,7 +39,7 @@ class _Rb_tree_node : public _Rb_tree_node_structure
 public:
     Val _value;
 
-    _Rb_tree_node() : _Rb_tree_node_structure() {}
+    _Rb_tree_node() : _Rb_tree_node_structure(), _value() {}
 
     virtual void* get_value_ptr() {return &_value;}
     virtual const void* get_value_ptr() const {return &_value;}

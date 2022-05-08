@@ -18,6 +18,16 @@ const void* _Rb_tree_node_structure::get_value_ptr() const
 }
 
 
+void _Rb_tree_node_structure::insert_left(_Rb_tree_node_structure* node)
+{
+    if (node->_color == _BLACK)
+        throw std::runtime_error("The color of the node to be added must be red");
+    if (_color == _RED)
+        throw std::runtime_error("pass");
+    _left = node;
+}
+
+
 void _Rb_tree_node_structure::debug_node(const _Rb_tree_node_structure* node, int& node_num, std::ofstream& ofs)
 {
     int my_num = node_num;

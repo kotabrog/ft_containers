@@ -22,7 +22,6 @@ int main()
 
     ft::_Rb_tree_node_structure::debug(&a);
     */
-    /*
     ft::_Rb_tree_node<int> a;
     ft::_Rb_tree_node<int> b;
     ft::_Rb_tree_node<int> c;
@@ -42,8 +41,13 @@ int main()
     a._right = &c;
     b._right = &d;
 
+    ft::_Rb_tree_node<int> e;
+    e._color = ft::_Rb_tree_node<int>::_RED;
+    d._value = 4;
+    b.insert_left(&e);
+
     ft::_Rb_tree_node<int>::debug(&a);
-    */
+    /*
     ft::_Rb_tree_node<std::string> a;
     ft::_Rb_tree_node<std::string> b;
     ft::_Rb_tree_node<std::string> c;
@@ -64,4 +68,5 @@ int main()
     b._right = &d;
 
     ft::_Rb_tree_node<std::string>::debug(&a);
+    */
 }
