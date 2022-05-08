@@ -5,68 +5,46 @@
 
 int main()
 {
-    /*
-    ft::_Rb_tree_node_structure a;
-    ft::_Rb_tree_node_structure b;
-    ft::_Rb_tree_node_structure c;
-    ft::_Rb_tree_node_structure d;
-
-    a._color = ft::_Rb_tree_node_structure::_RED;
-    b._color = ft::_Rb_tree_node_structure::_BLACK;
-    c._color = ft::_Rb_tree_node_structure::_RED;
-    d._color = ft::_Rb_tree_node_structure::_BLACK;
-
-    a._left = &b;
-    a._right = &c;
-    b._right = &d;
-
-    ft::_Rb_tree_node_structure::debug(&a);
-    */
     ft::_Rb_tree_node<int> a;
-    ft::_Rb_tree_node<int> b;
-    ft::_Rb_tree_node<int> c;
-    ft::_Rb_tree_node<int> d;
-
-    a._color = ft::_Rb_tree_node<int>::_RED;
-    b._color = ft::_Rb_tree_node<int>::_BLACK;
-    c._color = ft::_Rb_tree_node<int>::_RED;
-    d._color = ft::_Rb_tree_node<int>::_BLACK;
-
     a._value = 0;
-    b._value = 1;
-    c._value = 2;
-    d._value = 3;
 
-    a._left = &b;
-    a._right = &c;
-    b._right = &d;
+    ft::_Rb_tree_node<int> b;
+    b._value = 1;
+    a.insert_left(&b);
+    ft::_Rb_tree_node<int>::debug(static_cast<ft::_Rb_tree_node<int>*>(b.get_root()), "test1.dot");
+
+    ft::_Rb_tree_node<int> c;
+    c._value = 2;
+    a.insert_right(&c);
+    ft::_Rb_tree_node<int>::debug(static_cast<ft::_Rb_tree_node<int>*>(c.get_root()), "test2.dot");
+
+    ft::_Rb_tree_node<int> d;
+    d._value = 3;
+    b.insert_left(&d);
+    ft::_Rb_tree_node<int>::debug(static_cast<ft::_Rb_tree_node<int>*>(d.get_root()), "test3.dot");
 
     ft::_Rb_tree_node<int> e;
-    e._color = ft::_Rb_tree_node<int>::_RED;
-    d._value = 4;
-    b.insert_left(&e);
+    e._value = 4;
+    c.insert_left(&e);
+    ft::_Rb_tree_node<int>::debug(static_cast<ft::_Rb_tree_node<int>*>(e.get_root()), "test4.dot");
 
-    ft::_Rb_tree_node<int>::debug(&a);
-    /*
-    ft::_Rb_tree_node<std::string> a;
-    ft::_Rb_tree_node<std::string> b;
-    ft::_Rb_tree_node<std::string> c;
-    ft::_Rb_tree_node<std::string> d;
+    ft::_Rb_tree_node<int> f;
+    f._value = 5;
+    d.insert_left(&f);
+    ft::_Rb_tree_node<int>::debug(static_cast<ft::_Rb_tree_node<int>*>(f.get_root()), "test5.dot");
 
-    a._color = ft::_Rb_tree_node<std::string>::_RED;
-    b._color = ft::_Rb_tree_node<std::string>::_BLACK;
-    c._color = ft::_Rb_tree_node<std::string>::_RED;
-    d._color = ft::_Rb_tree_node<std::string>::_BLACK;
+    ft::_Rb_tree_node<int> g;
+    g._value = 6;
+    f.insert_right(&g);
+    ft::_Rb_tree_node<int>::debug(static_cast<ft::_Rb_tree_node<int>*>(g.get_root()), "test6.dot");
 
-    a._value = "aaaaa";
-    b._value = "bbbbb";
-    c._value = "ccccc";
-    d._value = "ddddd";
+    ft::_Rb_tree_node<int> h;
+    h._value = 7;
+    g.insert_left(&h);
+    ft::_Rb_tree_node<int>::debug(static_cast<ft::_Rb_tree_node<int>*>(h.get_root()), "test7.dot");
 
-    a._left = &b;
-    a._right = &c;
-    b._right = &d;
-
-    ft::_Rb_tree_node<std::string>::debug(&a);
-    */
+    ft::_Rb_tree_node<int> i;
+    i._value = 8;
+    f.insert_left(&i);
+    ft::_Rb_tree_node<int>::debug(static_cast<ft::_Rb_tree_node<int>*>(i.get_root()), "test8.dot");
 }

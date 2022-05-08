@@ -4,10 +4,17 @@
 #include <string>
 #include <fstream>
 
+#include <iostream>
+
 namespace ft
 {
 class _Rb_tree_node_structure
 {
+private:
+    void _insert_brother_is_non_or_red_case(_Rb_tree_node_structure* node);
+    void _insert_left_left_case_rotation();
+    void _insert_right_right_case_rotation();
+
 public:
     static const bool _RED = false;
     static const bool _BLACK = true;
@@ -19,6 +26,14 @@ public:
 
     _Rb_tree_node_structure();
 
+    _Rb_tree_node_structure* get_other_brothers();
+    _Rb_tree_node_structure* get_root();
+    bool is_left_node();
+    bool is_right_node();
+
+    void insert_left(_Rb_tree_node_structure* node);
+    void insert_right(_Rb_tree_node_structure* node);
+
     // static _Rb_tree_node_structure* increment(_Rb_tree_node_structure* node);
     // static _Rb_tree_node_structure* increment(const _Rb_tree_node_structure* node);
     // static _Rb_tree_node_structure* decrement(_Rb_tree_node_structure* node);
@@ -26,8 +41,6 @@ public:
 
     virtual void* get_value_ptr();
     virtual const void* get_value_ptr() const;
-
-    void insert_left(_Rb_tree_node_structure* node);
 
     static void debug_node(const _Rb_tree_node_structure* node, int& node_num, std::ofstream& ofs);
     static void debug(const _Rb_tree_node_structure* head, const std::string file_name = "test.dot");
