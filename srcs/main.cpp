@@ -6,6 +6,7 @@
     namespace ft = std;
 #else
     #define STD_FLAG 0
+    #include <map.hpp>
     #include <vector.hpp>
     #include "reverse_iterator.hpp"
     #include "pair.hpp"
@@ -14,7 +15,6 @@
     #include "is_integral.hpp"
     #include "enable_if.hpp"
     #include "iterator_traits.hpp"
-    // #include <map.hpp>
     // #include <stack.hpp>
 #endif
 
@@ -35,6 +35,8 @@ struct Buffer
     int idx;
     char buff[BUFFER_SIZE];
 };
+
+#define NOT_VALGRIND_FLAG 1
 
 #define COUNT (MAX_RAM / (int)sizeof(Buffer))
 
@@ -591,20 +593,26 @@ public:
     static int init_num;
     ErrorTest() : data(0)
     {
+#if NOT_VALGRIND_FLAG
         if (init_num++ % 3 == 0)
             throw std::bad_alloc();
+#endif
         tester.print("construct:", data);
     }
     ErrorTest(int x) : data(x)
     {
+#if NOT_VALGRIND_FLAG
         if (init_num++ % 3 == 0)
             throw std::bad_alloc();
+#endif
         tester.print("construct:", data);
     }
     ErrorTest(const ErrorTest& temp) : data(temp.data)
     {
+#if NOT_VALGRIND_FLAG
         if (init_num++ % 3 == 0)
             throw std::bad_alloc();
+#endif
         tester.print("construct:", data);
     }
     ErrorTest& operator=(const ErrorTest& temp) {this->data = temp.data; return *this;}
@@ -627,16 +635,20 @@ public:
     typename std::allocator<T>::pointer
     allocate(typename std::allocator<T>::size_type n, const void * hint = 0)
     {
+#if NOT_VALGRIND_FLAG
         if (n >= 100)
             throw std::bad_alloc();
+#endif
         return std::allocator<T>::allocate(n, hint);
     }
 
     static int construct_num;
     void construct(typename std::allocator<T>::pointer p, const T& value)
     {
+#if NOT_VALGRIND_FLAG
         if (construct_num++ % 3 == 0)
             throw std::bad_alloc();
+#endif
         new((void*)p) T(value);
     }
 };
@@ -1592,6 +1604,7 @@ void vector_test()
         tester.print("vec.size():", vec.size());
         tester.print("vec[0]:", vec[0]);
     }
+#if NOT_VALGRIND_FLAG
     tester.print("");
     {
         tester.print("ft::vector<Test> vec(1, 1);");
@@ -1612,6 +1625,7 @@ void vector_test()
         tester.print("vec.size():", vec.size());
         tester.print("vec[0]:", vec[0]);
     }
+#endif
     tester.print("");
     {
         tester.print("ft::vector<int> vec;");
@@ -2056,6 +2070,39 @@ void vector_test()
     }
 }
 
+void map_test()
+{
+    Tester tester;
+    tester.print("");
+    tester.print("----------------------");
+    tester.print("map test");
+    tester.print("");
+    tester.print("member types test");
+    tester.print("ft::map<int, double>");
+    tester.if_print("key_type:",
+                    typeid(ft::map<int, double>::key_type) == typeid(int), "int", "other");
+    tester.if_print("mapped_type:",
+                    typeid(ft::map<int, double>::mapped_type) == typeid(double), "double", "other");
+    tester.if_print("value_type:",
+                    typeid(ft::map<int, double>::value_type) == typeid(ft::pair<const int, double>), "pair<const int, double>", "other");
+    tester.if_print("size_type:",
+                    typeid(ft::map<int, double>::size_type) == typeid(std::size_t), "std::size_t", "other");
+    tester.if_print("difference_type:",
+                    typeid(ft::map<int, double>::difference_type) == typeid(std::ptrdiff_t), "std::ptrdiff_t", "other");
+    tester.if_print("key_compare:",
+                    typeid(ft::map<int, double>::key_compare) == typeid(std::less<int>), "std::less<int>", "other");
+    tester.if_print("allocator_type:",
+                    typeid(ft::map<int, double>::allocator_type) == typeid(std::allocator<ft::pair<const int, double> >), "std::allocator<ft::pair<const int, double>>", "other");
+    tester.if_print("reference:",
+                    typeid(ft::map<int, double>::reference) == typeid(ft::pair<const int, double>&), "ft::pair<const int, double>&", "other");
+    tester.if_print("const_reference:",
+                    typeid(ft::map<int, double>::const_reference) == typeid(const ft::pair<const int, double>&), "const ft::pair<const int, double>&", "other");
+    tester.if_print("pointer:",
+                    typeid(ft::map<int, double>::pointer) == typeid(std::allocator<ft::pair<const int, double> >::pointer), "std::allocator<ft::pair<const int, double> >::pointer", "other");
+    tester.if_print("const_pointer:",
+                    typeid(ft::map<int, double>::const_pointer) == typeid(std::allocator<ft::pair<const int, double> >::const_pointer), "std::allocator<ft::pair<const int, double> >::const_pointer", "other");
+}
+
 int main(int argc, char** argv)
 {
     if (argc != 2)
@@ -2080,5 +2127,6 @@ int main(int argc, char** argv)
     // pair_test();
     // make_pair_test();
     // reverse_iterator_test();
-    vector_test();
+    // vector_test();
+    map_test();
 }

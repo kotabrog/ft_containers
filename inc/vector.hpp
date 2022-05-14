@@ -8,6 +8,7 @@
 #include "reverse_iterator.hpp"
 #include "equal.hpp"
 #include "lexicographical_compare.hpp"
+#include "alloc_traits.hpp"
 
 namespace ft
 {
@@ -29,41 +30,23 @@ public:
     typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
 
 private:
+    typedef alloc_traits<Alloc> allocator;
+
     iterator _start;
     iterator _last;
     iterator _end_of_storage;
     Alloc _alloc;
 
-    typename Alloc::template rebind<value_type>::other
-    _rebind_alloc(const Alloc& alloc) const
+    typename Alloc::template rebind<value_type>::other::size_type
+    _alloc_max_size() const
     {
-        return typename Alloc::template rebind<value_type>::other(alloc);
+        return allocator::template max_size<value_type>(_alloc);
     }
-
-    typename Alloc::template rebind<value_type>::other
-    _get_alloc() const
-    {
-        return _rebind_alloc(_alloc);
-    }
-
-    template <typename Iter>
-    typename Alloc::template rebind<typename iterator_traits<Iter>::value_type>::other
-    _get_alloc_by_iter(Iter) const
-    {
-        return typename Alloc::template rebind<typename iterator_traits<Iter>::value_type>::other(_alloc);
-    }
-
-    // template <typename V>
-    // typename Alloc::template rebind<V>::other
-    // _get_alloc_by_value(const V&)
-    // {
-    //     return typename Alloc::template rebind<V>::other();
-    // }
 
     template <typename Iter>
     void _destroy(Iter iter)
     {
-        _get_alloc_by_iter(iter).destroy(iter);
+        allocator::destroy(_alloc, iter);
     }
 
     void _destroy(iterator start, iterator last)
@@ -74,21 +57,19 @@ private:
 
     pointer _allocate(size_type n)
     {
-        if (n == 0)
-            return pointer();
-        return _get_alloc().allocate(n);
+        return allocator::template allocate<pointer, size_type>(_alloc, n);
     }
 
     template <typename Iter, typename V>
     void _construct(Iter iter, const V& value)
     {
-        _get_alloc_by_iter(iter).construct(iter, value);
+        allocator::construct(_alloc, iter, value);
     }
 
     template <typename Iter>
     void _deallocate(Iter iter, size_type n)
     {
-        _get_alloc_by_iter(iter).deallocate(iter, n);
+        allocator::deallocate(_alloc, iter, n);
     }
 
     template<class Iter>
@@ -647,7 +628,7 @@ public:
     size_type max_size() const
     {
         const size_t diff_max = std::numeric_limits<std::ptrdiff_t>::max() / sizeof(value_type);
-        const size_t alloc_max = _get_alloc().max_size();
+        const size_t alloc_max = _alloc_max_size();
         return std::min(diff_max, alloc_max);
     }
 

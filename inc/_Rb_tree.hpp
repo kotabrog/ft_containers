@@ -6,8 +6,6 @@
 
 #include "alloc_traits.hpp"
 
-#include <iostream>
-
 namespace ft
 {
 class _Rb_tree_node_structure

@@ -154,4 +154,26 @@ int main()
         std::map<char, int> ma;
         std::cout << "not exist -> " << ma['a'] << std::endl;
     }
+    {
+        std::map<char, int> ma;
+        std::cout << ma.end()._M_node << std::endl;
+        std::cout << ma.end()._M_node->_M_parent << std::endl;
+        std::cout << ma.end()._M_node->_M_left << std::endl;
+        std::cout << ma.end()._M_node->_M_right << std::endl;
+        std::cout << ma.end()._M_node->_M_color << std::endl;
+    }
+    {
+        std::map<char, int> ma;
+        ma['a'] = 0;
+        std::cout << ma.end()._M_node << std::endl;
+        std::cout << ma.end()._M_node->_M_parent << std::endl;
+        std::cout << ma.end()._M_node->_M_left << std::endl;
+        std::cout << ma.end()._M_node->_M_right << std::endl;
+        std::cout << ma.end()._M_node->_M_color << std::endl;
+        std::cout << ma.begin()._M_node << std::endl;
+        std::cout << ma.begin()._M_node->_M_parent << std::endl;
+        std::cout << ma.begin()._M_node->_M_left << std::endl;
+        std::cout << ma.begin()._M_node->_M_right << std::endl;
+        std::cout << ma.begin()._M_node->_M_color << std::endl;
+    }
 }

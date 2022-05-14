@@ -4,7 +4,8 @@ TIMENAME := time_test
 
 SOURCES_FOLDER = srcs/
 SOURCES = main.cpp\
-		  Tester.cpp
+		  Tester.cpp\
+		  _Rb_tree.cpp
 
 SOURCES_PREFIXED = $(addprefix $(SOURCES_FOLDER), $(SOURCES))
 
@@ -24,6 +25,7 @@ INCLUDES = Tester.hpp\
 		   pair.hpp\
 		   reverse_iterator.hpp\
 		   vector.hpp\
+		   _Rb_tree.hpp
 
 INCLUDES_PREFIXED = $(addprefix $(INCLUDES_FOLDER), $(INCLUDES))
 
