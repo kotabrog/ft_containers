@@ -7,6 +7,8 @@
 #include "alloc_traits.hpp"
 #include "reverse_iterator.hpp"
 
+#include <iostream>
+
 namespace ft
 {
 class _Rb_tree_node_structure
@@ -27,8 +29,8 @@ private:
     void _delete_node_adjustment(_Rb_tree_node_structure* brother);
     void _delete_node_adjustment_first(bool is_parent_left);
 
-    static void _debug_node(const _Rb_tree_node_structure* node, int& node_num, std::ofstream& ofs);
-    static void _check_rb_tree_rule_node(const _Rb_tree_node_structure* node, int black_node_num);
+    static void _debug_node(const _Rb_tree_node_structure* node, int& node_num, std::ofstream& ofs, const _Rb_tree_node_structure* prohibited_node);
+    static void _check_rb_tree_rule_node(const _Rb_tree_node_structure* node, int black_node_num, const _Rb_tree_node_structure* prohibited_node = NULL);
 
 public:
     static const bool _RED = false;
@@ -66,8 +68,8 @@ public:
     virtual void* get_value_ptr();
     virtual const void* get_value_ptr() const;
 
-    static void debug(const _Rb_tree_node_structure* root, const std::string file_name = "test.dot");
-    static void check_rb_tree_rule(const _Rb_tree_node_structure* root);
+    static void debug(const _Rb_tree_node_structure* root, const std::string file_name = "test.dot", const _Rb_tree_node_structure* prohibited_node = NULL);
+    static void check_rb_tree_rule(const _Rb_tree_node_structure* root, const _Rb_tree_node_structure* prohibited_node = NULL);
 };
 
 template<typename Val>
@@ -83,39 +85,41 @@ public:
     virtual void* get_value_ptr() {return &_value;}
     virtual const void* get_value_ptr() const {return &_value;}
 
-    static void debug_node(const _Rb_tree_node_structure* node, int& node_num, std::ofstream& ofs)
+    static void debug_node(const _Rb_tree_node_structure* node, int& node_num, std::ofstream& ofs, const _Rb_tree_node_structure* prohibited_node)
     {
         int my_num = node_num;
+        if (node == prohibited_node)
+            return ;
         if (node->_color == _Rb_tree_node_structure::_RED)
             ofs << "    " << my_num << " [\n        label = \"" << *static_cast<const Val*>(node->get_value_ptr()) << "\",\n        color = \"#ff0000\"\n    ];" << std::endl;
         else
             ofs << "    " << my_num << " [\n        label = \"" << *static_cast<const Val*>(node->get_value_ptr()) << "\",\n        color = \"#000000\"\n    ];" << std::endl;
-        if (node->_left)
+        if (node->_left || node->_left != prohibited_node)
         {
             node_num += 1;
             ofs << "    " << my_num << " -> " << node_num << ";" <<std::endl;
-            debug_node(node->_left, node_num, ofs);
+            debug_node(node->_left, node_num, ofs, prohibited_node);
         }
         else
             ofs << "    left" << my_num << " [\n        label = \"NULL\",\n        color = \"#ffffff\"\n    ];\n"  <<"    " << my_num << " -> left" << my_num << ";" << std::endl;
-        if (node->_right)
+        if (node->_right || node->_left != prohibited_node)
         {
             node_num += 1;
             ofs << "    " << my_num << " -> " << node_num << ";" <<std::endl;
-            debug_node(node->_right, node_num, ofs);
+            debug_node(node->_right, node_num, ofs, prohibited_node);
         }
         else
             ofs << "    right" << my_num << " [\n        label = \"NULL\",\n        color = \"#ffffff\"\n    ];\n"  <<"    " << my_num << " -> right" << my_num << ";" << std::endl;
     }
 
-    static void debug(const _Rb_tree_node* head, const std::string file_name = "test.dot")
+    static void debug(const _Rb_tree_node* head, const std::string file_name = "test.dot", const _Rb_tree_node_structure* prohibited_node = NULL)
     {
         std::ofstream ofs(file_name.c_str());
         if (!ofs)
             return ;
         ofs << "digraph test {" << std::endl;
         int node_num = 0;
-        debug_node(head, node_num, ofs);
+        debug_node(head, node_num, ofs, prohibited_node);
         ofs << "}" << std::endl;
         ofs.close();
     }
@@ -138,10 +142,10 @@ private:
     typedef _Rb_tree_node<Val>* _Link_type;
 
     _Base_ptr _node;
-    _Base_ptr _end;
+
 public:
-    _Rb_tree_iterator() : _node(NULL), _end(NULL) {}
-    _Rb_tree_iterator(_Base_ptr node, _Base_ptr end) : _node(node), _end(end) {}
+    _Rb_tree_iterator() : _node(NULL) {}
+    _Rb_tree_iterator(_Base_ptr node) : _node(node) {}
 };
 
 
@@ -161,10 +165,10 @@ private:
     typedef const _Rb_tree_node<Val>* _Link_type;
 
     _Base_ptr _node;
-    _Base_ptr _end;
+
 public:
-    _Rb_tree_const_iterator() : _node(NULL), _end(NULL) {}
-    _Rb_tree_const_iterator(_Base_ptr node, _Base_ptr end) : _node(node), _end(end) {}
+    _Rb_tree_const_iterator() : _node(NULL) {}
+    _Rb_tree_const_iterator(_Base_ptr node) : _node(node) {}
 };
 
 
@@ -179,6 +183,7 @@ public:
 
     typedef _Rb_tree_node<Val> node_value_type;
     typedef _Rb_tree_node<Val>* node_value_ptr;
+    typedef const _Rb_tree_node<Val>* node_value_const_ptr;
     typedef _Rb_tree_node_structure node_type;
     typedef _Rb_tree_node_structure* node_ptr;
     typedef const _Rb_tree_node_structure* node_const_ptr;
@@ -193,15 +198,32 @@ public:
     size_type _node_count;
 
 private:
+    void _end_remove()
+    {
+        if (_end._parent)
+            _end._parent->_right = NULL;
+        else
+        {
+            _head = NULL;
+            _begin = NULL;
+        }
+    }
+
+    void _end_put()
+    {
+        if (_end._parent)
+            _end._parent->_right = &_end;
+        else
+        {
+            _head = &_end;
+            _begin = &_end;
+        }
+    }
+
     typename Alloc::template rebind<node_value_type>::other::size_type
     _alloc_max_size() const
     {
         return allocator::template max_size<node_value_type>(_alloc);
-    }
-
-    bool _is_end_node(node_ptr node) const
-    {
-        return node && node->_left && node->_left == node->_right;
     }
 
     template <typename Pointer>
@@ -237,7 +259,7 @@ private:
 
     void _node_destroy_and_deallocate(node_ptr node)
     {
-        if (node == NULL || _is_end_node(node))
+        if (node == NULL)
             return ;
         if (node->_left)
             _node_destroy_and_deallocate(node->_left);
@@ -248,6 +270,7 @@ private:
 
     void _all_destroy_and_deallocate()
     {
+        _end_remove();
         _node_destroy_and_deallocate(_head);
     }
 
@@ -286,55 +309,54 @@ private:
 
     void _init_end_and_begin()
     {
+        _end._left = NULL;
+        _end._right = NULL;
         if (_head == NULL)
         {
-            _end._left = NULL;
-            _end._right = NULL;
             _end._parent = NULL;
             _begin = NULL;
         }
         else
         {
-            _end._left = NULL;
-            _end._right = NULL;
             _end._parent = _head->get_maximum();
             _begin = _head->get_minimum();
         }
+        _end_put();
     }
 
-    void _copy_loop(const node_ptr head, node_ptr dest_head)
+    void _copy_loop(node_const_ptr head, node_ptr dest_head, node_const_ptr prohibited_node)
     {
         if (head == NULL)
             return ;
-        if (head->_left)
+        if (head->_left && head->_left != prohibited_node)
         {
-            dest_head->_left = _init_node(*static_cast<Val*>(head->_left->get_value_ptr()));
+            dest_head->_left = _init_node(*static_cast<const Val*>(head->_left->get_value_ptr()));
             dest_head->_left->_color = head->_left->_color;
             dest_head->_left->_parent = dest_head;
-            _copy_loop(head->_left, dest_head->_left);
+            _copy_loop(head->_left, dest_head->_left, prohibited_node);
         }
-        if (head->_right)
+        if (head->_right && head->_right != prohibited_node)
         {
-            dest_head->_right = _init_node(*static_cast<Val*>(head->_right->get_value_ptr()));
+            dest_head->_right = _init_node(*static_cast<const Val*>(head->_right->get_value_ptr()));
             dest_head->_right->_color = head->_right->_color;
             dest_head->_right->_parent = dest_head;
-            _copy_loop(head->_right, dest_head->_right);
+            _copy_loop(head->_right, dest_head->_right, prohibited_node);
         }
     }
 
-    void _copy(const node_ptr head, node_ptr* dest_head)
+    void _copy(node_const_ptr head, node_ptr* dest_head, node_const_ptr prohibited_node)
     {
-        if (head == NULL)
+        if (head == NULL || head == prohibited_node)
         {
             *dest_head = NULL;
             return ;
         }
-        Val* value = static_cast<Val*>(head->get_value_ptr());
+        const Val* value = static_cast<const Val*>(head->get_value_ptr());
         *dest_head = _init_node(*value);
         (*dest_head)->_color = head->_color;
         try
         {
-            _copy_loop(head, *dest_head);
+            _copy_loop(head, *dest_head, prohibited_node);
         }
         catch(const std::exception& e)
         {
@@ -432,7 +454,7 @@ public:
     _Rb_tree(const _Rb_tree& other)
         : _alloc(other._alloc), _comp(), _head(NULL), _begin(NULL), _node_count(other._node_count)
     {
-        _copy(other._head, &_head);
+        _copy(other._head, &_head, &(other._end));
         _init_end_and_begin();
     }
 
@@ -455,8 +477,10 @@ public:
     void insert_node(const T& value)
     {
         node_ptr node = _init_node(value);
+        _end_remove();
         if (_insert_node(node))
             _node_count += 1;
+        _end_put();
     }
 
     // void insert_node(const node_ptr p)
@@ -468,9 +492,13 @@ public:
     template<typename T>
     bool delete_node(const T& value)
     {
+        _end_remove();
         node_ptr node = _search_node(value);
         if (node == NULL)
+        {
+            _end_put();
             return false;
+        }
         if (node == _begin)
             _begin = node->increment();
         if (node == _end._parent)
@@ -493,6 +521,7 @@ public:
         else
             _head = _head->get_root();
         _destroy_and_deallocate(node);
+        _end_put();
         return true;
     }
 
@@ -501,11 +530,11 @@ public:
         return const_cast<node_value_ptr>(static_cast<const _Rb_tree*>(this)->get_min_node());
     }
 
-    const node_value_ptr get_min_node() const
+    node_value_const_ptr get_min_node() const
     {
-        if (_head == NULL)
+        if (_head == &_end)
             return NULL;
-        return static_cast<const node_value_ptr>(_head->get_minimum());
+        return static_cast<node_value_const_ptr>(_head->get_minimum());
     }
 
     node_value_ptr get_max_node()
@@ -513,32 +542,34 @@ public:
         return const_cast<node_value_ptr>(static_cast<const _Rb_tree*>(this)->get_max_node());
     }
 
-    const node_value_ptr get_max_node() const
+    node_value_const_ptr get_max_node() const
     {
-        if (_head == NULL)
+        if (_head == &_end)
             return NULL;
-        return static_cast<const node_value_ptr>(_head->get_maximum());
+        return static_cast<node_value_const_ptr>(_end._parent);
     }
 
     void check_rb_tree_rule() const
     {
-        if (_head == NULL)
+        if (_head == NULL || _head == &_end)
             return ;
-        node_type::check_rb_tree_rule(_head);
+        node_type::check_rb_tree_rule(_head, &_end);
         node_const_ptr node = _head->get_minimum();
         if (node != _begin)
             throw std::runtime_error("_begin is wrong.");
-        if (_head->get_maximum() != _end._parent)
-            throw std::runtime_error("_end is wrong.");
         const Val* value = static_cast<const Val*>(node->get_value_ptr());
+        int num = 1;
         node = node->increment();
-        while (node)
+        while (node != &_end)
         {
             if (!compare_value(*value, *static_cast<const Val*>(node->get_value_ptr())))
                 throw std::runtime_error("Root must be black.");
             value = static_cast<const Val*>(node->get_value_ptr());
             node = node->increment();
+            num += 1;
         }
+        if (num != _node_count)
+            throw std::runtime_error("node count is wrong.");
     }
 };
 
@@ -551,14 +582,14 @@ bool operator==(const _Rb_tree<Val, Compare, Alloc>& lhs,
         return false;
     const _Rb_tree_node_structure* lhs_node = lhs.get_min_node();
     const _Rb_tree_node_structure* rhs_node = rhs.get_min_node();
-    while (lhs_node && rhs_node)
+    while (lhs_node != &(lhs._end) && rhs_node != &(lhs._end))
     {
         if (*static_cast<const Val*>(lhs_node->get_value_ptr()) != *static_cast<const Val*>(rhs_node->get_value_ptr()))
             return false;
         lhs_node = lhs_node->increment();
         rhs_node = rhs_node->increment();
     }
-    return lhs_node == NULL && rhs_node == NULL;
+    return lhs_node == &(lhs._end) && rhs_node == &(rhs._end);
 }
 
 template<typename Val, typename Compare, typename Alloc>

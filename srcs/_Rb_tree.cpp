@@ -603,83 +603,87 @@ const void* _Rb_tree_node_structure::get_value_ptr() const
 }
 
 
-void _Rb_tree_node_structure::_debug_node(const _Rb_tree_node_structure* node, int& node_num, std::ofstream& ofs)
+void _Rb_tree_node_structure::_debug_node(const _Rb_tree_node_structure* node, int& node_num, std::ofstream& ofs, const _Rb_tree_node_structure* prohibited_node)
 {
+    if (node == prohibited_node)
+        return ;
     int my_num = node_num;
     if (node->_color == _Rb_tree_node_structure::_RED)
         ofs << "    " << my_num << " [\n        color = \"#ff0000\"\n    ];" << std::endl;
     else
         ofs << "    " << my_num << " [\n        color = \"#000000\"\n    ];" << std::endl;
-    if (node->_left)
+    if (node->_left && node->_left != prohibited_node)
     {
         node_num += 1;
         ofs << "    " << my_num << " -> " << node_num << ";" <<std::endl;
-        _debug_node(node->_left, node_num, ofs);
+        _debug_node(node->_left, node_num, ofs, prohibited_node);
     }
     else
         ofs << "    left" << my_num << " [\n        label = \"NULL\",\n        color = \"#ffffff\"\n    ];\n"  <<"    " << my_num << " -> left" << my_num << ";" << std::endl;
-    if (node->_right)
+    if (node->_right && node->_right != prohibited_node)
     {
         node_num += 1;
         ofs << "    " << my_num << " -> " << node_num << ";" <<std::endl;
-        _debug_node(node->_right, node_num, ofs);
+        _debug_node(node->_right, node_num, ofs, prohibited_node);
     }
     else
         ofs << "    right" << my_num << " [\n        label = \"NULL\",\n        color = \"#ffffff\"\n    ];\n"  <<"    " << my_num << " -> right" << my_num << ";" << std::endl;
 }
 
 
-void _Rb_tree_node_structure::debug(const _Rb_tree_node_structure* root, const std::string file_name)
+void _Rb_tree_node_structure::debug(const _Rb_tree_node_structure* root, const std::string file_name, const _Rb_tree_node_structure* prohibited_node)
 {
     std::ofstream ofs(file_name.c_str());
     if (!ofs)
         return ;
     ofs << "digraph test {" << std::endl;
     int node_num = 0;
-    _debug_node(root, node_num, ofs);
+    _debug_node(root, node_num, ofs, prohibited_node);
     ofs << "}" << std::endl;
     ofs.close();
 }
 
 
-void _Rb_tree_node_structure::_check_rb_tree_rule_node(const _Rb_tree_node_structure* node, int black_node_num)
+void _Rb_tree_node_structure::_check_rb_tree_rule_node(const _Rb_tree_node_structure* node, int black_node_num, const _Rb_tree_node_structure* prohibited_node)
 {
     if (node->_parent && node->_parent->_color == _RED && node->_color == _RED)
         throw std::runtime_error("Under the red node must be black");
     if (node->_color == _BLACK)
         black_node_num -= 1;
-    if (node->_left)
+    if (node->_left && node->_left != prohibited_node)
     {
         if (node->_left->_parent != node)
             throw std::runtime_error("Child-parent bonding does not match.");
-        _check_rb_tree_rule_node(node->_left, black_node_num);
+        _check_rb_tree_rule_node(node->_left, black_node_num, prohibited_node);
     }
-    if (node->_right)
+    if (node->_right && node->_right != prohibited_node)
     {
         if (node->_right->_parent != node)
             throw std::runtime_error("Child-parent bonding does not match.");
-        _check_rb_tree_rule_node(node->_right, black_node_num);
+        _check_rb_tree_rule_node(node->_right, black_node_num, prohibited_node);
     }
     if (!(node->_left && node->_right) && black_node_num != 0)
         throw std::runtime_error("The number of black node from root to leaf must be constant");
 }
 
 
-void _Rb_tree_node_structure::check_rb_tree_rule(const _Rb_tree_node_structure* root)
+void _Rb_tree_node_structure::check_rb_tree_rule(const _Rb_tree_node_structure* root, const _Rb_tree_node_structure* prohibited_node)
 {
+    if (root == NULL || root == prohibited_node)
+        return ;
     if (root->_color != _BLACK)
         throw std::runtime_error("Root must be black.");
     if (root->_parent != NULL)
         throw std::runtime_error("Root parents should not be there.");
     int black_node_num = 0;
     const _Rb_tree_node_structure* node = root;
-    while (node)
+    while (node && node != prohibited_node)
     {
         if (node->_color == _BLACK)
             black_node_num += 1;
         node = node->_left;
     }
-    _check_rb_tree_rule_node(root, black_node_num);
+    _check_rb_tree_rule_node(root, black_node_num, prohibited_node);
 }
 
 } // namespace ft

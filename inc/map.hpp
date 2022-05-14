@@ -24,8 +24,19 @@ public:
     typedef typename Alloc::const_pointer const_pointer;
 
 private:
-    // key_compareの部分はpair用のcompareに変更
-    typedef _Rb_tree<value_type, key_compare, allocator_type> _Tree;
+    key_compare _comp;
+
+    struct _PairFirstCompare
+    {
+        bool operator()(const value_type& lhs, const value_type& rhs) const
+        {
+            return _comp(lhs.first, rhs.first);
+        }
+    };
+
+    typedef _Rb_tree<value_type, _PairFirstCompare, allocator_type> _Tree;
+
+    _Tree _tree;
 
 public:
     typedef typename _Tree::iterator iterator;
@@ -33,6 +44,7 @@ public:
     typedef typename _Tree::reverse_iterator reverse_iterator;
     typedef typename _Tree::const_reverse_iterator const_reverse_iterator;
 
+    map() : _comp(), _tree() {};
 };
 
 } // namespace ft

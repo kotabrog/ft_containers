@@ -239,7 +239,7 @@ void random_value_insert_and_copy_test(int num, bool save_flag = false)
             return ;
         }
         if (save_flag)
-            ft::_Rb_tree_node<int>::debug(static_cast<ft::_Rb_tree_node<int>*>(tree._head), "test.dot");
+            ft::_Rb_tree_node<int>::debug(static_cast<ft::_Rb_tree_node<int>*>(tree._head), "test.dot", &(tree._end));
     }
     std::cout << std::endl;
 
@@ -283,7 +283,7 @@ void decrement_check(int num)
             return ;
         }
     }
-    ft::_Rb_tree_node_structure* node = tree._head->get_maximum();
+    ft::_Rb_tree_node_structure* node = tree._end._parent;
     int value = *(int*)(node->get_value_ptr());
     node = node->decrement();
     while (node)
@@ -322,23 +322,27 @@ void random_value_delete_test(int num, bool save_flag = false)
         }
     }
     if (save_flag)
-        ft::_Rb_tree_node<int>::debug(static_cast<ft::_Rb_tree_node<int>*>(tree._head), "test.dot");
+        ft::_Rb_tree_node<int>::debug(static_cast<ft::_Rb_tree_node<int>*>(tree._head), "test.dot", &(tree._end));
     std::cout << std::endl;
     ft::_Rb_tree_node_structure* min_node = tree.get_min_node();
     std::cout << "delete start" << std::endl;
     for (int i = 0; i < num; ++i)
     {
         std::cout << "\r" << "check " << i;
+        if (min_node == &(tree._end))
+            break;
         ft::_Rb_tree_node_structure* temp = min_node->get_root()->get_minimum();
+        if (temp == &(tree._end))
+            break;
         int index = std::rand() % (num - i);
         for (int j = 0; j < index; ++j)
         {
-            if (temp == NULL)
+            if (temp == NULL || temp == &(tree._end))
                 break;
             temp = temp->increment();
         }
-        if (temp == NULL)
-            break;
+        if (temp == NULL || temp == &(tree._end))
+            continue;
         if (index == 0)
             min_node = min_node->increment();
         tree.delete_node(*(static_cast<int*>(temp->get_value_ptr())));
