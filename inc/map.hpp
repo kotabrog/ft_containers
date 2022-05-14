@@ -22,10 +22,16 @@ public:
     typedef const value_type& const_reference;
     typedef typename Alloc::pointer pointer;
     typedef typename Alloc::const_pointer const_pointer;
-    // typedef // iterator;
-    // typedef // const_iterator;
-    // typedef ft::reverse_iterator<iterator> reverse_iterator;
-    // typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
+
+private:
+    // key_compareの部分はpair用のcompareに変更
+    typedef _Rb_tree<value_type, key_compare, allocator_type> _Tree;
+
+public:
+    typedef typename _Tree::iterator iterator;
+    typedef typename _Tree::const_iterator const_iterator;
+    typedef typename _Tree::reverse_iterator reverse_iterator;
+    typedef typename _Tree::const_reverse_iterator const_reverse_iterator;
 
 };
 

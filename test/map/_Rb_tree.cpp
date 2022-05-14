@@ -3,7 +3,7 @@
 namespace ft
 {
 _Rb_tree_node_structure::_Rb_tree_node_structure()
-    : _parent(NULL), _left(NULL), _right(NULL), _color(_Rb_tree_node_structure::_RED) {}
+    : _color(_Rb_tree_node_structure::_RED), _parent(NULL), _left(NULL), _right(NULL) {}
 
 
 _Rb_tree_node_structure* _Rb_tree_node_structure::get_other_brothers()

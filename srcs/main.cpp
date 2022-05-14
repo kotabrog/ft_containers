@@ -2101,6 +2101,44 @@ void map_test()
                     typeid(ft::map<int, double>::pointer) == typeid(std::allocator<ft::pair<const int, double> >::pointer), "std::allocator<ft::pair<const int, double> >::pointer", "other");
     tester.if_print("const_pointer:",
                     typeid(ft::map<int, double>::const_pointer) == typeid(std::allocator<ft::pair<const int, double> >::const_pointer), "std::allocator<ft::pair<const int, double> >::const_pointer", "other");
+    tester.print("std::map<int, double>::iterator");
+    tester.if_print("difference_type:",
+                    typeid(ft::iterator_traits<ft::map<int, double>::iterator>::difference_type) == typeid(std::ptrdiff_t),
+                    "std::ptrdiff_t", "other");
+    tester.if_print("value_type:",
+                    typeid(ft::iterator_traits<ft::map<int, double>::iterator>::value_type) == typeid(ft::pair<const int, double>),
+                    "ft::pair<const int, double>", "other");
+    tester.if_print("pointer:",
+                    typeid(ft::iterator_traits<ft::map<int, double>::iterator>::pointer) == typeid(ft::pair<const int, double>*),
+                    "ft::pair<const int, double>*", "other");
+    tester.if_print("reference:",
+                    typeid(ft::iterator_traits<ft::map<int, double>::iterator>::reference) == typeid(ft::pair<const int, double>&),
+                    "ft::pair<const int, double>&", "other");
+    tester.if_print("iterator_category:",
+                    typeid(ft::iterator_traits<ft::map<int, double>::iterator>::iterator_category) == typeid(std::bidirectional_iterator_tag),
+                    "std::bidirectional_iterator_tag", "other");
+    tester.print("std::map<int, double>::const_iterator");
+    tester.if_print("difference_type:",
+                    typeid(ft::iterator_traits<ft::map<int, double>::const_iterator>::difference_type) == typeid(std::ptrdiff_t),
+                    "std::ptrdiff_t", "other");
+    tester.if_print("value_type:",
+                    typeid(ft::iterator_traits<ft::map<int, double>::const_iterator>::value_type) == typeid(ft::pair<const int, double>),
+                    "ft::pair<const int, double>", "other");
+    tester.if_print("pointer:",
+                    typeid(ft::iterator_traits<ft::map<int, double>::const_iterator>::pointer) == typeid(const ft::pair<const int, double>*),
+                    "ft::pair<const int, double>*", "other");
+    tester.if_print("reference:",
+                    typeid(ft::iterator_traits<ft::map<int, double>::const_iterator>::reference) == typeid(const ft::pair<const int, double>&),
+                    "ft::pair<const int, double>&", "other");
+    tester.if_print("iterator_category:",
+                    typeid(ft::iterator_traits<ft::map<int, double>::const_iterator>::iterator_category) == typeid(std::bidirectional_iterator_tag),
+                    "std::bidirectional_iterator_tag", "other");
+    tester.if_print("reverse_iterator:",
+                    typeid(ft::map<int, double>::reverse_iterator) == typeid(ft::reverse_iterator<ft::map<int, double>::iterator>),
+                    "ft::reverse_iterator<ft::map<int, double>::iterator>", "other");
+    tester.if_print("const_reverse_iterator:",
+                    typeid(ft::map<int, double>::const_reverse_iterator) == typeid(ft::reverse_iterator<ft::map<int, double>::const_iterator>),
+                    "ft::reverse_iterator<ft::map<int, double>::const_iterator>", "other");
 }
 
 int main(int argc, char** argv)

@@ -239,7 +239,7 @@ void random_value_insert_and_copy_test(int num, bool save_flag = false)
             return ;
         }
         if (save_flag)
-            ft::_Rb_tree_node<int>::debug(tree._head, "test.dot");
+            ft::_Rb_tree_node<int>::debug(static_cast<ft::_Rb_tree_node<int>*>(tree._head), "test.dot");
     }
     std::cout << std::endl;
 
@@ -322,7 +322,7 @@ void random_value_delete_test(int num, bool save_flag = false)
         }
     }
     if (save_flag)
-        ft::_Rb_tree_node<int>::debug(tree._head, "test.dot");
+        ft::_Rb_tree_node<int>::debug(static_cast<ft::_Rb_tree_node<int>*>(tree._head), "test.dot");
     std::cout << std::endl;
     ft::_Rb_tree_node_structure* min_node = tree.get_min_node();
     std::cout << "delete start" << std::endl;
@@ -397,13 +397,13 @@ void const_check()
 int main()
 {
     // no free test
-    // Rb_tree_node_structure_insert_and_delete_check();
-    // random_make_tree_test(1000, false);
-    // random_make_tree_delete_test(10000, false);
+    Rb_tree_node_structure_insert_and_delete_check();
+    random_make_tree_test(1000, false);
+    random_make_tree_delete_test(10000, false);
     // free test
     random_value_insert_and_copy_test(1000, false);
-    // decrement_check(100);
-    // random_value_delete_test(1000, false);
-    // node_count_check(1000);
-    // const_check();
+    decrement_check(100);
+    random_value_delete_test(1000, false);
+    node_count_check(1000);
+    const_check();
 }

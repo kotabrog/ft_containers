@@ -5,6 +5,7 @@
 #include <fstream>
 
 #include "alloc_traits.hpp"
+#include "reverse_iterator.hpp"
 
 namespace ft
 {
@@ -120,25 +121,87 @@ public:
     }
 };
 
+
+template<typename Val>
+class _Rb_tree_iterator
+{
+public:
+    typedef Val value_type;
+    typedef Val& reference;
+    typedef Val* pointer;
+    typedef std::bidirectional_iterator_tag iterator_category;
+    typedef std::ptrdiff_t difference_type;
+
+private:
+    typedef _Rb_tree_iterator<Val> _Self;
+    typedef _Rb_tree_node_structure* _Base_ptr;
+    typedef _Rb_tree_node<Val>* _Link_type;
+
+    _Base_ptr _node;
+    _Base_ptr _end;
+public:
+    _Rb_tree_iterator() : _node(NULL), _end(NULL) {}
+    _Rb_tree_iterator(_Base_ptr node, _Base_ptr end) : _node(node), _end(end) {}
+};
+
+
+template<typename Val>
+class _Rb_tree_const_iterator
+{
+public:
+    typedef Val value_type;
+    typedef const Val& reference;
+    typedef const Val* pointer;
+    typedef std::bidirectional_iterator_tag iterator_category;
+    typedef std::ptrdiff_t difference_type;
+
+private:
+    typedef _Rb_tree_const_iterator<Val> _Self;
+    typedef const _Rb_tree_node_structure* _Base_ptr;
+    typedef const _Rb_tree_node<Val>* _Link_type;
+
+    _Base_ptr _node;
+    _Base_ptr _end;
+public:
+    _Rb_tree_const_iterator() : _node(NULL), _end(NULL) {}
+    _Rb_tree_const_iterator(_Base_ptr node, _Base_ptr end) : _node(node), _end(end) {}
+};
+
+
 template<typename Val, typename Compare = std::less<Val>, typename Alloc = std::allocator<Val> >
 class _Rb_tree
 {
 public:
-    typedef _Rb_tree_node<Val> node_type;
-    typedef _Rb_tree_node<Val>* node_ptr;
+    typedef _Rb_tree_iterator<Val> iterator;
+    typedef _Rb_tree_const_iterator<Val> const_iterator;
+    typedef ft::reverse_iterator<iterator> reverse_iterator;
+    typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
+
+    typedef _Rb_tree_node<Val> node_value_type;
+    typedef _Rb_tree_node<Val>* node_value_ptr;
+    typedef _Rb_tree_node_structure node_type;
+    typedef _Rb_tree_node_structure* node_ptr;
+    typedef const _Rb_tree_node_structure* node_const_ptr;
     typedef alloc_traits<Alloc> allocator;
     typedef std::size_t size_type;
 
     Alloc _alloc;
     Compare _comp;
     node_ptr _head;
+    node_ptr _begin;
+    node_type _end;
     size_type _node_count;
 
 private:
-    typename Alloc::template rebind<node_type>::other::size_type
+    typename Alloc::template rebind<node_value_type>::other::size_type
     _alloc_max_size() const
     {
-        return allocator::template max_size<node_type>(_alloc);
+        return allocator::template max_size<node_value_type>(_alloc);
+    }
+
+    bool _is_end_node(node_ptr node) const
+    {
+        return node && node->_left && node->_left == node->_right;
     }
 
     template <typename Pointer>
@@ -150,13 +213,13 @@ private:
     template<typename Size>
     node_ptr _allocate(Size n) const
     {
-        return allocator::template allocate<node_ptr, Size>(_alloc, n);
+        return allocator::template allocate<node_value_ptr, Size>(_alloc, n);
     }
 
-    template <typename Pointer, typename V>
-    void _construct(Pointer p, const V& value) const
+    template <typename V>
+    void _construct(node_ptr p, const V& value) const
     {
-        allocator::construct(_alloc, p, value);
+        allocator::construct(_alloc, static_cast<node_value_ptr>(p), value);
     }
 
     template <typename Pointer, typename Size>
@@ -174,12 +237,12 @@ private:
 
     void _node_destroy_and_deallocate(node_ptr node)
     {
-        if (node == NULL)
+        if (node == NULL || _is_end_node(node))
             return ;
         if (node->_left)
-            _node_destroy_and_deallocate(static_cast<node_ptr>(node->_left));
+            _node_destroy_and_deallocate(node->_left);
         if (node->_right)
-            _node_destroy_and_deallocate(static_cast<node_ptr>(node->_right));
+            _node_destroy_and_deallocate(node->_right);
         _destroy_and_deallocate(node);
     }
 
@@ -221,27 +284,41 @@ private:
     //     return node;
     // }
 
+    void _init_end_and_begin()
+    {
+        if (_head == NULL)
+        {
+            _end._left = NULL;
+            _end._right = NULL;
+            _end._parent = NULL;
+            _begin = NULL;
+        }
+        else
+        {
+            _end._left = NULL;
+            _end._right = NULL;
+            _end._parent = _head->get_maximum();
+            _begin = _head->get_minimum();
+        }
+    }
+
     void _copy_loop(const node_ptr head, node_ptr dest_head)
     {
         if (head == NULL)
             return ;
-        // if (head->_left)
-        //     _copy_loop(static_cast<const node_ptr>(head->_left), &static_cast<node_ptr*>((*dest_head)->_left));
-        // if (head->_right)
-        //     _copy_loop(static_cast<const node_ptr>(head->_right), &static_cast<node_ptr*>((*dest_head)->_right));
         if (head->_left)
         {
             dest_head->_left = _init_node(*static_cast<Val*>(head->_left->get_value_ptr()));
             dest_head->_left->_color = head->_left->_color;
             dest_head->_left->_parent = dest_head;
-            _copy_loop(static_cast<const node_ptr>(head->_left), static_cast<node_ptr>(dest_head->_left));
+            _copy_loop(head->_left, dest_head->_left);
         }
         if (head->_right)
         {
             dest_head->_right = _init_node(*static_cast<Val*>(head->_right->get_value_ptr()));
             dest_head->_right->_color = head->_right->_color;
             dest_head->_right->_parent = dest_head;
-            _copy_loop(static_cast<const node_ptr>(head->_right), static_cast<node_ptr>(dest_head->_right));
+            _copy_loop(head->_right, dest_head->_right);
         }
     }
 
@@ -252,7 +329,8 @@ private:
             *dest_head = NULL;
             return ;
         }
-        *dest_head = _init_node(head->_value);
+        Val* value = static_cast<Val*>(head->get_value_ptr());
+        *dest_head = _init_node(*value);
         (*dest_head)->_color = head->_color;
         try
         {
@@ -271,35 +349,43 @@ private:
         if (_head == NULL)
         {
             _head = add_node;
-            _head->_color = _Rb_tree_node_structure::_BLACK;
+            _head->_color = node_type::_BLACK;
+            _end._parent = _head;
+            _begin = _head;
             return true;
         }
         node_ptr node = _head;
         while (true)
         {
-            if (compare_value(node->_value, add_node->_value))
+            Val* node_value = static_cast<Val*>(node->get_value_ptr());
+            Val* add_value = static_cast<Val*>(add_node->get_value_ptr());
+            if (compare_value(*node_value, *add_value))
             {
                 if (node->_right == NULL)
                 {
                     node->insert_right(add_node);
-                    _head = static_cast<node_ptr>(_head->get_root());
+                    _head = _head->get_root();
+                    if (node == _end._parent)
+                        _end._parent = add_node;
                     return true;
                 }
-                node = static_cast<node_ptr>(node->_right);
+                node = node->_right;
             }
-            else if (compare_value(add_node->_value, node->_value))
+            else if (compare_value(*add_value, *node_value))
             {
                 if (node->_left == NULL)
                 {
                     node->insert_left(add_node);
-                    _head = static_cast<node_ptr>(_head->get_root());
+                    _head = _head->get_root();
+                    if (node == _begin)
+                        _begin = add_node;
                     return true;
                 }
-                node = static_cast<node_ptr>(node->_left);
+                node = node->_left;
             }
             else
             {
-                node->_value = add_node->_value;
+                *node_value = *add_value;
                 _destroy_and_deallocate(add_node);
                 return false;
             }
@@ -313,17 +399,18 @@ private:
         node_ptr node = _head;
         while (true)
         {
-            if (compare_value(node->_value, value))
+            Val* node_value = static_cast<Val*>(node->get_value_ptr());
+            if (compare_value(*node_value, value))
             {
                 if (node->_right == NULL)
                     return NULL;
-                node = static_cast<node_ptr>(node->_right);
+                node = node->_right;
             }
-            else if (compare_value(value, node->_value))
+            else if (compare_value(value, *node_value))
             {
                 if (node->_left == NULL)
                     return NULL;
-                node = static_cast<node_ptr>(node->_left);
+                node = node->_left;
             }
             else
                 return node;
@@ -331,15 +418,22 @@ private:
     }
 
 public:
-    _Rb_tree(): _alloc(), _comp(), _head(NULL), _node_count(0) {}
+    _Rb_tree(): _alloc(), _comp(), _head(NULL), _begin(NULL), _node_count(0)
+    {
+        _init_end_and_begin();
+    }
 
     explicit _Rb_tree(const Alloc& alloc)
-        : _alloc(alloc), _comp(), _head(NULL), _node_count(0) {}
+        : _alloc(alloc), _comp(), _head(NULL), _begin(NULL), _node_count(0)
+    {
+        _init_end_and_begin();
+    }
 
     _Rb_tree(const _Rb_tree& other)
-        : _alloc(other._alloc), _comp(), _head(NULL), _node_count(other._node_count)
+        : _alloc(other._alloc), _comp(), _head(NULL), _begin(NULL), _node_count(other._node_count)
     {
         _copy(other._head, &_head);
+        _init_end_and_begin();
     }
 
     ~_Rb_tree()
@@ -377,6 +471,10 @@ public:
         node_ptr node = _search_node(value);
         if (node == NULL)
             return false;
+        if (node == _begin)
+            _begin = node->increment();
+        if (node == _end._parent)
+            _end._parent = node->decrement();
         node->delete_node();
         _node_count -= 1;
         if (_node_count == 0)
@@ -384,50 +482,54 @@ public:
         else if (node == _head)
         {
             if (_head->_left)
-                _head = static_cast<node_ptr>(_head->_left->get_root());
+                _head = _head->_left->get_root();
             else if (_head->_right)
-                _head = static_cast<node_ptr>(_head->_right->get_root());
+                _head = _head->_right->get_root();
             else if (_head->_parent)
-                _head = static_cast<node_ptr>(_head->_parent->get_root());
+                _head = _head->_parent->get_root();
             else
                 throw std::runtime_error("_head is isolated.");
         }
         else
-            _head = static_cast<node_ptr>(_head->get_root());
+            _head = _head->get_root();
         _destroy_and_deallocate(node);
         return true;
     }
 
-    node_ptr get_min_node()
+    node_value_ptr get_min_node()
     {
-        return const_cast<node_ptr>(static_cast<const _Rb_tree*>(this)->get_min_node());
+        return const_cast<node_value_ptr>(static_cast<const _Rb_tree*>(this)->get_min_node());
     }
 
-    const node_ptr get_min_node() const
+    const node_value_ptr get_min_node() const
     {
         if (_head == NULL)
             return NULL;
-        return static_cast<const node_ptr>(_head->get_minimum());
+        return static_cast<const node_value_ptr>(_head->get_minimum());
     }
 
-    node_ptr get_max_node()
+    node_value_ptr get_max_node()
     {
-        return const_cast<node_ptr>(static_cast<const _Rb_tree*>(this)->get_max_node());
+        return const_cast<node_value_ptr>(static_cast<const _Rb_tree*>(this)->get_max_node());
     }
 
-    const node_ptr get_max_node() const
+    const node_value_ptr get_max_node() const
     {
         if (_head == NULL)
             return NULL;
-        return static_cast<const node_ptr>(_head->get_maximum());
+        return static_cast<const node_value_ptr>(_head->get_maximum());
     }
 
     void check_rb_tree_rule() const
     {
         if (_head == NULL)
             return ;
-        _Rb_tree_node_structure::check_rb_tree_rule(_head);
-        const _Rb_tree_node_structure* node = _head->get_minimum();
+        node_type::check_rb_tree_rule(_head);
+        node_const_ptr node = _head->get_minimum();
+        if (node != _begin)
+            throw std::runtime_error("_begin is wrong.");
+        if (_head->get_maximum() != _end._parent)
+            throw std::runtime_error("_end is wrong.");
         const Val* value = static_cast<const Val*>(node->get_value_ptr());
         node = node->increment();
         while (node)
