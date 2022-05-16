@@ -2139,6 +2139,219 @@ void map_test()
     tester.if_print("const_reverse_iterator:",
                     typeid(ft::map<int, double>::const_reverse_iterator) == typeid(ft::reverse_iterator<ft::map<int, double>::const_iterator>),
                     "ft::reverse_iterator<ft::map<int, double>::const_iterator>", "other");
+    tester.print("");
+    tester.print("basic test");
+    {
+        tester.print("ft::map<int, char> ma;");
+        ft::map<int, char> ma;
+        tester.print("ft::pair<ft::map<int, char>::iterator, bool> iter_and_bool = ma.insert(ft::pair<const int, char>(1, 'a'));");
+        ft::pair<ft::map<int, char>::iterator, bool> iter_and_bool = ma.insert(ft::pair<const int, char>(1, 'a'));
+        tester.if_print("insert ok:", iter_and_bool.second);
+        ft::map<int, char>::iterator iter = iter_and_bool.first;
+        tester.print("index:", (*iter).first);
+        tester.print("value:", (*iter).second);
+        tester.print("iter_and_bool = ma.insert(ft::pair<const int, char>(3, 'c'));");
+        iter_and_bool = ma.insert(ft::pair<const int, char>(3, 'c'));
+        tester.if_print("insert ok:", iter_and_bool.second);
+        iter = iter_and_bool.first;
+        tester.print("index:", (*iter).first);
+        tester.print("value:", (*iter).second);
+        tester.print("iter_and_bool = ma.insert(ft::pair<const int, char>(2, 'b'));");
+        iter_and_bool = ma.insert(ft::pair<const int, char>(2, 'b'));
+        tester.if_print("insert ok:", iter_and_bool.second);
+        iter = iter_and_bool.first;
+        tester.print("index:", (*iter).first);
+        tester.print("value:", (*iter).second);
+
+        iter = ma.begin();
+        ft::map<int, char>::iterator end = ma.end();
+        tester.print("for (iter = ma.begin(); iter != ma.end; ++iter)...");
+        for (; iter != end; ++iter)
+        {
+            tester.print("index:", (*iter).first);
+            tester.print("value:", (*iter).second);
+        }
+
+        tester.print("ma.erase(++(ma.begin()));");
+        ma.erase(++(ma.begin()));
+        iter = ma.begin();
+        end = ma.end();
+        tester.print("for (iter = ma.begin(); iter != ma.end; ++iter)...");
+        for (; iter != end; ++iter)
+        {
+            tester.print("index:", (*iter).first);
+            tester.print("value:", (*iter).second);
+        }
+    }
+    tester.print("");
+    tester.print("iterator test");
+    {
+        tester.print("ft::map<int, char> ma <- (1, 'a'), (2, 'b'), (3, 'c');");
+        ft::map<int, char> ma;
+        ft::pair<ft::map<int, char>::iterator, bool> iter_and_bool = ma.insert(ft::pair<const int, char>(1, 'a'));
+        iter_and_bool = ma.insert(ft::pair<const int, char>(3, 'c'));
+        iter_and_bool = ma.insert(ft::pair<const int, char>(2, 'b'));
+
+        tester.print("ft::map<int, char>::iterator it_copy(ma.begin());");
+        ft::map<int, char>::iterator it_copy1(ma.begin());
+        tester.print("index:", it_copy1->first);
+        tester.print("value:", it_copy1->second);
+
+        tester.print("ft::map<int, char>::iterator it_copy(ma.begin());");
+        ft::map<int, char>::iterator it_copy2 = ma.begin();
+        tester.print("index:", (*it_copy2).first);
+        tester.print("value:", (*it_copy2).second);
+
+        it_copy1 = ++it_copy2;
+        tester.print("it_copy1 = ++it_copy2");
+        tester.print("it_copy1");
+        tester.print("index:", (*it_copy1).first);
+        tester.print("value:", (*it_copy1).second);
+        tester.print("it_copy2");
+        tester.print("index:", (*it_copy2).first);
+        tester.print("value:", (*it_copy2).second);
+
+        it_copy1 = it_copy2++;
+        tester.print("it_copy1 = it_copy2++");
+        tester.print("it_copy1");
+        tester.print("index:", (*it_copy1).first);
+        tester.print("value:", (*it_copy1).second);
+        tester.print("it_copy2");
+        tester.print("index:", (*it_copy2).first);
+        tester.print("value:", (*it_copy2).second);
+
+        it_copy1 = --it_copy2;
+        tester.print("it_copy1 = --it_copy2");
+        tester.print("it_copy1");
+        tester.print("index:", (*it_copy1).first);
+        tester.print("value:", (*it_copy1).second);
+        tester.print("it_copy2");
+        tester.print("index:", (*it_copy2).first);
+        tester.print("value:", (*it_copy2).second);
+
+        it_copy1 = it_copy2--;
+        tester.print("it_copy1 = it_copy2--");
+        tester.print("it_copy1");
+        tester.print("index:", (*it_copy1).first);
+        tester.print("value:", (*it_copy1).second);
+        tester.print("it_copy2");
+        tester.print("index:", (*it_copy2).first);
+        tester.print("value:", (*it_copy2).second);
+
+        tester.print("it_copy1 = --ma.end();");
+        it_copy1 = --ma.end();
+        tester.print("it_copy1");
+        tester.print("index:", (*it_copy1).first);
+        tester.print("value:", (*it_copy1).second);
+
+        tester.print("ft::map<int, char>::const_iterator c_iter1 = ma.begin();");
+        ft::map<int, char>::const_iterator c_iter1 = ma.begin();
+        tester.print("index:", (*c_iter1).first);
+        tester.print("value:", (*c_iter1).second);
+
+        tester.print("ft::map<int, char>::const_iterator c_iter2 = ma.begin();");
+        ft::map<int, char>::const_iterator c_iter2(c_iter1);
+
+        c_iter1 = ++c_iter2;
+        tester.print("c_iter1 = ++c_iter2");
+        tester.print("c_iter1");
+        tester.print("index:", (*c_iter1).first);
+        tester.print("value:", (*c_iter1).second);
+        tester.print("c_iter2");
+        tester.print("index:", (*c_iter2).first);
+        tester.print("value:", (*c_iter2).second);
+
+        c_iter1 = c_iter2++;
+        tester.print("c_iter1 = c_iter2++");
+        tester.print("c_iter1");
+        tester.print("index:", (*c_iter1).first);
+        tester.print("value:", (*c_iter1).second);
+        tester.print("c_iter2");
+        tester.print("index:", (*c_iter2).first);
+        tester.print("value:", (*c_iter2).second);
+
+        c_iter1 = --c_iter2;
+        tester.print("c_iter1 = --c_iter2");
+        tester.print("c_iter1");
+        tester.print("index:", (*c_iter1).first);
+        tester.print("value:", (*c_iter1).second);
+        tester.print("c_iter2");
+        tester.print("index:", (*c_iter2).first);
+        tester.print("value:", (*c_iter2).second);
+
+        c_iter1 = c_iter2--;
+        tester.print("c_iter1 = c_iter2--");
+        tester.print("c_iter1");
+        tester.print("index:", (*c_iter1).first);
+        tester.print("value:", (*c_iter1).second);
+        tester.print("c_iter2");
+        tester.print("index:", (*c_iter2).first);
+        tester.print("value:", (*c_iter2).second);
+
+        tester.if_print("it_copy1 != c_iter2", it_copy1 != c_iter2);
+        tester.if_print("ma.begin() == c_iter2", ma.begin() == c_iter2);
+        tester.if_print("c_iter2 != it_copy1", c_iter2 != it_copy1);
+        tester.if_print("c_iter2 == ma.begin()", c_iter2 == ma.begin());
+
+        tester.print("ft::map<int, char>::reverse_iterator r_iter1 = ma.rbegin();");
+        ft::map<int, char>::reverse_iterator r_iter1 = ma.rbegin();
+        for (; r_iter1 != ma.rend(); ++r_iter1)
+        {
+            tester.print("index:", (*r_iter1).first);
+            tester.print("value:", (*r_iter1).second);
+        }
+
+        tester.print("r_iter1 = ma.rbegin();");
+        r_iter1 = ma.rbegin();
+        tester.print("ft::map<int, char>::reverse_iterator r_iter2(r_iter1);");
+        ft::map<int, char>::reverse_iterator r_iter2(r_iter1);
+
+        r_iter1 = ++r_iter2;
+        tester.print("r_iter1 = ++r_iter2");
+        tester.print("r_iter1");
+        tester.print("index:", (*r_iter1).first);
+        tester.print("value:", (*r_iter1).second);
+        tester.print("r_iter2");
+        tester.print("index:", (*r_iter2).first);
+        tester.print("value:", (*r_iter2).second);
+
+        r_iter1 = r_iter2++;
+        tester.print("r_iter1 = r_iter2++");
+        tester.print("r_iter1");
+        tester.print("index:", (*r_iter1).first);
+        tester.print("value:", (*r_iter1).second);
+        tester.print("r_iter2");
+        tester.print("index:", (*r_iter2).first);
+        tester.print("value:", (*r_iter2).second);
+
+        r_iter1 = --r_iter2;
+        tester.print("r_iter1 = --r_iter2");
+        tester.print("r_iter1");
+        tester.print("index:", (*r_iter1).first);
+        tester.print("value:", (*r_iter1).second);
+        tester.print("r_iter2");
+        tester.print("index:", (*r_iter2).first);
+        tester.print("value:", (*r_iter2).second);
+
+        tester.print("ft::map<int, char>::const_reverse_iterator cr_iter(r_iter2);");
+        ft::map<int, char>::const_reverse_iterator cr_iter(r_iter2);
+
+        tester.if_print("r_iter2 != cr_iter", r_iter2 != cr_iter);
+        tester.if_print("r_iter2 == cr_iter", r_iter2 == cr_iter);
+        tester.if_print("cr_iter != r_iter2", cr_iter != r_iter2);
+        tester.if_print("cr_iter == r_iter2", cr_iter == r_iter2);
+    }
+    tester.print("");
+    tester.print("member classes test");
+    tester.print("value_compare test");
+    {
+        tester.if_print("value_compare::result_type:",
+            typeid(ft::map<int, char>::value_compare::result_type) == typeid(bool), "bool", "other");
+        tester.if_print("value_compare::first_argument_type:",
+            typeid(ft::map<int, char>::value_compare::first_argument_type) == typeid(ft::map<int, char>::value_type), "ft::map<int, char>::value_type", "other");
+        tester.if_print("value_compare::result_type:",
+            typeid(ft::map<int, char>::value_compare::second_argument_type) == typeid(ft::map<int, char>::value_type), "ft::map<int, char>::value_type", "other");
+    }
 }
 
 int main(int argc, char** argv)

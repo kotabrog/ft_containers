@@ -6,6 +6,7 @@
 
 #include "alloc_traits.hpp"
 #include "reverse_iterator.hpp"
+#include "pair.hpp"
 
 #include <iostream>
 
@@ -141,11 +142,38 @@ private:
     typedef _Rb_tree_node_structure* _Base_ptr;
     typedef _Rb_tree_node<Val>* _Link_type;
 
-    _Base_ptr _node;
-    _Base_ptr _end;
+
 public:
-    _Rb_tree_iterator() : _node(NULL), _end(NULL) {}
-    _Rb_tree_iterator(_Base_ptr node, _Base_ptr end) : _node(node), _end(end) {}
+    _Base_ptr _node;
+
+    _Rb_tree_iterator() : _node(NULL) {}
+    explicit _Rb_tree_iterator(_Base_ptr node) : _node(node) {}
+
+    reference operator*() const
+    {
+        return *static_cast<pointer>(static_cast<_Link_type>(_node)->get_value_ptr());
+    }
+
+    pointer operator->() const
+    {
+        return static_cast<pointer>(static_cast<_Link_type>(_node)->get_value_ptr());
+    }
+
+    _Self& operator++()
+    {
+        _node = _node->increment();
+        return *this;
+    }
+
+    bool operator==(const _Self& other) const
+    {
+        return _node == other._node;
+    }
+
+    bool operator!=(const _Self& other) const
+    {
+        return !(*this == other);
+    }
 };
 
 
@@ -164,15 +192,52 @@ private:
     typedef const _Rb_tree_node_structure* _Base_ptr;
     typedef const _Rb_tree_node<Val>* _Link_type;
 
+public:
     _Base_ptr _node;
 
-public:
     _Rb_tree_const_iterator() : _node(NULL) {}
-    _Rb_tree_const_iterator(_Base_ptr node, _Base_ptr end) : _node(node) {}
+    explicit _Rb_tree_const_iterator(_Base_ptr node) : _node(node) {}
+
+    reference operator*() const
+    {
+        return *static_cast<pointer>(static_cast<_Link_type>(_node)->get_value_ptr());
+    }
+
+    pointer operator->() const
+    {
+        return static_cast<pointer>(static_cast<_Link_type>(_node)->get_value_ptr());
+    }
+
+    _Self& operator++()
+    {
+        _node = _node->increment();
+        return *this;
+    }
+
+    bool operator==(const _Self& other) const
+    {
+        return _node == other._node;
+    }
+
+    bool operator!=(const _Self& other) const
+    {
+        return !(*this == other);
+    }
 };
 
 
-template<typename Val, typename Compare = std::less<Val>, typename Alloc = std::allocator<Val> >
+class _ValueCopy
+{
+public:
+    template<typename T>
+    void operator()(T& dest, T& src)
+    {
+        dest = src;
+    }
+};
+
+
+template<typename Val, typename Compare = std::less<Val>, typename Alloc = std::allocator<Val>, typename ValueCopy = _ValueCopy >
 class _Rb_tree
 {
 public:
@@ -181,6 +246,8 @@ public:
     typedef ft::reverse_iterator<iterator> reverse_iterator;
     typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
 
+    typedef Val value_type;
+    typedef Val* value_type_ptr;
     typedef _Rb_tree_node<Val> node_value_type;
     typedef _Rb_tree_node<Val>* node_value_ptr;
     typedef const _Rb_tree_node<Val>* node_value_const_ptr;
@@ -366,7 +433,7 @@ private:
         }
     }
 
-    bool _insert_node(node_ptr add_node)
+    node_ptr _insert_node(node_ptr add_node)
     {
         if (_head == NULL)
         {
@@ -374,7 +441,8 @@ private:
             _head->_color = node_type::_BLACK;
             _end._parent = _head;
             _begin = _head;
-            return true;
+            _node_count += 1;
+            return _head;
         }
         node_ptr node = _head;
         while (true)
@@ -389,7 +457,8 @@ private:
                     _head = _head->get_root();
                     if (node == _end._parent)
                         _end._parent = add_node;
-                    return true;
+                    _node_count += 1;
+                    return add_node;
                 }
                 node = node->_right;
             }
@@ -401,15 +470,16 @@ private:
                     _head = _head->get_root();
                     if (node == _begin)
                         _begin = add_node;
-                    return true;
+                    _node_count += 1;
+                    return add_node;
                 }
                 node = node->_left;
             }
             else
             {
-                *node_value = *add_value;
+                ValueCopy()(*node_value, *add_value);
                 _destroy_and_deallocate(add_node);
-                return false;
+                return node;
             }
         }
     }
@@ -439,6 +509,35 @@ private:
         }
     }
 
+    bool _delete_node(node_ptr node)
+    {
+        if (node == NULL)
+        {
+            return false;
+        }
+        if (node == _begin)
+            _begin = node->increment();
+        if (node == _end._parent)
+            _end._parent = node->decrement();
+        node->delete_node();
+        _node_count -= 1;
+        if (_node_count == 0)
+            _head = NULL;
+        else if (node == _head)
+        {
+            if (_head->_left)
+                _head = _head->_left->get_root();
+            else if (_head->_right)
+                _head = _head->_right->get_root();
+            else if (_head->_parent)
+                _head = _head->_parent->get_root();
+        }
+        else
+            _head = _head->get_root();
+        _destroy_and_deallocate(node);
+        return true;
+    }
+
 public:
     _Rb_tree(): _alloc(), _comp(), _head(NULL), _begin(NULL), _node_count(0)
     {
@@ -458,7 +557,7 @@ public:
         _init_end_and_begin();
     }
 
-    ~_Rb_tree()
+    virtual ~_Rb_tree()
     {
         _all_destroy_and_deallocate();
     }
@@ -474,13 +573,14 @@ public:
     }
 
     template<typename T>
-    void insert_node(const T& value)
+    pair<iterator, bool> insert_node(const T& value)
     {
         node_ptr node = _init_node(value);
         _end_remove();
-        if (_insert_node(node))
-            _node_count += 1;
+        size_type num = _node_count;
+        node = _insert_node(node);
         _end_put();
+        return pair<iterator, bool>(iterator(node), num != _node_count);
     }
 
     // void insert_node(const node_ptr p)
@@ -494,35 +594,17 @@ public:
     {
         _end_remove();
         node_ptr node = _search_node(value);
-        if (node == NULL)
-        {
-            _end_put();
-            return false;
-        }
-        if (node == _begin)
-            _begin = node->increment();
-        if (node == _end._parent)
-            _end._parent = node->decrement();
-        node->delete_node();
-        _node_count -= 1;
-        if (_node_count == 0)
-            _head = NULL;
-        else if (node == _head)
-        {
-            if (_head->_left)
-                _head = _head->_left->get_root();
-            else if (_head->_right)
-                _head = _head->_right->get_root();
-            else if (_head->_parent)
-                _head = _head->_parent->get_root();
-            else
-                throw std::runtime_error("_head is isolated.");
-        }
-        else
-            _head = _head->get_root();
-        _destroy_and_deallocate(node);
+        bool delete_or_not = _delete_node(node);
         _end_put();
-        return true;
+        return delete_or_not;
+    }
+
+    bool delete_node(iterator pos)
+    {
+        _end_remove();
+        bool delete_or_not = _delete_node(pos._node);
+        _end_put();
+        return delete_or_not;
     }
 
     node_value_ptr get_min_node()
