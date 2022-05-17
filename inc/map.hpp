@@ -51,7 +51,7 @@ private:
             return this->comp(lhs.first, rhs.first);
         }
 
-        Compare& get_key_compare() const
+        const Compare& get_key_compare() const
         {
             return this->comp;
         }
@@ -79,14 +79,63 @@ public:
 
     map() : _tree(Compare()) {};
 
+    explicit map(const Compare& comp, const Alloc& alloc = Alloc())
+        : _tree(comp, alloc) {}
+
+    template<class It>
+    map(It start, It last, const Compare& comp = Compare(), const Alloc& alloc = Alloc())
+        : _tree(start, last, comp, alloc) {}
+
+    map(const map& other)
+        : _tree(other._tree) {}
+
+    allocator_type get_allocator() const
+    {
+        return _tree._alloc;
+    }
+
+    T& at(const Key& key)
+    {
+        try
+        {
+            return _tree.template search_node<key_type, mapped_type, Compare>(key);
+        }
+        catch(const std::exception& e)
+        {
+            throw std::out_of_range("map::at");
+        }
+    }
+
+    const T& at(const Key& key) const
+    {
+        try
+        {
+            return _tree.template search_node<key_type, mapped_type, Compare>(key);
+        }
+        catch(const std::exception& e)
+        {
+            throw std::out_of_range("map::at");
+        }
+    }
+
     iterator begin()
     {
         return iterator(_tree._begin);
     }
 
+    const_iterator begin() const
+    {
+        return const_iterator(_tree._begin);
+    }
+
     iterator end()
     {
         return iterator(&(_tree._end));
+    }
+
+    const_iterator end() const
+    {
+        return const_iterator(&(_tree._end));
     }
 
     reverse_iterator rbegin()
@@ -107,6 +156,11 @@ public:
     void erase(iterator pos)
     {
         _tree.delete_node(pos);
+    }
+
+    key_compare key_comp() const
+    {
+        return _tree._comp.get_key_compare();
     }
 };
 

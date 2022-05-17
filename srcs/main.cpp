@@ -2070,6 +2070,21 @@ void vector_test()
     }
 }
 
+class MapTest
+{
+private:
+    ft::pair<const int, double> data;
+    Tester tester;
+public:
+    MapTest() : data(0, 0) {tester.print("construct:", data.first, data.second);}
+    MapTest(int x, double y) : data(x, y) {tester.print("construct:", data.first, data.second);}
+    MapTest(const MapTest& temp) : data(temp.data) {tester.print("construct:", data.first, data.second);}
+    MapTest& operator=(const MapTest& temp) {this->data.second = temp.data.second; return *this;}
+    ~MapTest() {tester.print("destruct:", data.first, data.second);}
+
+    ft::pair<const int, double> get_data() const {return data;}
+};
+
 void map_test()
 {
     Tester tester;
@@ -2351,6 +2366,128 @@ void map_test()
             typeid(ft::map<int, char>::value_compare::first_argument_type) == typeid(ft::map<int, char>::value_type), "ft::map<int, char>::value_type", "other");
         tester.if_print("value_compare::result_type:",
             typeid(ft::map<int, char>::value_compare::second_argument_type) == typeid(ft::map<int, char>::value_type), "ft::map<int, char>::value_type", "other");
+    }
+    tester.print("");
+    tester.print("construct and operator= test");
+    {
+        tester.print("ft::map<int, double> ma;");
+        ft::map<int, double> ma;
+        tester.print("ma.insert(ft::pair<int, double>(1, 1.5));");
+        ma.insert(ft::pair<int, double>(1, 1.5));
+        tester.print("ma.insert(ft::pair<int, double>(3, 3.5));");
+        ma.insert(ft::pair<int, double>(3, 3.5));
+        tester.print("for (ft::map<int, double>::iterator iter = ma.begin(); iter != ma.end(); ++iter)...");
+        for (ft::map<int, double>::iterator iter = ma.begin(); iter != ma.end(); ++iter)
+            tester.print("index, value:", iter->first, iter->second);
+    }
+    tester.print("");
+    {
+        tester.print("std::greater<int> comp = std::greater<int>();");
+        std::greater<int> comp = std::greater<int>();
+        tester.print("ft::map<int, double, std::greater<int> > ma(comp);");
+        ft::map<int, double, std::greater<int> > ma(comp);
+        tester.print("ma.insert(ft::pair<int, double>(1, 1.5));");
+        ma.insert(ft::pair<int, double>(1, 1.5));
+        tester.print("ma.insert(ft::pair<int, double>(3, 3.5));");
+        ma.insert(ft::pair<int, double>(3, 3.5));
+        tester.print("for (ft::map<int, double>::iterator iter = ma.begin(); iter != ma.end(); ++iter)...");
+        for (ft::map<int, double>::iterator iter = ma.begin(); iter != ma.end(); ++iter)
+            tester.print("index, value:", iter->first, iter->second);
+    }
+    tester.print("");
+    {
+        tester.print("std::greater<int> comp = std::greater<int>();");
+        std::greater<int> comp = std::greater<int>();
+        tester.print("std::allocator<ft::pair<const int, double> > allocator;");
+        std::allocator<ft::pair<const int, double> > allocator;
+        tester.print("ft::map<int, double, std::greater<int>, std::allocator<ft::pair<const int, double> > > ma(comp, allocator);");
+        ft::map<int, double, std::greater<int>, std::allocator<ft::pair<const int, double> > > ma(comp, allocator);
+        tester.print("ma.insert(ft::pair<int, double>(1, 1.5));");
+        ma.insert(ft::pair<int, double>(1, 1.5));
+        tester.print("ma.insert(ft::pair<int, double>(3, 3.5));");
+        ma.insert(ft::pair<int, double>(3, 3.5));
+        tester.print("for (ft::map<int, double>::iterator iter = ma.begin(); iter != ma.end(); ++iter)...");
+        for (ft::map<int, double>::iterator iter = ma.begin(); iter != ma.end(); ++iter)
+            tester.print("index, value:", iter->first, iter->second);
+
+        tester.print("ft::map<int, double> copy_ma(ma.begin(), ma.end());");
+        ft::map<int, double> copy_ma(ma.begin(), ma.end());
+        tester.print("for (ft::map<int, double>::iterator iter = copy_ma.begin(); iter != copy_ma.end(); ++iter)...");
+        for (ft::map<int, double>::iterator iter = copy_ma.begin(); iter != copy_ma.end(); ++iter)
+            tester.print("index, value:", iter->first, iter->second);
+
+        tester.print("ft::map<int, double, std::greater<int>, std::allocator<ft::pair<const int, double> > > copy2_ma(ma);");
+        ft::map<int, double, std::greater<int>, std::allocator<ft::pair<const int, double> > > copy2_ma(ma);
+        tester.print("for (ft::map<int, double>::iterator iter = copy2_ma.begin(); iter != copy2_ma.end(); ++iter)...");
+        for (ft::map<int, double>::iterator iter = copy2_ma.begin(); iter != copy2_ma.end(); ++iter)
+            tester.print("index, value:", iter->first, iter->second);
+
+        tester.print("ft::map<int, double, std::greater<int>, std::allocator<ft::pair<const int, double> > > copy3_ma;");
+        ft::map<int, double, std::greater<int>, std::allocator<ft::pair<const int, double> > > copy3_ma;
+        tester.print("copy3_ma = ma;");
+        copy3_ma = ma;
+        tester.print("for (ft::map<int, double>::iterator iter = copy3_ma.begin(); iter != copy3_ma.end(); ++iter)...");
+        for (ft::map<int, double>::iterator iter = copy3_ma.begin(); iter != copy3_ma.end(); ++iter)
+            tester.print("index, value:", iter->first, iter->second);
+    }
+    tester.print("");
+    tester.print("get_allocator test");
+    {
+        tester.print("ft::map<int, double> ma;");
+        ft::map<int, double> ma;
+        tester.print("ft::map<int, double>::allocator_type allocator = ma.get_allocator();");
+        ft::map<int, double>::allocator_type allocator = ma.get_allocator();
+        tester.print("ft::pair<const int, double>* data = allocator.allocate(1);");
+        ft::pair<const int, double>* data = allocator.allocate(1);
+        tester.print("allocator.construct(data, ft::pair<const int, double>(1, 1.5));");
+        allocator.construct(data, ft::pair<const int, double>(1, 1.5));
+        tester.print("data index, value:", data->first, data->second);
+        tester.print("allocator.destroy(data);");
+        allocator.destroy(data);
+        tester.print("allocator.deallocate(data, 1);");
+        allocator.deallocate(data, 1);
+    }
+    tester.print("");
+    tester.print("at test");
+    {
+        tester.print("ft::map<int, double> ma;");
+        ft::map<int, double> ma;
+        tester.print("ma.insert(ft::pair<int, double>(1, 1.5));");
+        ma.insert(ft::pair<int, double>(1, 1.5));
+        tester.print("ma.insert(ft::pair<int, double>(3, 3.5));");
+        ma.insert(ft::pair<int, double>(3, 3.5));
+        tester.print("ma.at(1):", ma.at(1));
+        tester.print("ma.at(3):", ma.at(3));
+        try
+        {
+            tester.print("ma.at(2)", ma.at(2));
+        }
+        catch(const std::exception& e)
+        {
+            tester.print("ma.at(2):", e.what());
+        }
+
+        tester.print("const ft::map<int, double> ma_copy(ma);");
+        const ft::map<int, double> ma_copy(ma);
+        tester.print("ma_copy.at(1):", ma_copy.at(1));
+        tester.print("ma_copy.at(3):", ma_copy.at(3));
+        try
+        {
+            tester.print("ma_copy.at(2):", ma_copy.at(2));
+        }
+        catch(const std::exception& e)
+        {
+            tester.print("ma_copy.at(2):", e.what());
+        }
+    }
+    // tester.print("");
+    // tester.print("key_comp test");
+    {
+        // ft::map<char, int, std::less<char>> ma;
+        // ft::pair<const char, int> a('a', 1);
+        // ft::pair<const char, int> b('b', 2);
+        // ft::pair<const char, int> c('c', 3);
+        // ma.key_comp()
     }
 }
 

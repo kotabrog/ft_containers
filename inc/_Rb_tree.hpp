@@ -490,6 +490,15 @@ private:
         }
     }
 
+    template<class It>
+    void _copy(It start, It last)
+    {
+        for (; start != last; ++start)
+        {
+            insert_node(*start);
+        }
+    }
+
     node_ptr _insert_node(node_ptr add_node)
     {
         if (_head == NULL)
@@ -538,6 +547,60 @@ private:
                 _destroy_and_deallocate(add_node);
                 return node;
             }
+        }
+    }
+
+    template <class Key, typename keyCompare>
+    node_ptr _search_node(const Key& key)
+    {
+        const keyCompare& comp = _comp.get_key_compare();
+        if (_head == NULL)
+            return NULL;
+        node_ptr node = _head;
+        while (true)
+        {
+            Val* node_value = static_cast<Val*>(node->get_value_ptr());
+            if (comp(node_value->first, key))
+            {
+                if (node->_right == NULL)
+                    return NULL;
+                node = node->_right;
+            }
+            else if (comp(key, node_value->first))
+            {
+                if (node->_left == NULL)
+                    return NULL;
+                node = node->_left;
+            }
+            else
+                return node;
+        }
+    }
+
+    template <class Key, typename keyCompare>
+    node_const_ptr _search_node(const Key& key) const
+    {
+        const keyCompare& comp = _comp.get_key_compare();
+        if (_head == NULL || _head == &(_end))
+            return NULL;
+        node_ptr node = _head;
+        while (true)
+        {
+            Val* node_value = static_cast<Val*>(node->get_value_ptr());
+            if (comp(node_value->first, key))
+            {
+                if (node->_right == NULL || node->_right == &(_end))
+                    return NULL;
+                node = node->_right;
+            }
+            else if (comp(key, node_value->first))
+            {
+                if (node->_left == NULL || node->_left == &(_end))
+                    return NULL;
+                node = node->_left;
+            }
+            else
+                return node;
         }
     }
 
@@ -613,11 +676,32 @@ public:
         _init_end_and_begin();
     }
 
+    template<class It>
+    _Rb_tree(It start, It last, const Compare& comp = Compare(), const Alloc& alloc = Alloc())
+        : _alloc(alloc), _comp(comp), _head(NULL), _begin(NULL), _node_count(0)
+    {
+        _init_end_and_begin();
+        _copy(start, last);
+    }
+
     _Rb_tree(const _Rb_tree& other)
-        : _alloc(other._alloc), _comp(), _head(NULL), _begin(NULL), _node_count(other._node_count)
+        : _alloc(other._alloc), _comp(other._comp), _head(NULL), _begin(NULL), _node_count(other._node_count)
     {
         _copy(other._head, &_head, &(other._end));
         _init_end_and_begin();
+    }
+
+    _Rb_tree& operator=(const _Rb_tree& other)
+    {
+        if (this != &other)
+        {
+            node_ptr head_node = NULL;
+            _copy(other._head, &head_node, &(other._end));
+            _all_destroy_and_deallocate();
+            _head = head_node;
+            _init_end_and_begin();
+        }
+        return *this;
     }
 
     virtual ~_Rb_tree()
@@ -668,6 +752,36 @@ public:
         bool delete_or_not = _delete_node(pos._node);
         _end_put();
         return delete_or_not;
+    }
+
+    template <class Key, class V, class KeyCompare>
+    V& search_node(const Key& key)
+    {
+        _end_remove();
+        node_ptr node = _search_node<Key, KeyCompare>(key);
+        _end_put();
+        if (node == NULL)
+            throw std::out_of_range("_Rb_tree::search_node");
+        return static_cast<Val*>(node->get_value_ptr())->second;
+    }
+
+    template <class Key, class V, class KeyCompare>
+    const V& search_node(const Key& key) const
+    {
+        node_const_ptr node = _search_node<Key, KeyCompare>(key);
+        if (node == NULL)
+            throw std::out_of_range("_Rb_tree::search_node");
+        return static_cast<const Val*>(node->get_value_ptr())->second;
+    }
+
+    iterator search_node(const Val& value)
+    {
+        _end_remove();
+        node_ptr node = _search_node(value);
+        _end_put();
+        if (node == NULL)
+            throw std::out_of_range("_Rb_tree::search_node");
+        return iterator(node);
     }
 
     node_value_ptr get_min_node()
