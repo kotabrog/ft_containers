@@ -2480,14 +2480,847 @@ void map_test()
             tester.print("ma_copy.at(2):", e.what());
         }
     }
-    // tester.print("");
-    // tester.print("key_comp test");
+    tester.print("");
+    tester.print("operator[] test");
     {
-        // ft::map<char, int, std::less<char>> ma;
-        // ft::pair<const char, int> a('a', 1);
-        // ft::pair<const char, int> b('b', 2);
-        // ft::pair<const char, int> c('c', 3);
-        // ma.key_comp()
+        tester.print("ft::map<int, double> ma;");
+        ft::map<int, double> ma;
+        tester.print("ma.insert(ft::pair<int, double>(1, 1.5));");
+        ma.insert(ft::pair<int, double>(1, 1.5));
+        tester.print("ma.insert(ft::pair<int, double>(3, 3.5));");
+        ma.insert(ft::pair<int, double>(3, 3.5));
+        tester.print("ma[1]:", ma[1]);
+        tester.print("ma[3]:", ma[3]);
+        tester.print("ma[2]", ma[2]);
+        tester.print("ma[1] = 5;");
+        ma[1] = 5;
+        tester.print("for (ft::map<int, double>::iterator iter = ma.begin(); iter != ma.end(); ++iter)...");
+        for (ft::map<int, double>::iterator iter = ma.begin(); iter != ma.end(); ++iter)
+            tester.print("index, value:", iter->first, iter->second);
+    }
+    tester.print("");
+    tester.print("begin, end test");
+    {
+        tester.print("ft::map<int, double> ma;");
+        ft::map<int, double> ma;
+        tester.if_print("ma.begin() == ma.end():", ma.begin() == ma.end());
+
+        tester.print("ma.insert(ft::pair<int, double>(1, 1.5));");
+        ma.insert(ft::pair<int, double>(1, 1.5));
+        tester.print("ma.insert(ft::pair<int, double>(3, 3.5));");
+        ma.insert(ft::pair<int, double>(3, 3.5));
+
+        tester.print("for (ft::map<int, double>::iterator iter = ma.begin(); iter != ma.end(); ++iter)...");
+        for (ft::map<int, double>::iterator iter = ma.begin(); iter != ma.end(); ++iter)
+            tester.print("index, value:", iter->first, iter->second);
+
+        tester.print("for end to begin...");
+        for (ft::map<int, double>::iterator iter = ma.end();;)
+        {
+            if (iter == ma.begin())
+                break;
+            --iter;
+            tester.print("index, value:", iter->first, iter->second);
+        }
+
+        tester.print("const ft::map<int, double> const_empty_ma;");
+        const ft::map<int, double> const_empty_ma;
+        tester.if_print("const_empty_ma.begin() == const_empty_ma.end():", const_empty_ma.begin() == const_empty_ma.end());
+
+        tester.print("const ft::map<int, double> const_ma(ma);");
+        const ft::map<int, double> const_ma(ma);
+
+        tester.print("for (ft::map<int, double>::const_iterator iter = const_ma.begin(); iter != const_ma.end(); ++iter)...");
+        for (ft::map<int, double>::const_iterator iter = const_ma.begin(); iter != const_ma.end(); ++iter)
+            tester.print("index, value:", iter->first, iter->second);
+
+        tester.print("for end to begin...");
+        for (ft::map<int, double>::const_iterator iter = const_ma.end();;)
+        {
+            if (iter == const_ma.begin())
+                break;
+            --iter;
+            tester.print("index, value:", iter->first, iter->second);
+        }
+    }
+    tester.print("");
+    tester.print("rbegin, rend test");
+    {
+        tester.print("ft::map<int, double> ma;");
+        ft::map<int, double> ma;
+        tester.if_print("ma.rbegin() == ma.rend():", ma.rbegin() == ma.rend());
+
+        tester.print("ma.insert(ft::pair<int, double>(1, 1.5));");
+        ma.insert(ft::pair<int, double>(1, 1.5));
+        tester.print("ma.insert(ft::pair<int, double>(3, 3.5));");
+        ma.insert(ft::pair<int, double>(3, 3.5));
+
+        tester.print("for (ft::map<int, double>::reverse_iterator iter = ma.begin(); iter != ma.end(); ++iter)...");
+        for (ft::map<int, double>::reverse_iterator iter = ma.rbegin(); iter != ma.rend(); ++iter)
+            tester.print("index, value:", iter->first, iter->second);
+
+        tester.print("for end to begin...");
+        for (ft::map<int, double>::reverse_iterator iter = ma.rend();;)
+        {
+            if (iter == ma.rbegin())
+                break;
+            --iter;
+            tester.print("index, value:", iter->first, iter->second);
+        }
+
+        tester.print("const ft::map<int, double> const_empty_ma;");
+        const ft::map<int, double> const_empty_ma;
+        tester.if_print("const_empty_ma.begin() == const_empty_ma.end():", const_empty_ma.rbegin() == const_empty_ma.rend());
+
+        tester.print("const ft::map<int, double> const_ma(ma);");
+        const ft::map<int, double> const_ma(ma);
+
+        tester.print("for (ft::map<int, double>::const_reverse_iterator iter = const_ma.rbegin(); iter != const_ma.rend(); ++iter)...");
+        for (ft::map<int, double>::const_reverse_iterator iter = const_ma.rbegin(); iter != const_ma.rend(); ++iter)
+            tester.print("index, value:", iter->first, iter->second);
+
+        tester.print("for rend to rbegin...");
+        for (ft::map<int, double>::const_reverse_iterator iter = const_ma.rend();;)
+        {
+            if (iter == const_ma.rbegin())
+                break;
+            --iter;
+            tester.print("index, value:", iter->first, iter->second);
+        }
+    }
+    tester.print("");
+    tester.print("empty test");
+    {
+        tester.print("ft::map<int, double> ma;");
+        ft::map<int, double> ma;
+        tester.if_print("ma.empty():", ma.empty());
+        tester.print("ma.insert(ft::pair<int, double>(1, 1.5));");
+        ma.insert(ft::pair<int, double>(1, 1.5));
+        tester.if_print("ma.empty():", ma.empty());
+
+        tester.print("const ft::map<int, double> const_empty_ma;");
+        const ft::map<int, double> const_empty_ma;
+        tester.if_print("const_empty_ma.empty():", const_empty_ma.empty());
+
+        tester.print("const ft::map<int, double> const_ma(ma);");
+        const ft::map<int, double> const_ma(ma);
+        tester.if_print("const_ma.empty():", const_ma.empty());
+    }
+    tester.print("");
+    tester.print("size test");
+    {
+        tester.print("ft::map<int, double> ma;");
+        ft::map<int, double> ma;
+        tester.print("ma.size():", ma.size());
+
+        tester.print("insert (i, -i) i = 0 to 1000");
+        for (int i = 0; i < 10000; ++i)
+            ma.insert(ft::pair<const int, double>(i, -i));
+
+        tester.print("ma.size():", ma.size());
+
+        tester.print("const ft::map<int, double> ec_ma;");
+        const ft::map<int, double> ec_ma;
+        tester.print("ma.size():", ec_ma.size());
+
+        tester.print("const ft::map<int, double> c_ma(ma);");
+        const ft::map<int, double> c_ma(ma);
+        tester.print("ma.size():", c_ma.size());
+    }
+    tester.print("");
+    tester.print("max_size test");
+    {
+        // Commented out because the values do not match
+        tester.print("ft::map<int, char> ma;");
+        ft::map<int, char> ma;
+        tester.if_print("ma.max_size():", ma.max_size());
+        // tester.print("ma.max_size():", ma.max_size());
+
+        tester.print("ft::map<int, double> ma2;");
+        ft::map<int, double> ma2;
+        tester.if_print("ma.max_size():", ma2.max_size());
+        // tester.print("ma.max_size():", ma2.max_size());
+
+        tester.print("ft::map<int, char> c_ma;");
+        ft::map<int, char> c_ma;
+        tester.if_print("ma.max_size():", c_ma.max_size());
+        // tester.print("ma.max_size():", c_ma.max_size());
+    }
+    tester.print("");
+    tester.print("max_size test");
+    {
+        tester.print("ft::map<int, double> ma;");
+        ft::map<int, double> ma;
+
+        tester.print("insert (i, -i) i = 0 to 1000");
+        for (int i = 0; i < 10000; ++i)
+            ma.insert(ft::pair<const int, double>(i, -i));
+
+        tester.print("ma.size():", ma.size());
+        ma.clear();
+        tester.print("ma.size():", ma.size());
+
+        tester.print("for (ft::map<int, double>::iterator iter = ma.begin(); iter != ma.end(); ++iter)...");
+        for (ft::map<int, double>::iterator iter = ma.begin(); iter != ma.end(); ++iter)
+            tester.print("index, value:", iter->first, iter->second);
+    }
+    tester.print("");
+    tester.print("insert test");
+    {
+        tester.print("ft::map<int, double> ma;");
+        ft::map<int, double> ma;
+
+        tester.print("ft::pair<ft::map<int, double>::iterator, bool> iter_and_bool = ma.insert(ft::pair<const int, double>(3, 1));");
+        ft::pair<ft::map<int, double>::iterator, bool> iter_and_bool = ma.insert(ft::pair<const int, double>(3, 1));
+        tester.print("iter_and_bool.first:", iter_and_bool.first->first, iter_and_bool.first->second);
+        tester.if_print("iter_and_bool.second:", iter_and_bool.second);
+
+        tester.print("iter_and_bool = ma.insert(ft::pair<const int, double>(3, 1));");
+        iter_and_bool = ma.insert(ft::pair<const int, double>(3, 1));
+        tester.print("iter_and_bool.first:", iter_and_bool.first->first, iter_and_bool.first->second);
+        tester.if_print("iter_and_bool.second:", iter_and_bool.second);
+
+        tester.print("ft::map<int, double>::iterator insert_iter = ma.insert(ma.begin(), ft::pair<const int, double>(2, 1));");
+        ft::map<int, double>::iterator insert_iter = ma.insert(ma.begin(), ft::pair<const int, double>(2, 1));
+        tester.print("insert_iter:", insert_iter->first, insert_iter->second);
+
+        tester.print("insert_iter = ma.insert(ma.begin(), ft::pair<const int, double>(2, 1));");
+        insert_iter = ma.insert(ma.begin(), ft::pair<const int, double>(2, 1));
+        tester.print("insert_iter:", insert_iter->first, insert_iter->second);
+
+        tester.print("insert_iter = ma.insert(ma.end(), ft::pair<const int, double>(2, 1));");
+        insert_iter = ma.insert(ma.end(), ft::pair<const int, double>(4, 1));
+        tester.print("insert_iter:", insert_iter->first, insert_iter->second);
+
+        tester.print("ft::vector<ft::pair<int, double>> vec;");
+        ft::vector<ft::pair<int, double> > vec;
+        tester.print("vec.push_back(ft::pair<int, double>(-1, 2));");
+        vec.push_back(ft::pair<int, double>(-1, 2));
+        tester.print("vec.push_back(ft::pair<int, double>(-3, 2));");
+        vec.push_back(ft::pair<int, double>(-3, 2));
+        tester.print("vec.push_back(ft::pair<int, double>(-2, 2));");
+        vec.push_back(ft::pair<int, double>(-2, 2));
+        tester.print("vec.push_back(ft::pair<int, double>(-2, 2));");
+        vec.push_back(ft::pair<int, double>(-2, 3));
+        tester.print("ma.insert(vec.begin(), vec.end());");
+        ma.insert(vec.begin(), vec.end());
+
+        tester.print("ft::map<int, double> ma2;");
+        ft::map<int, double> ma2;
+        tester.print("ma2[0] = 2;");
+        ma2[0] = 2;
+        tester.print("ma2[10] = 2;");
+        ma2[10] = 2;
+        tester.print("ma2[100] = 2;");
+        ma2[100] = 2;
+        tester.print("ma.insert(ma2.begin(), ma2.end());");
+        ma.insert(ma2.begin(), ma2.end());
+
+        tester.print("for (ft::map<int, double>::iterator iter = ma.begin(); iter != ma.end(); ++iter)...");
+        for (ft::map<int, double>::iterator iter = ma.begin(); iter != ma.end(); ++iter)
+            tester.print("index, value:", iter->first, iter->second);
+
+        // The following is commented out due to error
+        // tester.print("ft::map<int, double> ma2;");
+        // ft::map<int, double> ma2;
+        // ma.insert(ma2.end(), ft::pair<const int, double>(2, 1));
+    }
+    tester.print("");
+    {
+        tester.print("ft::map<int, double> ma;");
+        ft::map<int, double> ma;
+
+        tester.print("test with 2000 node insert(const value_type& value)");
+        for (int i = 0; i < 1000; ++i)
+        {
+            ma.insert(ft::pair<int, double>((i % 2 ? -1 : 1) * i * 2, i));
+        }
+        for (int i = 0; i < 1000; ++i)
+        {
+            ma.insert(ft::pair<int, double>((i % 2 ? -1 : 1) * (i * 2 + 1), i));
+        }
+        tester.print("ma.size():", ma.size());
+        tester.print("test to see if it is sorted");
+        ft::map<int, double>::iterator pre_iter;
+        bool flag = true;
+        for (ft::map<int, double>::iterator iter = ma.begin(); iter != ma.end(); ++iter)
+        {
+            if (iter != ma.begin())
+            {
+                if (pre_iter->first >= iter->first)
+                {
+                    flag = false;
+                    break;
+                }
+            }
+            pre_iter = iter;
+        }
+        if (flag)
+            tester.print("Success");
+        else
+            tester.print("Failure");
+    }
+    tester.print("");
+    {
+        tester.print("ft::map<int, double> ma;");
+        ft::map<int, double> ma;
+
+        tester.print("test with 2000 node insert(iterator hint, const value_type& value)");
+        ft::map<int, double>::iterator pre_iter;
+        for (int i = 0; i < 1000; ++i)
+        {
+            if (i != 0)
+                pre_iter = ma.insert(pre_iter, ft::pair<int, double>((i % 2 ? -1 : 1) * i * 2, i));
+            else
+                pre_iter = ma.insert(ma.end(), ft::pair<int, double>((i % 2 ? -1 : 1) * i * 2, i));
+        }
+        for (int i = 0; i < 1000; ++i)
+        {
+            if (i != 0)
+                pre_iter = ma.insert(pre_iter, ft::pair<int, double>((i % 2 ? -1 : 1) * (i * 2 + 1), i));
+            else
+                pre_iter = ma.insert(ma.end(), ft::pair<int, double>((i % 2 ? -1 : 1) * (i * 2 + 1), i));
+        }
+        tester.print("ma.size():", ma.size());
+        tester.print("test to see if it is sorted");
+        bool flag = true;
+        for (ft::map<int, double>::iterator iter = ma.begin(); iter != ma.end(); ++iter)
+        {
+            if (iter != ma.begin())
+            {
+                if (pre_iter->first >= iter->first)
+                {
+                    flag = false;
+                    break;
+                }
+            }
+            pre_iter = iter;
+        }
+        if (flag)
+            tester.print("Success");
+        else
+            tester.print("Failure");
+    }
+    tester.print("");
+    {
+        tester.print("ft::map<int, double> ma;");
+        ft::map<int, double> ma;
+
+        tester.print("ma[0] = 2;");
+        ma[0] = 2;
+        tester.print("ma[2] = 4;");
+        ma[2] = 4;
+
+        tester.print("ft::map<int, double>::iterator begin = ma.begin();");
+        ft::map<int, double>::iterator begin = ma.begin();
+        tester.print("ft::map<int, double>::iterator end = ma.end();");
+        ft::map<int, double>::iterator end = ma.end();
+
+        tester.print("ma.insert(ft::pair<int, double>(4, 8));");
+        ma.insert(ft::pair<int, double>(4, 8));
+
+        tester.print("for (ft::map<int, double>::iterator iter = begin; iter != end; ++iter)...");
+        for (ft::map<int, double>::iterator iter = begin; iter != end; ++iter)
+            tester.print("index, value:", iter->first, iter->second);
+    }
+    tester.print("");
+    tester.print("erase test");
+    {
+        tester.print("ft::map<int, double> ma;");
+        ft::map<int, double> ma;
+
+        tester.print("insert 0~4");
+        ma[0] = 1;
+        ma[1] = 2;
+        ma[2] = 3;
+        ma[3] = 4;
+        ma[4] = 5;
+        tester.print("for (ft::map<int, double>::iterator iter = ma.begin(); iter != ma.end(); ++iter)...");
+        for (ft::map<int, double>::iterator iter = ma.begin(); iter != ma.end(); ++iter)
+            tester.print("index, value:", iter->first, iter->second);
+
+        tester.print("ma.erase(ma.begin());");
+        ma.erase(ma.begin());
+        tester.print("for (ft::map<int, double>::iterator iter = ma.begin(); iter != ma.end(); ++iter)...");
+        for (ft::map<int, double>::iterator iter = ma.begin(); iter != ma.end(); ++iter)
+            tester.print("index, value:", iter->first, iter->second);
+
+        tester.print("ma.erase(3);");
+        tester.if_print("removed:", ma.erase(3));
+        tester.print("for (ft::map<int, double>::iterator iter = ma.begin(); iter != ma.end(); ++iter)...");
+        for (ft::map<int, double>::iterator iter = ma.begin(); iter != ma.end(); ++iter)
+            tester.print("index, value:", iter->first, iter->second);
+
+        tester.print("ma.erase(0);");
+        tester.if_print("removed:", ma.erase(0));
+
+        tester.print("ma.erase(++(ma.begin()), ma.end());");
+        ma.erase(++(ma.begin()), ma.end());
+        tester.print("for (ft::map<int, double>::iterator iter = ma.begin(); iter != ma.end(); ++iter)...");
+        for (ft::map<int, double>::iterator iter = ma.begin(); iter != ma.end(); ++iter)
+            tester.print("index, value:", iter->first, iter->second);
+
+        tester.print("ma.erase(ma.begin(), ma.begin());");
+        ma.erase(ma.begin(), ma.begin());
+        tester.print("for (ft::map<int, double>::iterator iter = ma.begin(); iter != ma.end(); ++iter)...");
+        for (ft::map<int, double>::iterator iter = ma.begin(); iter != ma.end(); ++iter)
+            tester.print("index, value:", iter->first, iter->second);
+    }
+    tester.print("");
+    {
+        tester.print("ft::map<int, double> ma;");
+        ft::map<int, double> ma;
+
+        tester.print("ma[0] = 2;");
+        ma[0] = 2;
+        tester.print("ma[2] = 4;");
+        ma[2] = 4;
+        tester.print("ma[2] = 4;");
+        ma[4] = 8;
+
+        tester.print("ft::map<int, double>::iterator begin = ma.begin();");
+        ft::map<int, double>::iterator begin = ma.begin();
+        tester.print("ft::map<int, double>::iterator end = ma.end();");
+        ft::map<int, double>::iterator end = ma.end();
+
+        tester.print("ma.erase(2);");
+        ma.erase(2);
+
+        tester.print("for (ft::map<int, double>::iterator iter = begin; iter != end; ++iter)...");
+        for (ft::map<int, double>::iterator iter = begin; iter != end; ++iter)
+            tester.print("index, value:", iter->first, iter->second);
+    }
+    tester.print("");
+    tester.print("swap test");
+    {
+        tester.print("ft::map<int, double> ma1;");
+        ft::map<int, double> ma1;
+        tester.print("ft::map<int, double> ma2;");
+        ft::map<int, double> ma2;
+
+        ma1[0] = 2;
+        ma1[2] = 3;
+        ma1[4] = 4;
+        ma1[6] = 5;
+        ma2[1] = 2;
+        ma2[3] = 3;
+        ma2[5] = 4;
+        ma2[6] = 5;
+
+        tester.print("for (ft::map<int, double>::iterator iter = ma1.begin(); iter != ma1.end(); ++iter)...");
+        for (ft::map<int, double>::iterator iter = ma1.begin(); iter != ma1.end(); ++iter)
+            tester.print("index, value:", iter->first, iter->second);
+        tester.print("for (ft::map<int, double>::iterator iter = ma2.begin(); iter != ma2.end(); ++iter)...");
+        for (ft::map<int, double>::iterator iter = ma2.begin(); iter != ma2.end(); ++iter)
+            tester.print("index, value:", iter->first, iter->second);
+        ma1.swap(ma2);
+        tester.print("for (ft::map<int, double>::iterator iter = ma1.begin(); iter != ma1.end(); ++iter)...");
+        for (ft::map<int, double>::iterator iter = ma1.begin(); iter != ma1.end(); ++iter)
+            tester.print("index, value:", iter->first, iter->second);
+        tester.print("for (ft::map<int, double>::iterator iter = ma2.begin(); iter != ma2.end(); ++iter)...");
+        for (ft::map<int, double>::iterator iter = ma2.begin(); iter != ma2.end(); ++iter)
+            tester.print("index, value:", iter->first, iter->second);
+    }
+    tester.print("");
+    tester.print("count test");
+    {
+        tester.print("ft::map<int, double> ma;");
+        ft::map<int, double> ma;
+        ma[0] = 2;
+        ma[2] = 3;
+        ma[4] = 4;
+        ma[6] = 5;
+        tester.print("for (ft::map<int, double>::iterator iter = ma.begin(); iter != ma.end(); ++iter)...");
+        for (ft::map<int, double>::iterator iter = ma.begin(); iter != ma.end(); ++iter)
+            tester.print("index, value:", iter->first, iter->second);
+        tester.if_print("ma.count(2) == 1", ma.count(2) == 1);
+        tester.if_print("ma.count(3) == 0", ma.count(3) == 0);
+
+        tester.print("const ft::map<int, double> ma_copy(ma);");
+        const ft::map<int, double> ma_copy(ma);
+        tester.if_print("ma_copy.count(2) == 1", ma_copy.count(2) == 1);
+        tester.if_print("ma_copy.count(3) == 0", ma_copy.count(3) == 0);
+    }
+    tester.print("");
+    tester.print("find test");
+    {
+        tester.print("ft::map<int, double> ma;");
+        ft::map<int, double> ma;
+
+        ma[0] = 2;
+        ma[2] = 3;
+        ma[4] = 4;
+        ma[6] = 5;
+        tester.print("for (ft::map<int, double>::iterator iter = ma.begin(); iter != ma.end(); ++iter)...");
+        for (ft::map<int, double>::iterator iter = ma.begin(); iter != ma.end(); ++iter)
+            tester.print("index, value:", iter->first, iter->second);
+
+        tester.print("ft::map<int, double>::iterator find_iter = ma.find(2);");
+        ft::map<int, double>::iterator find_iter = ma.find(2);
+        tester.print("find_iter:", find_iter->first, find_iter->second);
+
+        tester.print("find_iter->second = 5;");
+        find_iter->second = 5;
+        tester.print("find_iter:", find_iter->first, find_iter->second);
+
+        tester.print("find_iter = ma.find(3);");
+        find_iter = ma.find(3);
+        tester.if_print("find_iter == ma.end()", find_iter == ma.end());
+
+        tester.print("const ft::map<int, double> copy_ma(ma);");
+        const ft::map<int, double> copy_ma(ma);
+        tester.print("for (ft::map<int, double>::const_iterator iter = copy_ma.begin(); iter != copy_ma.end(); ++iter)...");
+        for (ft::map<int, double>::const_iterator iter = copy_ma.begin(); iter != copy_ma.end(); ++iter)
+            tester.print("index, value:", iter->first, iter->second);
+
+        tester.print("ft::map<int, double>::const_iterator const_iter = copy_ma.find(2);");
+        ft::map<int, double>::const_iterator const_iter = copy_ma.find(2);
+        tester.print("const_iter:", const_iter->first, const_iter->second);
+
+        tester.print("const_iter = copy_ma.find(3);");
+        const_iter = copy_ma.find(3);
+        tester.if_print("const_iter == copy_ma.end()", const_iter == copy_ma.end());
+    }
+    tester.print("");
+    tester.print("equal_range test");
+    {
+        tester.print("ft::map<int, double> ma;");
+        ft::map<int, double> ma;
+
+        ma[0] = 2;
+        ma[2] = 3;
+        ma[4] = 4;
+        ma[6] = 5;
+        tester.print("for (ft::map<int, double>::iterator iter = ma.begin(); iter != ma.end(); ++iter)...");
+        for (ft::map<int, double>::iterator iter = ma.begin(); iter != ma.end(); ++iter)
+            tester.print("index, value:", iter->first, iter->second);
+
+        tester.print("ft::pair<ft::map<int, double>::iterator, ft::map<int, double>::iterator> iter_pair = ma.equal_range(2);");
+        ft::pair<ft::map<int, double>::iterator, ft::map<int, double>::iterator> iter_pair = ma.equal_range(2);
+        for (ft::map<int, double>::iterator iter = iter_pair.first; iter != iter_pair.second; ++iter)
+            tester.print("index, value:", iter->first, iter->second);
+        tester.print("iter_pair.first->second = 6;");
+        iter_pair.first->second = 6;
+
+        tester.print("iter_pair = ma.equal_range(3);");
+        iter_pair = ma.equal_range(3);
+        tester.if_print("iter_pair.first == iter_pair.second", iter_pair.first == iter_pair.second);
+        tester.print("iter_pair.first:", iter_pair.first->first, iter_pair.first->second);
+
+        tester.print("iter_pair = ma.equal_range(100);");
+        iter_pair = ma.equal_range(100);
+        tester.if_print("iter_pair.first == iter_pair.second", iter_pair.first == iter_pair.second);
+        tester.if_print("iter_pair.first == ma.end():", iter_pair.first == ma.end());
+
+        tester.print("const ft::map<int, double> copy_ma(ma);");
+        const ft::map<int, double> copy_ma(ma);
+
+        tester.print("ft::pair<ft::map<int, double>::const_iterator, ft::map<int, double>::const_iterator> const_pair = copy_ma.equal_range(2);");
+        ft::pair<ft::map<int, double>::const_iterator, ft::map<int, double>::const_iterator> const_pair = copy_ma.equal_range(2);
+        for (ft::map<int, double>::const_iterator iter = const_pair.first; iter != const_pair.second; ++iter)
+            tester.print("index, value:", iter->first, iter->second);
+
+        tester.print("const_pair = copy_ma.equal_range(3);");
+        const_pair = copy_ma.equal_range(3);
+        tester.if_print("const_pair.first == const_pair.second", const_pair.first == const_pair.second);
+        tester.print("const_pair.first:", const_pair.first->first, const_pair.first->second);
+
+        tester.print("iter_pair = copy_ma.equal_range(100);");
+        const_pair = copy_ma.equal_range(100);
+        tester.if_print("const_pair.first == const_pair.second", const_pair.first == const_pair.second);
+        tester.if_print("const_pair.first == const_pair.end():", const_pair.first == copy_ma.end());
+    }
+    tester.print("");
+    tester.print("lower_bound test");
+    {
+        tester.print("ft::map<int, double> ma;");
+        ft::map<int, double> ma;
+
+        ma[0] = 2;
+        ma[2] = 3;
+        ma[4] = 4;
+        ma[6] = 5;
+        tester.print("for (ft::map<int, double>::iterator iter = ma.begin(); iter != ma.end(); ++iter)...");
+        for (ft::map<int, double>::iterator iter = ma.begin(); iter != ma.end(); ++iter)
+            tester.print("index, value:", iter->first, iter->second);
+
+        tester.print("ft::map<int, double>::iterator lower_iter = ma.lower_bound(2);");
+        ft::map<int, double>::iterator lower_iter = ma.lower_bound(2);
+        tester.print("index, value:", lower_iter->first, lower_iter->second);
+        tester.print("lower_iter->second = 6;");
+        lower_iter->second = 6;
+
+        tester.print("lower_iter = ma.lower_bound(3);");
+        lower_iter = ma.lower_bound(3);
+        tester.print("index, value:", lower_iter->first, lower_iter->second);
+
+        tester.print("lower_iter = ma.lower_bound(100);");
+        lower_iter = ma.lower_bound(100);
+        tester.if_print("lower_iter == ma.end():", lower_iter == ma.end());
+
+        tester.print("const ft::map<int, double> copy_ma(ma);");
+        const ft::map<int, double> copy_ma(ma);
+
+        tester.print("ft::map<int, double>::const_iterator const_pair = copy_ma.lower_bound(2);");
+        ft::map<int, double>::const_iterator const_iter = copy_ma.lower_bound(2);
+        tester.print("index, value:", const_iter->first, const_iter->second);
+
+        tester.print("const_iter = copy_ma.lower_bound(3);");
+        const_iter = copy_ma.lower_bound(3);
+        tester.print("index, value:", const_iter->first, const_iter->second);
+
+        tester.print("const_iter = copy_ma.lower_bound(100);");
+        const_iter = copy_ma.lower_bound(100);
+        tester.if_print("const_iter == const_iter.end():", const_iter == copy_ma.end());
+    }
+    tester.print("");
+    tester.print("upper_bound test");
+    {
+        tester.print("ft::map<int, double> ma;");
+        ft::map<int, double> ma;
+
+        ma[0] = 2;
+        ma[2] = 3;
+        ma[4] = 4;
+        ma[6] = 5;
+        tester.print("for (ft::map<int, double>::iterator iter = ma.begin(); iter != ma.end(); ++iter)...");
+        for (ft::map<int, double>::iterator iter = ma.begin(); iter != ma.end(); ++iter)
+            tester.print("index, value:", iter->first, iter->second);
+
+        tester.print("ft::map<int, double>::iterator lower_iter = ma.upper_bound(2);");
+        ft::map<int, double>::iterator lower_iter = ma.upper_bound(2);
+        tester.print("index, value:", lower_iter->first, lower_iter->second);
+        tester.print("lower_iter->second = 6;");
+        lower_iter->second = 6;
+
+        tester.print("lower_iter = ma.upper_bound(3);");
+        lower_iter = ma.upper_bound(3);
+        tester.print("index, value:", lower_iter->first, lower_iter->second);
+
+        tester.print("lower_iter = ma.upper_bound(100);");
+        lower_iter = ma.upper_bound(100);
+        tester.if_print("lower_iter == ma.end():", lower_iter == ma.end());
+
+        tester.print("const ft::map<int, double> copy_ma(ma);");
+        const ft::map<int, double> copy_ma(ma);
+
+        tester.print("ft::map<int, double>::const_iterator const_pair = copy_ma.upper_bound(2);");
+        ft::map<int, double>::const_iterator const_iter = copy_ma.upper_bound(2);
+        tester.print("index, value:", const_iter->first, const_iter->second);
+
+        tester.print("const_iter = copy_ma.upper_bound(3);");
+        const_iter = copy_ma.upper_bound(3);
+        tester.print("index, value:", const_iter->first, const_iter->second);
+
+        tester.print("const_iter = copy_ma.upper_bound(100);");
+        const_iter = copy_ma.upper_bound(100);
+        tester.if_print("const_iter == const_iter.end():", const_iter == copy_ma.end());
+    }
+    tester.print("");
+    tester.print("key_comp test");
+    {
+        tester.print("ft::map<char, int, std::greater<char>> ma;");
+        ft::map<char, int, std::greater<char> > ma;
+        tester.print("ft::pair<const char, int> a('a', 2);");
+        ft::pair<const char, int> a('a', 2);
+        tester.print("ft::pair<const char, int> b('b', 0);");
+        ft::pair<const char, int> b('b', 0);
+        tester.print("ft::pair<const char, int> c('c', 4);");
+        ft::pair<const char, int> c('c', 4);
+        tester.if_print("ma.key_comp()(a.first, b.first):", ma.key_comp()(a.first, b.first));
+        tester.if_print("ma.key_comp()(b.first, c.first):", ma.key_comp()(b.first, c.first));
+        tester.if_print("ma.key_comp()(c.first, a.first):", ma.key_comp()(c.first, a.first));
+    }
+    tester.print("");
+    tester.print("value_comp test");
+    {
+        tester.print("ft::map<char, int, std::greater<char>> ma;");
+        ft::map<char, int, std::greater<char> > ma;
+        tester.print("ft::pair<const char, int> a('a', 2);");
+        ft::pair<const char, int> a('a', 2);
+        tester.print("ft::pair<const char, int> b('b', 0);");
+        ft::pair<const char, int> b('b', 0);
+        tester.print("ft::pair<const char, int> c('c', 4);");
+        ft::pair<const char, int> c('c', 4);
+        tester.if_print("ma.value_comp()(a, b):", ma.value_comp()(a, b));
+        tester.if_print("ma.value_comp()(b, c):", ma.value_comp()(b, c));
+        tester.if_print("ma.value_comp()(c, a):", ma.value_comp()(c, a));
+    }
+    tester.print("");
+    tester.print("non member classes test");
+    tester.print("operator==, !=, <, <=, >, >= test");
+    {
+        tester.print("ft::map<int, double, std::greater<int> > ma1;");
+        ft::map<int, double, std::greater<int> > ma1;
+        ma1[0] = 2;
+        ma1[2] = 3;
+        ma1[4] = 4;
+        ma1[6] = 5;
+        tester.print("for (ft::map<int, double, std::greater<int> >::iterator iter = ma1.begin(); iter != ma1.end(); ++iter)...");
+        for (ft::map<int, double, std::greater<int> >::iterator iter = ma1.begin(); iter != ma1.end(); ++iter)
+            tester.print("index, value:", iter->first, iter->second);
+
+        tester.print("ft::map<int, double, std::greater<int> > ma2(ma1);");
+        ft::map<int, double, std::greater<int> > ma2(ma1);
+        tester.print("for (ft::map<int, double, std::greater<int> >::iterator iter = ma2.begin(); iter != ma2.end(); ++iter)...");
+        for (ft::map<int, double, std::greater<int> >::iterator iter = ma2.begin(); iter != ma2.end(); ++iter)
+            tester.print("index, value:", iter->first, iter->second);
+
+        tester.print("ft::map<int, double, std::greater<int> > ma3;");
+        ft::map<int, double, std::greater<int> > ma3;
+        ma3[0] = 2;
+        ma3[3] = 3;
+        ma3[4] = 4;
+        ma3[6] = 5;
+        tester.print("for (ft::map<int, double, std::greater<int> >::iterator iter = ma3.begin(); iter != ma3.end(); ++iter)...");
+        for (ft::map<int, double, std::greater<int> >::iterator iter = ma3.begin(); iter != ma3.end(); ++iter)
+            tester.print("index, value:", iter->first, iter->second);
+
+        tester.print("ft::map<int, double, std::greater<int> > ma4;");
+        ft::map<int, double, std::greater<int> > ma4;
+        ma4[0] = 2;
+        ma4[2] = 3;
+        ma4[4] = 5;
+        ma4[6] = 5;
+        tester.print("for (ft::map<int, double, std::greater<int> >::iterator iter = ma4.begin(); iter != ma4.end(); ++iter)...");
+        for (ft::map<int, double, std::greater<int> >::iterator iter = ma4.begin(); iter != ma4.end(); ++iter)
+            tester.print("index, value:", iter->first, iter->second);
+
+        tester.print("ft::map<int, double, std::greater<int> > ma5(ma1);");
+        const ft::map<int, double, std::greater<int> > ma5(ma1);
+        tester.print("for (ft::map<int, double, std::greater<int> >::const_iterator iter = ma5.begin(); iter != ma5.end(); ++iter)...");
+        for (ft::map<int, double, std::greater<int> >::const_iterator iter = ma5.begin(); iter != ma5.end(); ++iter)
+            tester.print("index, value:", iter->first, iter->second);
+
+        tester.print("ft::map<int, double, std::greater<int> > ma6;");
+        ft::map<int, double, std::greater<int> > ma6;
+        ma6[0] = 2;
+        ma6[2] = 3;
+        ma6[4] = 4;
+        ma6[6] = 5;
+        ma6[7] = 6;
+        tester.print("for (ft::map<int, double, std::greater<int> >::iterator iter = ma6.begin(); iter != ma6.end(); ++iter)...");
+        for (ft::map<int, double, std::greater<int> >::iterator iter = ma6.begin(); iter != ma6.end(); ++iter)
+            tester.print("index, value:", iter->first, iter->second);
+
+        tester.print("ft::map<int, double, std::greater<int> > ma7;");
+        ft::map<int, double, std::greater<int> > ma7;
+        ma7[-1] = 0;
+        ma7[0] = 2;
+        ma7[2] = 3;
+        ma7[4] = 4;
+        ma7[6] = 5;
+        tester.print("for (ft::map<int, double, std::greater<int> >::iterator iter = ma7.begin(); iter != ma7.end(); ++iter)...");
+        for (ft::map<int, double, std::greater<int> >::iterator iter = ma7.begin(); iter != ma7.end(); ++iter)
+            tester.print("index, value:", iter->first, iter->second);
+
+        tester.if_print("ma1 == ma2", ma1 == ma2);
+        tester.if_print("ma1 == ma3", ma1 == ma3);
+        tester.if_print("ma1 == ma4", ma1 == ma4);
+        tester.if_print("ma1 == ma5", ma1 == ma5);
+        tester.if_print("ma1 == ma6", ma1 == ma6);
+        tester.if_print("ma1 == ma7", ma1 == ma7);
+        tester.if_print("ma2 == ma1", ma2 == ma1);
+        tester.if_print("ma3 == ma1", ma3 == ma1);
+        tester.if_print("ma4 == ma1", ma4 == ma1);
+        tester.if_print("ma5 == ma1", ma5 == ma1);
+        tester.if_print("ma6 == ma1", ma6 == ma1);
+        tester.if_print("ma7 == ma1", ma7 == ma1);
+
+        tester.if_print("ma1 != ma2", ma1 != ma2);
+        tester.if_print("ma1 != ma3", ma1 != ma3);
+        tester.if_print("ma1 != ma4", ma1 != ma4);
+        tester.if_print("ma1 != ma5", ma1 != ma5);
+        tester.if_print("ma1 != ma6", ma1 != ma6);
+        tester.if_print("ma1 != ma7", ma1 != ma7);
+        tester.if_print("ma2 != ma1", ma2 != ma1);
+        tester.if_print("ma3 != ma1", ma3 != ma1);
+        tester.if_print("ma4 != ma1", ma4 != ma1);
+        tester.if_print("ma5 != ma1", ma5 != ma1);
+        tester.if_print("ma6 != ma1", ma6 != ma1);
+        tester.if_print("ma7 != ma1", ma7 != ma1);
+
+        tester.if_print("ma1 < ma2", ma1 < ma2);
+        tester.if_print("ma1 < ma3", ma1 < ma3);
+        tester.if_print("ma1 < ma4", ma1 < ma4);
+        tester.if_print("ma1 < ma5", ma1 < ma5);
+        tester.if_print("ma1 < ma6", ma1 < ma6);
+        tester.if_print("ma1 < ma7", ma1 < ma7);
+        tester.if_print("ma2 < ma1", ma2 < ma1);
+        tester.if_print("ma3 < ma1", ma3 < ma1);
+        tester.if_print("ma4 < ma1", ma4 < ma1);
+        tester.if_print("ma5 < ma1", ma5 < ma1);
+        tester.if_print("ma6 < ma1", ma6 < ma1);
+        tester.if_print("ma7 < ma1", ma7 < ma1);
+
+        tester.if_print("ma1 <= ma2", ma1 <= ma2);
+        tester.if_print("ma1 <= ma3", ma1 <= ma3);
+        tester.if_print("ma1 <= ma4", ma1 <= ma4);
+        tester.if_print("ma1 <= ma5", ma1 <= ma5);
+        tester.if_print("ma1 <= ma6", ma1 <= ma6);
+        tester.if_print("ma1 <= ma7", ma1 <= ma7);
+        tester.if_print("ma2 <= ma1", ma2 <= ma1);
+        tester.if_print("ma3 <= ma1", ma3 <= ma1);
+        tester.if_print("ma4 <= ma1", ma4 <= ma1);
+        tester.if_print("ma5 <= ma1", ma5 <= ma1);
+        tester.if_print("ma6 <= ma1", ma6 <= ma1);
+        tester.if_print("ma7 <= ma1", ma7 <= ma1);
+
+        tester.if_print("ma1 > ma2", ma1 > ma2);
+        tester.if_print("ma1 > ma3", ma1 > ma3);
+        tester.if_print("ma1 > ma4", ma1 > ma4);
+        tester.if_print("ma1 > ma5", ma1 > ma5);
+        tester.if_print("ma1 > ma6", ma1 > ma6);
+        tester.if_print("ma1 > ma7", ma1 > ma7);
+        tester.if_print("ma2 > ma1", ma2 > ma1);
+        tester.if_print("ma3 > ma1", ma3 > ma1);
+        tester.if_print("ma4 > ma1", ma4 > ma1);
+        tester.if_print("ma5 > ma1", ma5 > ma1);
+        tester.if_print("ma6 > ma1", ma6 > ma1);
+        tester.if_print("ma7 > ma1", ma7 > ma1);
+
+        tester.if_print("ma1 >= ma2", ma1 >= ma2);
+        tester.if_print("ma1 >= ma3", ma1 >= ma3);
+        tester.if_print("ma1 >= ma4", ma1 >= ma4);
+        tester.if_print("ma1 >= ma5", ma1 >= ma5);
+        tester.if_print("ma1 >= ma6", ma1 >= ma6);
+        tester.if_print("ma1 >= ma7", ma1 >= ma7);
+        tester.if_print("ma2 >= ma1", ma2 >= ma1);
+        tester.if_print("ma3 >= ma1", ma3 >= ma1);
+        tester.if_print("ma4 >= ma1", ma4 >= ma1);
+        tester.if_print("ma5 >= ma1", ma5 >= ma1);
+        tester.if_print("ma6 >= ma1", ma6 >= ma1);
+        tester.if_print("ma7 >= ma1", ma7 >= ma1);
+    }
+    tester.print("swap test");
+    {
+        tester.print("ft::map<int, double> ma1;");
+        ft::map<int, double> ma1;
+        tester.print("ft::map<int, double> ma2;");
+        ft::map<int, double> ma2;
+
+        ma1[0] = 2;
+        ma1[2] = 3;
+        ma1[4] = 4;
+        ma1[6] = 5;
+        ma2[1] = 2;
+        ma2[3] = 3;
+        ma2[5] = 4;
+        ma2[6] = 5;
+
+        tester.print("for (ft::map<int, double>::iterator iter = ma1.begin(); iter != ma1.end(); ++iter)...");
+        for (ft::map<int, double>::iterator iter = ma1.begin(); iter != ma1.end(); ++iter)
+            tester.print("index, value:", iter->first, iter->second);
+        tester.print("for (ft::map<int, double>::iterator iter = ma2.begin(); iter != ma2.end(); ++iter)...");
+        for (ft::map<int, double>::iterator iter = ma2.begin(); iter != ma2.end(); ++iter)
+            tester.print("index, value:", iter->first, iter->second);
+        ft::swap(ma1, ma2);
+        tester.print("for (ft::map<int, double>::iterator iter = ma1.begin(); iter != ma1.end(); ++iter)...");
+        for (ft::map<int, double>::iterator iter = ma1.begin(); iter != ma1.end(); ++iter)
+            tester.print("index, value:", iter->first, iter->second);
+        tester.print("for (ft::map<int, double>::iterator iter = ma2.begin(); iter != ma2.end(); ++iter)...");
+        for (ft::map<int, double>::iterator iter = ma2.begin(); iter != ma2.end(); ++iter)
+            tester.print("index, value:", iter->first, iter->second);
     }
 }
 

@@ -318,14 +318,14 @@ public:
     Compare _comp;
     node_ptr _head;
     node_ptr _begin;
-    node_type _end;
+    node_ptr _end;
     size_type _node_count;
 
 private:
     void _end_remove()
     {
-        if (_end._parent)
-            _end._parent->_right = NULL;
+        if (_end->_parent)
+            _end->_parent->_right = NULL;
         else
         {
             _head = NULL;
@@ -335,12 +335,12 @@ private:
 
     void _end_put()
     {
-        if (_end._parent)
-            _end._parent->_right = &_end;
+        if (_end->_parent)
+            _end->_parent->_right = _end;
         else
         {
-            _head = &_end;
-            _begin = &_end;
+            _head = _end;
+            _begin = _end;
         }
     }
 
@@ -362,8 +362,7 @@ private:
         return allocator::template allocate<node_value_ptr, Size>(_alloc, n);
     }
 
-    template <typename V>
-    void _construct(node_ptr p, const V& value) const
+    void _construct(node_ptr p, const Val& value) const
     {
         allocator::construct(_alloc, static_cast<node_value_ptr>(p), value);
     }
@@ -396,6 +395,8 @@ private:
     {
         _end_remove();
         _node_destroy_and_deallocate(_head);
+        if (_end != NULL)
+            _destroy_and_deallocate(_end);
     }
 
     template<typename T>
@@ -433,16 +434,26 @@ private:
 
     void _init_end_and_begin()
     {
-        _end._left = NULL;
-        _end._right = NULL;
+        try
+        {
+            _end = _init_node(Val());
+        }
+        catch(const std::exception& e)
+        {
+            _node_destroy_and_deallocate(_head);
+            _head = NULL;
+            throw;
+        }
+        _end->_left = NULL;
+        _end->_right = NULL;
         if (_head == NULL)
         {
-            _end._parent = NULL;
+            _end->_parent = NULL;
             _begin = NULL;
         }
         else
         {
-            _end._parent = _head->get_maximum();
+            _end->_parent = _head->get_maximum();
             _begin = _head->get_minimum();
         }
         _end_put();
@@ -499,30 +510,35 @@ private:
         }
     }
 
+    void _insert_to_empty_tree(node_ptr add_node)
+    {
+        _head = add_node;
+        _head->_color = node_type::_BLACK;
+        _end->_parent = _head;
+        _begin = _head;
+        _node_count += 1;
+    }
+
     node_ptr _insert_node(node_ptr add_node)
     {
         if (_head == NULL)
         {
-            _head = add_node;
-            _head->_color = node_type::_BLACK;
-            _end._parent = _head;
-            _begin = _head;
-            _node_count += 1;
+            _insert_to_empty_tree(add_node);
             return _head;
         }
         node_ptr node = _head;
+        Val* add_value = static_cast<Val*>(add_node->get_value_ptr());
         while (true)
         {
             Val* node_value = static_cast<Val*>(node->get_value_ptr());
-            Val* add_value = static_cast<Val*>(add_node->get_value_ptr());
             if (compare_value(*node_value, *add_value))
             {
                 if (node->_right == NULL)
                 {
                     node->insert_right(add_node);
                     _head = _head->get_root();
-                    if (node == _end._parent)
-                        _end._parent = add_node;
+                    if (node == _end->_parent)
+                        _end->_parent = add_node;
                     _node_count += 1;
                     return add_node;
                 }
@@ -543,7 +559,70 @@ private:
             }
             else
             {
-                ValueCopy()(*node_value, *add_value);
+                // ValueCopy is not used
+                // ValueCopy()(*node_value, *add_value);
+                _destroy_and_deallocate(add_node);
+                return node;
+            }
+        }
+    }
+
+    node_ptr _insert_node(iterator hint, node_ptr add_node)
+    {
+        if (_head == NULL)
+        {
+            _insert_to_empty_tree(add_node);
+            return _head;
+        }
+        node_ptr node = hint._node;
+        if (node == _end)
+            node = _head;
+        Val* add_value = static_cast<Val*>(add_node->get_value_ptr());
+        while (true)
+        {
+            Val* node_value = static_cast<Val*>(node->get_value_ptr());
+            if (compare_value(*node_value, *add_value))
+            {
+                if (node->_right == NULL)
+                {
+                    node_ptr next_node = node->increment();
+                    if (next_node == NULL
+                            || compare_value(*add_value, *static_cast<Val*>(next_node->get_value_ptr())))
+                    {
+                        node->insert_right(add_node);
+                        _head = _head->get_root();
+                        if (node == _end->_parent)
+                            _end->_parent = add_node;
+                        _node_count += 1;
+                        return add_node;
+                    }
+                    node = next_node;
+                }
+                else
+                    node = node->_right;
+            }
+            else if (compare_value(*add_value, *node_value))
+            {
+                if (node->_left == NULL)
+                {
+                    node_ptr pred_node = node->decrement();
+                    if (pred_node == NULL
+                            || compare_value(*static_cast<Val*>(pred_node->get_value_ptr()), *add_value))
+                    {
+                        node->insert_left(add_node);
+                        _head = _head->get_root();
+                        if (node == _begin)
+                            _begin = add_node;
+                        _node_count += 1;
+                        return add_node;
+                    }
+                    node = pred_node;
+                }
+                else
+                    node = node->_left;
+            }
+            else
+            {
                 _destroy_and_deallocate(add_node);
                 return node;
             }
@@ -551,7 +630,7 @@ private:
     }
 
     template <class Key, typename keyCompare>
-    node_ptr _search_node(const Key& key)
+    node_ptr _search_node(const Key& key, int mode = 0)
     {
         const keyCompare& comp = _comp.get_key_compare();
         if (_head == NULL)
@@ -569,19 +648,29 @@ private:
             else if (comp(key, node_value->first))
             {
                 if (node->_left == NULL)
-                    return NULL;
+                {
+                    if (mode == 0)
+                        return NULL;
+                    else
+                        return node;
+                }
                 node = node->_left;
             }
             else
-                return node;
+            {
+                if (mode != 2)
+                    return node;
+                else
+                    return node->increment();
+            }
         }
     }
 
     template <class Key, typename keyCompare>
-    node_const_ptr _search_node(const Key& key) const
+    node_const_ptr _search_node(const Key& key, int mode = 0) const
     {
         const keyCompare& comp = _comp.get_key_compare();
-        if (_head == NULL || _head == &(_end))
+        if (_head == NULL || _head == _end)
             return NULL;
         node_ptr node = _head;
         while (true)
@@ -589,18 +678,28 @@ private:
             Val* node_value = static_cast<Val*>(node->get_value_ptr());
             if (comp(node_value->first, key))
             {
-                if (node->_right == NULL || node->_right == &(_end))
+                if (node->_right == NULL || node->_right == _end)
                     return NULL;
                 node = node->_right;
             }
             else if (comp(key, node_value->first))
             {
-                if (node->_left == NULL || node->_left == &(_end))
-                    return NULL;
+                if (node->_left == NULL || node->_left == _end)
+                {
+                    if (mode == 0)
+                        return NULL;
+                    else
+                        return node;
+                }
                 node = node->_left;
             }
             else
-                return node;
+            {
+                if (mode != 2)
+                    return node;
+                else
+                    return node->increment();
+            }
         }
     }
 
@@ -629,6 +728,33 @@ private:
         }
     }
 
+    // template <class Key, class KeyCompare>
+    // node_ptr _lower_bound(const Key& key)
+    // {
+    //     const keyCompare& comp = _comp.get_key_compare();
+    //     if (_head == NULL)
+    //         return NULL;
+    //     node_ptr node = _head;
+    //     while (true)
+    //     {
+    //         Val* node_value = static_cast<Val*>(node->get_value_ptr());
+    //         if (comp(node_value->first, key))
+    //         {
+    //             if (node->_right == NULL)
+    //                 return NULL;
+    //             node = node->_right;
+    //         }
+    //         else if (comp(key, node_value->first))
+    //         {
+    //             if (node->_left == NULL)
+    //                 return node;
+    //             node = node->_left;
+    //         }
+    //         else
+    //             return node;
+    //     }
+    // }
+
     bool _delete_node(node_ptr node)
     {
         if (node == NULL)
@@ -637,8 +763,8 @@ private:
         }
         if (node == _begin)
             _begin = node->increment();
-        if (node == _end._parent)
-            _end._parent = node->decrement();
+        if (node == _end->_parent)
+            _end->_parent = node->decrement();
         node->delete_node();
         _node_count -= 1;
         if (_node_count == 0)
@@ -659,35 +785,35 @@ private:
     }
 
 public:
-    _Rb_tree(): _alloc(), _comp(), _head(NULL), _begin(NULL), _node_count(0)
+    _Rb_tree(): _alloc(), _comp(), _head(NULL), _begin(NULL), _end(NULL), _node_count(0)
     {
         _init_end_and_begin();
     }
 
     explicit _Rb_tree(const Alloc& alloc)
-        : _alloc(alloc), _comp(), _head(NULL), _begin(NULL), _node_count(0)
+        : _alloc(alloc), _comp(), _head(NULL), _begin(NULL), _end(NULL), _node_count(0)
     {
         _init_end_and_begin();
     }
 
     explicit _Rb_tree(const Compare& comp, const Alloc& alloc = Alloc())
-        : _alloc(alloc), _comp(comp), _head(NULL), _begin(NULL), _node_count(0)
+        : _alloc(alloc), _comp(comp), _head(NULL), _begin(NULL), _end(NULL), _node_count(0)
     {
         _init_end_and_begin();
     }
 
     template<class It>
     _Rb_tree(It start, It last, const Compare& comp = Compare(), const Alloc& alloc = Alloc())
-        : _alloc(alloc), _comp(comp), _head(NULL), _begin(NULL), _node_count(0)
+        : _alloc(alloc), _comp(comp), _head(NULL), _begin(NULL), _end(NULL), _node_count(0)
     {
         _init_end_and_begin();
         _copy(start, last);
     }
 
     _Rb_tree(const _Rb_tree& other)
-        : _alloc(other._alloc), _comp(other._comp), _head(NULL), _begin(NULL), _node_count(other._node_count)
+        : _alloc(other._alloc), _comp(other._comp), _head(NULL), _begin(NULL), _end(NULL), _node_count(other._node_count)
     {
-        _copy(other._head, &_head, &(other._end));
+        _copy(other._head, &_head, other._end);
         _init_end_and_begin();
     }
 
@@ -696,7 +822,7 @@ public:
         if (this != &other)
         {
             node_ptr head_node = NULL;
-            _copy(other._head, &head_node, &(other._end));
+            _copy(other._head, &head_node, other._end);
             _all_destroy_and_deallocate();
             _head = head_node;
             _init_end_and_begin();
@@ -712,6 +838,24 @@ public:
     size_type size() const
     {
         return _node_count;
+    }
+
+    bool empty() const
+    {
+        return _node_count == 0;
+    }
+
+    size_type max_size() const
+    {
+        return _alloc_max_size();
+    }
+
+    void clear()
+    {
+        _all_destroy_and_deallocate();
+        _head = NULL;
+        _node_count = 0;
+        _init_end_and_begin();
     }
 
     bool compare_value(const Val& lhs, const Val& rhs) const
@@ -730,17 +874,34 @@ public:
         return pair<iterator, bool>(iterator(node), num != _node_count);
     }
 
+    template<typename T>
+    iterator insert_node(iterator hint, const T& value)
+    {
+        node_ptr node = _init_node(value);
+        _end_remove();
+        node = _insert_node(hint, node);
+        _end_put();
+        return iterator(node);
+    }
+
+    template< class It >
+    void insert_iter(It start, It last)
+    {
+        for (; start != last; ++start)
+            insert_node(*start);
+    }
+
     // void insert_node(const node_ptr p)
     // {
     //     node_ptr node = _init_node(p);
     //     _insert_node(node);
     // }
 
-    template<typename T>
-    bool delete_node(const T& value)
+    template <class Key, class KeyCompare>
+    bool delete_node(const Key& value)
     {
         _end_remove();
-        node_ptr node = _search_node(value);
+        node_ptr node = _search_node<Key, KeyCompare>(value);
         bool delete_or_not = _delete_node(node);
         _end_put();
         return delete_or_not;
@@ -752,6 +913,19 @@ public:
         bool delete_or_not = _delete_node(pos._node);
         _end_put();
         return delete_or_not;
+    }
+
+    void delete_node(iterator start, iterator last)
+    {
+        _end_remove();
+        iterator dummy_last(NULL);
+        while (true)
+        {
+            if ((start == last) || (start == dummy_last && iterator(_end) == last))
+                break;
+            _delete_node((start++)._node);
+        }
+        _end_put();
     }
 
     template <class Key, class V, class KeyCompare>
@@ -784,6 +958,125 @@ public:
         return iterator(node);
     }
 
+    template <class Key, class KeyCompare>
+    iterator find(const Key& key)
+    {
+        _end_remove();
+        node_ptr node = _search_node<Key, KeyCompare>(key);
+        _end_put();
+        if (node == NULL)
+            return iterator(_end);
+        return iterator(node);
+    }
+
+    template <class Key, class KeyCompare>
+    const_iterator find(const Key& key) const
+    {
+        node_const_ptr node = _search_node<Key, KeyCompare>(key);
+        if (node == NULL)
+            return const_iterator(_end);
+        return const_iterator(node);
+    }
+
+    template <class Key, class KeyCompare>
+    pair<iterator, iterator> equal_range(const Key& key)
+    {
+        _end_remove();
+        node_ptr node = _search_node<Key, KeyCompare>(key, 1);
+        _end_put();
+        if (node == NULL)
+            return pair<iterator, iterator>(iterator(_end), iterator(_end));
+        else if (_comp.get_key_compare()(key, iterator(node)->first))
+            return pair<iterator, iterator>(iterator(node), iterator(node));
+        else
+            return pair<iterator, iterator>(iterator(node), iterator(node->increment()));
+    }
+
+    template <class Key, class KeyCompare>
+    pair<const_iterator, const_iterator> equal_range(const Key& key) const
+    {
+        node_const_ptr node = _search_node<Key, KeyCompare>(key, 1);
+        if (node == NULL || node == _end)
+            return pair<const_iterator, const_iterator>(const_iterator(_end), const_iterator(_end));
+                else if (_comp.get_key_compare()(key, const_iterator(node)->first))
+            return pair<const_iterator, const_iterator>(const_iterator(node), const_iterator(node));
+        else
+            return pair<const_iterator, const_iterator>(const_iterator(node), const_iterator(node->increment()));
+    }
+
+    template <class Key, class KeyCompare>
+    iterator lower_bound(const Key& key)
+    {
+        _end_remove();
+        node_ptr node = _search_node<Key, KeyCompare>(key, 1);
+        _end_put();
+        if (node == NULL)
+            return iterator(_end);
+        else
+            return iterator(node);
+    }
+
+    template <class Key, class KeyCompare>
+    const_iterator lower_bound(const Key& key) const
+    {
+        node_const_ptr node = _search_node<Key, KeyCompare>(key, 1);
+        if (node == NULL || node == _end)
+            return const_iterator(_end);
+        else
+            return const_iterator(node);
+    }
+
+    template <class Key, class KeyCompare>
+    iterator upper_bound(const Key& key)
+    {
+        _end_remove();
+        node_ptr node = _search_node<Key, KeyCompare>(key, 2);
+        _end_put();
+        if (node == NULL)
+            return iterator(_end);
+        else
+            return iterator(node);
+    }
+
+    template <class Key, class KeyCompare>
+    const_iterator upper_bound(const Key& key) const
+    {
+        node_const_ptr node = _search_node<Key, KeyCompare>(key, 2);
+        if (node == NULL || node == _end)
+            return const_iterator(_end);
+        else
+            return const_iterator(node);
+    }
+
+    template <class Key, class KeyCompare>
+    size_type count(const Key& key) const
+    {
+        node_const_ptr node = _search_node<Key, KeyCompare>(key);
+        return node != NULL;
+    }
+
+    void swap(_Rb_tree& other)
+    {
+        node_ptr temp = _head;
+        _head = other._head;
+        other._head = temp;
+
+        temp = _end;
+        _end = other._end;
+        other._end = temp;
+
+        temp = _begin;
+        _begin = other._begin;
+        other._begin = temp;
+
+        size_type temp_size = _node_count;
+        _node_count = other._node_count;
+        other._node_count = temp_size;
+
+        std::swap(_comp, other._comp);
+        std::swap(_alloc, other._alloc);
+    }
+
     node_value_ptr get_min_node()
     {
         return const_cast<node_value_ptr>(static_cast<const _Rb_tree*>(this)->get_min_node());
@@ -791,7 +1084,7 @@ public:
 
     node_value_const_ptr get_min_node() const
     {
-        if (_head == &_end)
+        if (_head == _end)
             return NULL;
         return static_cast<node_value_const_ptr>(_head->get_minimum());
     }
@@ -803,23 +1096,23 @@ public:
 
     node_value_const_ptr get_max_node() const
     {
-        if (_head == &_end)
+        if (_head == _end)
             return NULL;
-        return static_cast<node_value_const_ptr>(_end._parent);
+        return static_cast<node_value_const_ptr>(_end->_parent);
     }
 
     void check_rb_tree_rule() const
     {
-        if (_head == NULL || _head == &_end)
+        if (_head == NULL || _head == _end)
             return ;
-        node_type::check_rb_tree_rule(_head, &_end);
+        node_type::check_rb_tree_rule(_head, _end);
         node_const_ptr node = _head->get_minimum();
         if (node != _begin)
             throw std::runtime_error("_begin is wrong.");
         const Val* value = static_cast<const Val*>(node->get_value_ptr());
         int num = 1;
         node = node->increment();
-        while (node != &_end)
+        while (node != _end)
         {
             if (!compare_value(*value, *static_cast<const Val*>(node->get_value_ptr())))
                 throw std::runtime_error("Root must be black.");
@@ -841,14 +1134,14 @@ bool operator==(const _Rb_tree<Val, Compare, Alloc>& lhs,
         return false;
     const _Rb_tree_node_structure* lhs_node = lhs.get_min_node();
     const _Rb_tree_node_structure* rhs_node = rhs.get_min_node();
-    while (lhs_node != &(lhs._end) && rhs_node != &(lhs._end))
+    while (lhs_node != lhs._end && rhs_node != lhs._end)
     {
         if (*static_cast<const Val*>(lhs_node->get_value_ptr()) != *static_cast<const Val*>(rhs_node->get_value_ptr()))
             return false;
         lhs_node = lhs_node->increment();
         rhs_node = rhs_node->increment();
     }
-    return lhs_node == &(lhs._end) && rhs_node == &(rhs._end);
+    return lhs_node == lhs._end && rhs_node == rhs._end;
 }
 
 template<typename Val, typename Compare, typename Alloc>

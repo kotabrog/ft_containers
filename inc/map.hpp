@@ -3,6 +3,8 @@
 
 #include "_Rb_tree.hpp"
 #include "pair.hpp"
+#include "equal.hpp"
+#include "lexicographical_compare.hpp"
 
 namespace ft
 {
@@ -118,6 +120,11 @@ public:
         }
     }
 
+    T& operator[](const Key& key)
+    {
+        return insert(pair<const Key, T>(key, T())).first->second;
+    }
+
     iterator begin()
     {
         return iterator(_tree._begin);
@@ -130,17 +137,22 @@ public:
 
     iterator end()
     {
-        return iterator(&(_tree._end));
+        return iterator(_tree._end);
     }
 
     const_iterator end() const
     {
-        return const_iterator(&(_tree._end));
+        return const_iterator(_tree._end);
     }
 
     reverse_iterator rbegin()
     {
-        return reverse_iterator(iterator(&(_tree._end)));
+        return reverse_iterator(iterator(_tree._end));
+    }
+
+    const_reverse_iterator rbegin() const
+    {
+        return const_reverse_iterator(const_iterator(_tree._end));
     }
 
     reverse_iterator rend()
@@ -148,9 +160,45 @@ public:
         return reverse_iterator(iterator(_tree._begin));
     }
 
+    const_reverse_iterator rend() const
+    {
+        return const_reverse_iterator(const_iterator(_tree._begin));
+    }
+
+    bool empty() const
+    {
+        return _tree.empty();
+    }
+
+    size_type size() const
+    {
+        return _tree.size();
+    }
+
+    size_type max_size() const
+    {
+        return _tree.max_size();
+    }
+
+    void clear()
+    {
+        _tree.clear();
+    }
+
     pair<iterator, bool> insert(const value_type& value)
     {
         return _tree.insert_node(value);
+    }
+
+    iterator insert(iterator hint, const value_type& value)
+    {
+        return _tree.insert_node(hint, value);
+    }
+
+    template< class It >
+    void insert(It start, It last)
+    {
+        _tree.insert_iter(start, last);
     }
 
     void erase(iterator pos)
@@ -158,11 +206,126 @@ public:
         _tree.delete_node(pos);
     }
 
+    void erase(iterator start, iterator last)
+    {
+        _tree.delete_node(start, last);
+    }
+
+    size_type erase(const Key& key)
+    {
+        return _tree.template delete_node<key_type, Compare>(key);
+    }
+
+    void swap(map& other)
+    {
+        _tree.swap(other._tree);
+    }
+
+    size_type count(const Key& key) const
+    {
+        return _tree.template count<key_type, Compare>(key);
+    }
+
+    iterator find(const Key& key)
+    {
+        return _tree.template find<key_type, Compare>(key);
+    }
+
+    const_iterator find(const Key& key) const
+    {
+        return _tree.template find<key_type, Compare>(key);
+    }
+
+    pair<iterator, iterator> equal_range(const Key& key)
+    {
+        return _tree.template equal_range<key_type, Compare>(key);
+    }
+
+    pair<const_iterator, const_iterator> equal_range(const Key& key) const
+    {
+        return _tree.template equal_range<key_type, Compare>(key);
+    }
+
+    iterator lower_bound(const Key& key)
+    {
+        return _tree.template lower_bound<key_type, Compare>(key);
+    }
+
+    const_iterator lower_bound(const Key& key) const
+    {
+        return _tree.template lower_bound<key_type, Compare>(key);
+    }
+
+    iterator upper_bound(const Key& key)
+    {
+        return _tree.template upper_bound<key_type, Compare>(key);
+    }
+
+    const_iterator upper_bound(const Key& key) const
+    {
+        return _tree.template upper_bound<key_type, Compare>(key);
+    }
+
     key_compare key_comp() const
     {
         return _tree._comp.get_key_compare();
     }
+
+    value_compare value_comp() const
+    {
+        return _tree._comp;
+    }
 };
+
+template<class Key, class T, class Compare, class Alloc>
+bool operator==(const map<Key, T, Compare, Alloc>& lhs,
+                const map<Key, T, Compare, Alloc>& rhs)
+{
+    return (lhs.size() == rhs.size() &&
+            equal(lhs.begin(), lhs.end(), rhs.begin()));
+}
+
+template<class Key, class T, class Compare, class Alloc>
+bool operator!=(const map<Key, T, Compare, Alloc>& lhs,
+                const map<Key, T, Compare, Alloc>& rhs)
+{
+    return !(lhs == rhs);
+}
+
+template<class Key, class T, class Compare, class Alloc>
+bool operator<(const map<Key, T, Compare, Alloc>& lhs,
+                const map<Key, T, Compare, Alloc>& rhs)
+{
+    return lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
+}
+
+template<class Key, class T, class Compare, class Alloc>
+bool operator<=(const map<Key, T, Compare, Alloc>& lhs,
+                const map<Key, T, Compare, Alloc>& rhs)
+{
+    return !(rhs < lhs);
+}
+
+template<class Key, class T, class Compare, class Alloc>
+bool operator>(const map<Key, T, Compare, Alloc>& lhs,
+                const map<Key, T, Compare, Alloc>& rhs)
+{
+    return rhs < lhs;
+}
+
+template<class Key, class T, class Compare, class Alloc>
+bool operator>=(const map<Key, T, Compare, Alloc>& lhs,
+                const map<Key, T, Compare, Alloc>& rhs)
+{
+    return !(lhs < rhs);
+}
+
+template<class Key, class T, class Compare, class Alloc>
+void swap(map<Key, T, Compare, Alloc>& lhs,
+          map<Key, T, Compare, Alloc>& rhs)
+{
+    lhs.swap(rhs);
+}
 
 } // namespace ft
 

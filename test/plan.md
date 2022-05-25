@@ -45,3 +45,6 @@
 ## issue
 
 - [ ] make docker時にlogを標準出力する
+- [ ] test通す
+  - https://github.com/mli42/containers_test.git
+  - https://github.com/mfunyu/tester_ft_containers.git

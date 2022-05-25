@@ -10,7 +10,8 @@ SOURCES = main.cpp\
 SOURCES_PREFIXED = $(addprefix $(SOURCES_FOLDER), $(SOURCES))
 
 TIME_SOURCES = time_test.cpp\
-			   Tester.cpp
+			   Tester.cpp\
+			   _Rb_tree.cpp
 
 TIME_SOURCES_PREFIXED = $(addprefix $(SOURCES_FOLDER), $(SOURCES_PREFIXED))
 

@@ -1,6 +1,10 @@
 #include <vector.hpp>
+#include <map.hpp>
 
 #include "Tester.hpp"
+
+#include <vector>
+#include <map>
 
 void push_back_allocate_test()
 {
@@ -112,7 +116,7 @@ void check_2function_time(void (*func1)(Tester&), void (*func2)(Tester&))
 }
 
 
-void test_push_back_ft(Tester& tester)
+void test_vec_push_back_ft(Tester& tester)
 {
     ft::vector<int> vec;
     tester.set_time("ft push_back start");
@@ -124,7 +128,7 @@ void test_push_back_ft(Tester& tester)
 }
 
 
-void test_push_back_std(Tester& tester)
+void test_vec_push_back_std(Tester& tester)
 {
     std::vector<int> vec;
     tester.set_time("std push_back start");
@@ -136,7 +140,7 @@ void test_push_back_std(Tester& tester)
 }
 
 
-void test_copy_ft(Tester& tester)
+void test_vec_copy_ft(Tester& tester)
 {
     ft::vector<int> vec1(1000);
     ft::vector<ft::vector<int> > vec2;
@@ -150,7 +154,7 @@ void test_copy_ft(Tester& tester)
 }
 
 
-void test_copy_std(Tester& tester)
+void test_vec_copy_std(Tester& tester)
 {
     std::vector<int> vec1(1000);
     std::vector<std::vector<int> > vec2;
@@ -164,6 +168,30 @@ void test_copy_std(Tester& tester)
 }
 
 
+void test_map_insert_ft(Tester& tester)
+{
+    ft::map<int, double> ma;
+    tester.set_time("ft map_insert start");
+    for (int i = 0; i < 10000; ++i)
+    {
+        ma.insert(ft::make_pair(i, i));
+    }
+    tester.set_time("ft map_insert end 10000");
+}
+
+
+void test_map_insert_std(Tester& tester)
+{
+    std::map<int, double> ma;
+    tester.set_time("std map_insert start");
+    for (int i = 0; i < 10000; ++i)
+    {
+        ma.insert(std::make_pair(i, i));
+    }
+    tester.set_time("std map_insert end 10000");
+}
+
+
 int main()
 {
     // push_back_allocate_test();
@@ -172,8 +200,10 @@ int main()
     // insert_allocate_test2();
     // resize_allocate_test();
     Tester tester;
-    tester.print("test_push_back");
-    check_2function_time(test_push_back_ft, test_push_back_std);
-    tester.print("test_copy");
-    check_2function_time(test_copy_ft, test_copy_std);
+    tester.print("test_vec_push_back");
+    check_2function_time(test_vec_push_back_ft, test_vec_push_back_std);
+    tester.print("test_vec_copy");
+    check_2function_time(test_vec_copy_ft, test_vec_copy_std);
+    tester.print("test_map_insert");
+    check_2function_time(test_map_insert_ft, test_map_insert_std);
 }
