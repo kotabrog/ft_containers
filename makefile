@@ -41,7 +41,7 @@ DEPENDENCIES = $(TIME_OBJECTS:.o=.d)
 
 FT_EQUAL_STD = 0
 
-CXX := clang++
+CXX := c++
 ifeq ($(FT_EQUAL_STD), 1)
 	CXXFLAGS := -Wall -Wextra -Werror
 else

@@ -192,6 +192,39 @@ void test_map_insert_std(Tester& tester)
 }
 
 
+void test_map_erase_ft(Tester& tester)
+{
+    ft::map<int, double> ma;
+    for (int i = 0; i < 10000; ++i)
+    {
+        ma.insert(ft::make_pair(i, i));
+    }
+    tester.set_time("ft map_erase start");
+    for (int i = 10000 - 1; i >= 0; --i)
+    {
+        ma.erase(i);
+    }
+    tester.set_time("ft map_erase end 10000");
+}
+
+
+void test_map_erase_std(Tester& tester)
+{
+    std::map<int, double> ma;
+    for (int i = 0; i < 10000; ++i)
+    {
+        ma.insert(std::make_pair(i, i));
+    }
+    tester.set_time("std map_erase start");
+    for (int i = 10000 - 1; i >= 0; --i)
+    {
+        ma.erase(i);
+    }
+    tester.set_time("std map_erase end 10000");
+}
+
+
+
 int main()
 {
     // push_back_allocate_test();
@@ -206,4 +239,6 @@ int main()
     check_2function_time(test_vec_copy_ft, test_vec_copy_std);
     tester.print("test_map_insert");
     check_2function_time(test_map_insert_ft, test_map_insert_std);
+    tester.print("test_map_erase");
+    check_2function_time(test_map_erase_ft, test_map_erase_std);
 }

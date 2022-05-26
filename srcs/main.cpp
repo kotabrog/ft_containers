@@ -59,17 +59,17 @@ public:
     iterator begin() { return this->c.begin(); }
     iterator end() { return this->c.end(); }
 };
+*/
 
 void default_test()
 {
-    tester.print("");
     std::cout << "----------------------" << std::endl;
     std::cout << "default test" << std::endl;
     ft::vector<std::string> vector_str;
     ft::vector<int> vector_int;
-    ft::stack<int> stack_int;
+    // ft::stack<int> stack_int;
     ft::vector<Buffer> vector_buffer;
-    ft::stack<Buffer, std::deque<Buffer> > stack_deq_buffer;
+    // ft::stack<Buffer, std::deque<Buffer> > stack_deq_buffer;
     ft::map<int, int> map_int;
 
     for (int i = 0; i < COUNT; i++)
@@ -114,6 +114,7 @@ void default_test()
     {
         ft::map<int, int> copy = map_int;
     }
+    /*
     MutantStack<char> iterable_stack;
     for (char letter = 'a'; letter <= 'z'; letter++)
         iterable_stack.push(letter);
@@ -122,8 +123,9 @@ void default_test()
         std::cout << *it;
     }
     std::cout << std::endl;
+    */
 }
-*/
+
 
 void iterators_traits_test()
 {
@@ -307,8 +309,11 @@ void equal_test()
                     ft::equal(v1.begin(), v1.end(), v2.begin()), "true", "false");
     tester.if_print("v1:[0,1,2,3,4,5], v2:[0,1,2,3,4,5,6], ft::equal(v1.begin(), v1.end(), v2.begin(), v2.end()):",
                     ft::equal(v1.begin(), v1.end(), v2.begin(), v2.end()), "true", "false");
+    /*
+    Because v2 is longer, it accesses places that v1 should not
     tester.if_print("v1:[0,1,2,3,4,5], v2:[0,1,2,3,4,5,6], ft::equal(v2.begin(), v2.end(), v1.begin()):",
                     ft::equal(v2.begin(), v2.end(), v1.begin()), "true", "false");
+    */
 }
 
 void lexicographical_test()
@@ -522,19 +527,13 @@ void reverse_iterator_test()
         ft::reverse_iterator<std::vector<int>::iterator> y = ri1;
         ft::reverse_iterator<std::vector<int>::iterator> z = ri1 + 2;
         std::vector<int> vec2(vec1);
-        ft::reverse_iterator<std::vector<int>::const_iterator> ri2(vec2.end());
-        ft::reverse_iterator<std::vector<int>::const_iterator> x2 = ri2;
         tester.print("ri1 = vec.end()");
         tester.print("x = ri1");
         tester.print("y = ri1");
         tester.print("z = ri1 + 2");
-        tester.print("vec2 = vec");
-        tester.print("ri2 = vec2.end()");
-        tester.print("x2 = ri2");
         tester.print("*x ==", *x);
         tester.print("*y ==", *y);
         tester.print("*z ==", *z);
-        tester.print("*x2 ==", *x2);
         tester.if_print("x == y:", x == y, "true", "false");
         tester.if_print("x != y:", x != y, "true", "false");
         tester.if_print("x <  y:", x <  y, "true", "false");
@@ -543,14 +542,6 @@ void reverse_iterator_test()
         tester.if_print("x != z:", x != z, "true", "false");
         tester.if_print("x <  z:", x <  z, "true", "false");
         tester.if_print("x <= z:", x <= z, "true", "false");
-        tester.if_print("x2 == y:", x2 == y, "true", "false");
-        tester.if_print("x2 != y:", x2 != y, "true", "false");
-        tester.if_print("x2 <  y:", x2 <  y, "true", "false");
-        tester.if_print("x2 <= y:", x2 <= y, "true", "false");
-        tester.if_print("x2 == z:", x2 == z, "true", "false");
-        tester.if_print("x2 != z:", x2 != z, "true", "false");
-        tester.if_print("x2 <  z:", x2 <  z, "true", "false");
-        tester.if_print("x2 <= z:", x2 <= z, "true", "false");
     }
     tester.print("");
     tester.print("operator+ test");
@@ -3339,15 +3330,15 @@ int main(int argc, char** argv)
     Tester tester;
     tester.print("test start");
 
-    // default_test();
-    // iterators_traits_test();
-    // enable_if_test();
-    // is_integral_test();
-    // equal_test();
-    // lexicographical_test();
-    // pair_test();
-    // make_pair_test();
-    // reverse_iterator_test();
-    // vector_test();
+    default_test();
+    iterators_traits_test();
+    enable_if_test();
+    is_integral_test();
+    equal_test();
+    lexicographical_test();
+    pair_test();
+    make_pair_test();
+    reverse_iterator_test();
+    vector_test();
     map_test();
 }
