@@ -204,7 +204,7 @@ private:
     template<class Iter>
     void _iter_init(Iter start, Iter last, false_type)
     {
-        typename iterator_traits<Iter>::difference_type dist = distance(start, last);
+        typename iterator_traits<Iter>::difference_type dist = ft::distance(start, last);
         _start = _allocate_and_copy(dist, start, last);
         _last = _start + dist;
         _end_of_storage = _last;
@@ -241,7 +241,7 @@ private:
     template<class Iter>
     void _iter_assign(Iter start, Iter last, false_type)
     {
-        size_type dist = size_type(distance(start, last));
+        size_type dist = size_type(ft::distance(start, last));
         if (dist > capacity())
         {
             iterator temp = _allocate_and_copy(dist, start, last);
@@ -415,7 +415,7 @@ private:
                       Iter last,
                       false_type)
     {
-        typename iterator_traits<Iter>::difference_type count = distance(start, last);
+        typename iterator_traits<Iter>::difference_type count = ft::distance(start, last);
         if (count > 0)
         {
             const size_type n = pos - _start;

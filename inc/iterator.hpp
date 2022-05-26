@@ -7,7 +7,7 @@ namespace ft
 {
 template<class Iter>
 typename iterator_traits<Iter>::difference_type
-    distance(Iter start, Iter last)
+distance(Iter start, Iter last)
 {
     typename iterator_traits<Iter>::difference_type result = 0;
     for (; start != last; ++start, ++result) ;
