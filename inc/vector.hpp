@@ -115,13 +115,6 @@ private:
             _deallocate(_start, capacity());
     }
 
-    // void _create_storage(size_type n)
-    // {
-    //     _start = _allocate(n);
-    //     _last = _start;
-    //     _end_of_storage = _start + n;
-    // }
-
     void _construct_by_value(iterator start,
                              size_type n,
                              const value_type& value)

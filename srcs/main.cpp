@@ -1,11 +1,9 @@
 #if FT_EQUAL_STD//CREATE A REAL STL EXAMPLE
-    #define STD_FLAG 1
     #include <map>
     #include <stack>
     #include <vector>
     namespace ft = std;
 #else
-    #define STD_FLAG 0
     #include <map.hpp>
     #include <vector.hpp>
     #include "reverse_iterator.hpp"
@@ -735,18 +733,14 @@ void vector_test()
     }
     tester.print("");
     {
-        tester.print("ft::vector<Test> vec(count);");
+        tester.print("ft::vector<int> vec(count);");
         int count = 3;
         tester.print("count:", count);
-#if STD_FLAG
-        ft::vector<Test> vec(count, Test());
-#else
-        ft::vector<Test> vec(count);
-#endif
+        ft::vector<int> vec(count);
         tester.print("vec.size():", vec.size());
         tester.print("vec.capacity():", vec.capacity());
         for (int i = 0; i < count; ++i)
-            tester.set_stream(vec[i].get_data());
+            tester.set_stream(vec[i]);
         tester.put_all_stream();
     }
     tester.print("");

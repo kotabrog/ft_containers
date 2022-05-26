@@ -8,8 +8,6 @@
 #include "reverse_iterator.hpp"
 #include "pair.hpp"
 
-#include <iostream>
-
 namespace ft
 {
 class _Rb_tree_node_structure
@@ -416,22 +414,6 @@ private:
         return node;
     }
 
-    // node_ptr _init_node(const node_ptr p) const
-    // {
-    //     node_ptr node;
-    //     node = _allocate(1);
-    //     try
-    //     {
-    //         _construct(node, *p);
-    //     }
-    //     catch(const std::exception& e)
-    //     {
-    //         _deallocate(node, 1);
-    //         throw;
-    //     }
-    //     return node;
-    // }
-
     void _init_end_and_begin()
     {
         try
@@ -559,8 +541,6 @@ private:
             }
             else
             {
-                // ValueCopy is not used
-                // ValueCopy()(*node_value, *add_value);
                 _destroy_and_deallocate(add_node);
                 return node;
             }
@@ -728,33 +708,6 @@ private:
         }
     }
 
-    // template <class Key, class KeyCompare>
-    // node_ptr _lower_bound(const Key& key)
-    // {
-    //     const keyCompare& comp = _comp.get_key_compare();
-    //     if (_head == NULL)
-    //         return NULL;
-    //     node_ptr node = _head;
-    //     while (true)
-    //     {
-    //         Val* node_value = static_cast<Val*>(node->get_value_ptr());
-    //         if (comp(node_value->first, key))
-    //         {
-    //             if (node->_right == NULL)
-    //                 return NULL;
-    //             node = node->_right;
-    //         }
-    //         else if (comp(key, node_value->first))
-    //         {
-    //             if (node->_left == NULL)
-    //                 return node;
-    //             node = node->_left;
-    //         }
-    //         else
-    //             return node;
-    //     }
-    // }
-
     bool _delete_node(node_ptr node)
     {
         if (node == NULL)
@@ -890,12 +843,6 @@ public:
         for (; start != last; ++start)
             insert_node(*start);
     }
-
-    // void insert_node(const node_ptr p)
-    // {
-    //     node_ptr node = _init_node(p);
-    //     _insert_node(node);
-    // }
 
     template <class Key, class KeyCompare>
     bool delete_node(const Key& value)
