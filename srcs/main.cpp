@@ -4,8 +4,8 @@
     #include <vector>
     namespace ft = std;
 #else
-    #include <map.hpp>
     #include <vector.hpp>
+    #include <map.hpp>
     #include "reverse_iterator.hpp"
     #include "pair.hpp"
     #include "lexicographical_compare.hpp"
@@ -34,7 +34,7 @@ struct Buffer
     char buff[BUFFER_SIZE];
 };
 
-#define NOT_VALGRIND_FLAG 1
+#define NOT_VALGRIND_FLAG 0
 
 #define COUNT (MAX_RAM / (int)sizeof(Buffer))
 
@@ -139,7 +139,6 @@ void iterators_traits_test()
         {
             vec.push_back(rand());
         }
-        // typedef ft::vector<int>::iterator Iterator;
         typedef std::vector<int>::iterator Iterator;
         Iterator first = vec.begin();
         Iterator last = vec.end();
@@ -836,24 +835,6 @@ void vector_test()
         vec2[0] = 4;
         tester.print("change value vec2[0] = 4 -> vec1[0] vec2[]", vec1[0], vec2[0]);
     }
-    /*
-    コンストラクタが余分に呼ばれてしまう。
-    allocatorのconstructを使用する限り避けられない？
-    tester.print("");
-    {
-        tester.print("ft::vector<Test> vec2(vec1.begin(), vec1.end());");
-        tester.print("ft::vector<int> vec1(2, 3);");
-        ft::vector<int> vec1(2, 3);
-        ft::vector<Test> vec2(vec1.begin(), vec1.end());
-        tester.print("vec2.size():", vec2.size());
-        tester.print("vec2.capacity():", vec2.capacity());
-        for (std::size_t i = 0; i < vec2.size(); ++i)
-            tester.set_stream(vec2[i].get_data());
-        tester.put_all_stream();
-        vec2[0] = 4;
-        tester.print("change value vec2[0] = 4 -> vec1[0] vec2[]", vec1[0], vec2[0].get_data());
-    }
-    */
     tester.print("");
     {
         tester.print("ft::vector<Test> vec2(vec1.begin(), vec1.end(), alloc);");
@@ -1160,7 +1141,6 @@ void vector_test()
         }
         catch(const std::out_of_range& e)
         {
-            // tester.print(e.what());
             tester.print("std::out_of_range error");
         }
         vec.at(0) = 1;
@@ -1180,7 +1160,6 @@ void vector_test()
         }
         catch(const std::out_of_range& e)
         {
-            // tester.print(e.what());
             tester.print("std::out_of_range error");
         }
     }
@@ -2052,6 +2031,20 @@ void vector_test()
         for (std::size_t i = 0; i < vec[1].size(); ++i)
             tester.set_stream(vec[1][i]);
         tester.put_all_stream();
+    }
+    tester.print("");
+    {
+        tester.print("ft::vector<int> vec(3);");
+        ft::vector<int> vec(3);
+        vec[0] = 1;
+        vec[1] = 2;
+        vec[2] = 3;
+        tester.print("*++vec.begin()", *(++(vec.begin())));
+        tester.print("*++(++vec.begin())", *++(++vec.begin()));
+        tester.print("*--vec.end() ", *--vec.end() );
+        tester.print("*--vec.end()", *--vec.end());
+        tester.print("*--(--vec.end())", *--(--vec.end()));
+        tester.print("*--(--(--vec.end()))", *--(--(--vec.end())));
     }
 }
 

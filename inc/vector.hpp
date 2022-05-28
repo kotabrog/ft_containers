@@ -24,17 +24,139 @@ public:
     typedef const value_type& const_reference;
     typedef typename Alloc::pointer pointer;
     typedef typename Alloc::const_pointer const_pointer;
-    typedef pointer iterator;
-    typedef const_pointer const_iterator;
+
+    class iterator
+    {
+    private:
+        typedef iterator_traits<pointer> traits_type;
+
+    public:
+        pointer _current;
+
+        typedef typename traits_type::iterator_category iterator_category;
+        typedef typename traits_type::value_type value_type;
+        typedef typename traits_type::difference_type difference_type;
+        typedef typename traits_type::reference reference;
+        typedef typename traits_type::pointer pointer;
+
+        iterator() : _current(NULL) {}
+        explicit iterator(const pointer ptr) : _current(ptr) {}
+
+        reference operator*() const {return *_current;}
+        pointer operator->() const {return _current;}
+
+        iterator& operator++()
+        {
+            ++_current;
+            return *this;
+        }
+
+        iterator operator++(int) {return iterator(_current++);}
+
+        iterator& operator--()
+        {
+            --_current;
+            return *this;
+        }
+
+        iterator operator--(int) {return iterator(_current--);}
+        reference operator[](difference_type n) const {return _current[n];}
+
+        iterator& operator+=(difference_type n)
+        {
+            _current += n;
+            return *this;
+        }
+
+        iterator operator+(difference_type n) {return iterator(_current + n);}
+
+        iterator& operator-=(difference_type n)
+        {
+            _current -= n;
+            return *this;
+        }
+
+        iterator operator-(difference_type n) {return iterator(_current - n);}
+        bool operator==(const iterator& other) const {return _current == other._current;}
+        bool operator!=(const iterator& other) const {return _current != other._current;}
+        bool operator<(const iterator& other) const {return _current < other._current;}
+        bool operator<=(const iterator& other) const {return _current <= other._current;}
+        bool operator>(const iterator& other) const {return _current > other._current;}
+        bool operator>=(const iterator& other) const {return _current >= other._current;}
+        difference_type operator-(const iterator& other) const {return _current - other._current;}
+    };
+
+    class const_iterator
+    {
+    private:
+        typedef iterator_traits<const_pointer> traits_type;
+
+    public:
+        const_pointer _current;
+
+        typedef typename traits_type::iterator_category iterator_category;
+        typedef typename traits_type::value_type value_type;
+        typedef typename traits_type::difference_type difference_type;
+        typedef typename traits_type::reference reference;
+        typedef typename traits_type::pointer pointer;
+
+        const_iterator() : _current(NULL) {}
+        explicit const_iterator(const_pointer ptr) : _current(ptr) {}
+        const_iterator(const iterator& iter) : _current(iter._current) {}
+
+        reference operator*() const {return *_current;}
+        pointer operator->() const {return _current;}
+
+        const_iterator& operator++()
+        {
+            ++_current;
+            return *this;
+        }
+
+        const_iterator operator++(int) {return const_iterator(_current++);}
+
+        const_iterator& operator--()
+        {
+            --_current;
+            return *this;
+        }
+
+        const_iterator operator--(int) {return const_iterator(_current--);}
+        reference operator[](difference_type n) const {return _current[n];}
+
+        const_iterator& operator+=(difference_type n)
+        {
+            _current += n;
+            return *this;
+        }
+
+        const_iterator operator+(difference_type n) {return const_iterator(_current + n);}
+
+        const_iterator& operator-=(difference_type n)
+        {
+            _current -= n;
+            return *this;
+        }
+
+        const_iterator operator-(difference_type n) {return const_iterator(_current - n);}
+        bool operator==(const const_iterator& other) const {return _current == other._current;}
+        bool operator!=(const const_iterator& other) const {return _current != other._current;}
+        bool operator<(const const_iterator& other) const {return _current < other._current;}
+        bool operator<=(const const_iterator& other) const {return _current <= other._current;}
+        bool operator>(const const_iterator& other) const {return _current > other._current;}
+        bool operator>=(const const_iterator& other) const {return _current >= other._current;}
+        difference_type operator-(const const_iterator& other) const {return _current - other._current;}
+    };
+
     typedef ft::reverse_iterator<iterator> reverse_iterator;
     typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
 
 private:
     typedef alloc_traits<Alloc> allocator;
 
-    iterator _start;
-    iterator _last;
-    iterator _end_of_storage;
+    pointer _start;
+    pointer _last;
+    pointer _end_of_storage;
     Alloc _alloc;
 
     typename Alloc::template rebind<value_type>::other::size_type
@@ -49,7 +171,7 @@ private:
         allocator::destroy(_alloc, iter);
     }
 
-    void _destroy(iterator start, iterator last)
+    void _destroy(pointer start, pointer last)
     {
         for (; start < last; ++start)
             _destroy(start);
@@ -72,16 +194,16 @@ private:
         allocator::deallocate(_alloc, iter, n);
     }
 
-    template<class Iter>
-    iterator _copy(Iter start, Iter last, iterator dest)
+    template<class Iter1, class Iter2>
+    Iter2 _copy(Iter1 start, Iter1 last, Iter2 dest)
     {
         for (; start != last; ++start, ++dest)
             *dest = *start;
         return dest;
     }
 
-    template<class Iter>
-    Iter _copy(Iter start, Iter last, iterator dest, size_type n)
+    template<class Iter1, class Iter2>
+    Iter1 _copy(Iter1 start, Iter1 last, Iter2 dest, size_type n)
     {
         for (size_type i = 0; i < n && start != last; ++start, ++dest, ++i)
             *dest = *start;
@@ -89,7 +211,7 @@ private:
     }
 
     template<class Iter>
-    iterator _reverse_copy(Iter start, Iter last, iterator dest)
+    pointer _reverse_copy(Iter start, Iter last, pointer dest)
     {
         --start;
         --dest;
@@ -99,9 +221,9 @@ private:
         return dest;
     }
 
-    iterator _fill_value(iterator dest,
-                         size_type n,
-                         const value_type& value)
+    pointer _fill_value(pointer dest,
+                        size_type n,
+                        const value_type& value)
     {
         for (size_type i = 0; i < n; ++i, ++dest)
             *dest = value;
@@ -115,11 +237,11 @@ private:
             _deallocate(_start, capacity());
     }
 
-    void _construct_by_value(iterator start,
+    void _construct_by_value(pointer start,
                              size_type n,
                              const value_type& value)
     {
-        iterator temp = start;
+        pointer temp = start;
         try
         {
             for (; n > 0; --n, ++temp)
@@ -133,9 +255,9 @@ private:
     }
 
     template<class Iter>
-    void _construct_by_iterator(Iter start, Iter last, iterator dest)
+    void _construct_by_iterator(Iter start, Iter last, pointer dest)
     {
-        iterator temp = dest;
+        pointer temp = dest;
         try
         {
             for (; start != last; ++start, ++temp)
@@ -149,9 +271,9 @@ private:
     }
 
     template<class Iter>
-    iterator _allocate_and_copy(size_type n, Iter start, Iter last)
+    pointer _allocate_and_copy(size_type n, Iter start, Iter last)
     {
-        iterator temp = _allocate(n);
+        pointer temp = _allocate(n);
         try
         {
             _construct_by_iterator(start, last, temp);
@@ -164,9 +286,9 @@ private:
         return temp;
     }
 
-    iterator _allocate_and_fill_value(size_type n, const value_type& value)
+    pointer _allocate_and_fill_value(size_type n, const value_type& value)
     {
-        iterator temp = _allocate(n);
+        pointer temp = _allocate(n);
         try
         {
             _construct_by_value(temp, n, value);
@@ -214,7 +336,7 @@ private:
     {
         if (count > capacity())
         {
-            iterator temp = _allocate_and_fill_value(count, value);
+            pointer temp = _allocate_and_fill_value(count, value);
             _destroy_and_deallocate();
             _start = temp;
             _end_of_storage = _start + count;
@@ -244,7 +366,7 @@ private:
         size_type dist = size_type(ft::distance(start, last));
         if (dist > capacity())
         {
-            iterator temp = _allocate_and_copy(dist, start, last);
+            pointer temp = _allocate_and_copy(dist, start, last);
             _destroy_and_deallocate();
             _start = temp;
             _end_of_storage = _start + dist;
@@ -274,8 +396,8 @@ private:
     {
         size_type total_size = n + size();
         size_type allocate_size = std::min(std::max(total_size, size() * 2), max_size());
-        iterator temp = _allocate(allocate_size);
-        iterator copied_pos = temp;
+        pointer temp = _allocate(allocate_size);
+        pointer copied_pos = temp;
         try
         {
             _construct_by_iterator(_start, _start + pos, temp);
@@ -302,7 +424,7 @@ private:
     {
         size_type add_iter_num = std::min(n, size() - pos);
         size_type add_value_num = n - add_iter_num;
-        iterator copied_pos = _last;
+        pointer copied_pos = _last;
         try
         {
             _construct_by_value(_last, add_value_num, value);
@@ -330,8 +452,8 @@ private:
                                  size_type count)
     {
         size_type total_size = size() + count;
-        iterator temp = _allocate(total_size);
-        iterator copied_pos = temp;
+        pointer temp = _allocate(total_size);
+        pointer copied_pos = temp;
         try
         {
             _construct_by_iterator(_start, _start + pos, temp);
@@ -361,7 +483,7 @@ private:
         size_type add_origin_num = std::min(count, size() - pos);
         size_type add_iter_num = count - add_origin_num;
         size_type copy_iter_num = count - add_iter_num;
-        iterator copied_pos = _last;
+        pointer copied_pos = _last;
         try
         {
             Iter temp = start;
@@ -385,7 +507,7 @@ private:
 
     size_type _value_insert(iterator pos, size_type count, const T& value)
     {
-        const size_type n = pos - _start;
+        const size_type n = pos - iterator(_start);
         if (_last + count > _end_of_storage)
         {
             _realloc_insert_by_value(n, value, count);
@@ -418,7 +540,7 @@ private:
         typename iterator_traits<Iter>::difference_type count = ft::distance(start, last);
         if (count > 0)
         {
-            const size_type n = pos - _start;
+            const size_type n = pos - iterator(_start);
             if (_last + count > _end_of_storage)
             {
                 _realloc_insert_by_iter(n, start, last, count);
@@ -479,15 +601,14 @@ public:
             const size_type other_len = other.size();
             if (other_len > capacity())
             {
-                iterator temp = _allocate_and_copy(other_len, other._start, other._last);
+                pointer temp = _allocate_and_copy(other_len, other._start, other._last);
                 _destroy_and_deallocate();
                 _start = temp;
                 _end_of_storage = temp + other_len;
             }
             else if (size() >= other_len)
             {
-                _destroy(_copy(other._start, other._last, _start),
-                         _last);
+                _destroy(_copy(other._start, other._last, _start), _last);
             }
             else
             {
@@ -570,22 +691,22 @@ public:
 
     iterator begin()
     {
-        return _start;
+        return iterator(_start);
     }
 
     const_iterator begin() const
     {
-        return _start;
+        return const_iterator(_start);
     }
 
     iterator end()
     {
-        return _last;
+        return iterator(_last);
     }
 
     const_iterator end() const
     {
-        return _last;
+        return const_iterator(_last);
     }
 
     reverse_iterator rbegin()
@@ -632,7 +753,7 @@ public:
         if (new_cap > capacity())
         {
             const size_type old_size = size();
-            iterator temp = _allocate_and_copy(new_cap, _start, _last);
+            pointer temp = _allocate_and_copy(new_cap, _start, _last);
             _destroy_and_deallocate();
             _start = temp;
             _last = temp + old_size;
@@ -654,7 +775,7 @@ public:
     iterator insert(iterator pos, const T& value)
     {
         const size_type n = _value_insert(pos, 1, value);
-        return _start + n;
+        return iterator(_start + n);
     }
 
     void insert(iterator pos, size_type count, const T& value)
@@ -674,7 +795,7 @@ public:
 
     iterator erase(iterator pos)
     {
-        _copy(pos + 1, _last, pos);
+        _copy(pos + 1, iterator(_last), pos);
         --_last;
         _destroy(_last);
         return pos;
@@ -684,7 +805,7 @@ public:
     {
         if (start != last)
         {
-            _copy(last, _last, start);
+            _copy(last, iterator(_last), start);
             _destroy(_last - (last - start), _last);
             _last = _last - (last - start);
         }
@@ -714,11 +835,11 @@ public:
     {
         if (count > size())
         {
-            _value_insert(_last, count - size(), value);
+            _value_insert(iterator(_last), count - size(), value);
         }
         else if (count < size())
         {
-            erase(_last - (size() - count), _last);
+            erase(iterator(_last) - (size() - count), iterator(_last));
         }
     }
 
@@ -781,6 +902,40 @@ void swap(vector<T, Alloc>& lhs,
 {
     lhs.swap(rhs);
 }
+
+template<typename T, typename Alloc>
+bool operator==(const typename vector<T, Alloc>::iterator& lhs, const typename vector<T, Alloc>::const_iterator& rhs)
+{return lhs._current == rhs._current;}
+
+template<typename T, typename Alloc>
+bool operator!=(const typename vector<T, Alloc>::iterator& lhs, const typename vector<T, Alloc>::const_iterator& rhs)
+{return lhs._current != rhs._current;}
+
+template<typename T, typename Alloc>
+bool operator<(const typename vector<T, Alloc>::iterator& lhs, const typename vector<T, Alloc>::const_iterator& rhs)
+{return lhs._current < rhs._current;}
+
+template<typename T, typename Alloc>
+bool operator<=(const typename vector<T, Alloc>::iterator& lhs, const typename vector<T, Alloc>::const_iterator& rhs)
+{return lhs._current <= rhs._current;}
+
+template<typename T, typename Alloc>
+bool operator>(const typename vector<T, Alloc>::iterator& lhs, const typename vector<T, Alloc>::const_iterator& rhs)
+{return lhs._current > rhs._current;}
+
+template<typename T, typename Alloc>
+bool operator>=(const typename vector<T, Alloc>::iterator& lhs, const typename vector<T, Alloc>::const_iterator& rhs)
+{return lhs._current >= rhs._current;}
+
+template<typename T, typename Alloc>
+typename vector<T, Alloc>::iterator
+operator+(typename vector<T, Alloc>::iterator::difference_type n, const typename vector<T, Alloc>::iterator& iter)
+{return vector<T, Alloc>::iterator(iter._cuurent + n);}
+
+template<typename T, typename Alloc>
+typename vector<T, Alloc>::iterator
+operator+(typename vector<T, Alloc>::const_iterator::difference_type n, const typename vector<T, Alloc>::const_iterator& iter)
+{return vector<T, Alloc>::const_iterator(iter._cuurent + n);}
 } // namespace ft
 
 #endif
