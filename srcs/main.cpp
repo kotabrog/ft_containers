@@ -34,7 +34,7 @@ struct Buffer
     char buff[BUFFER_SIZE];
 };
 
-#define NOT_VALGRIND_FLAG 0
+#define NOT_VALGRIND_FLAG 1
 
 #define COUNT (MAX_RAM / (int)sizeof(Buffer))
 
@@ -1367,6 +1367,15 @@ void vector_test()
         ft::vector<Test> vec;
         tester.print("ft::vector<Test> vec;");
         tester.print("vec.max_size()", vec.max_size());
+    }
+    tester.print("");
+    {
+        ft::vector<int> vec1(10);
+        ft::vector<int> vec2(100);
+        tester.print("ft::vector<int> vec1;");
+        tester.print("ft::vector<int> vec2;");
+        tester.print("vec1.max_size()", vec1.max_size());
+        tester.print("vec2.max_size()", vec2.max_size());
     }
     tester.print("");
     tester.print("reserve and capacity test");
