@@ -483,7 +483,7 @@ void reverse_iterator_test()
         tester.print("ri = vec.end(), *ri", *ri1);
         std::map<int, int> map1;
         map1[0] = 1;
-        ft::reverse_iterator<std::map<int, int>::iterator> ri2(map1.begin());
+        ft::reverse_iterator<std::map<int, int>::iterator> ri2(map1.end());
         tester.print("std::map<int, int> map1, map1[0] = 1");
         tester.print("map ri->first:", ri2->first);
         tester.print("map ri->second:", ri2->second);
