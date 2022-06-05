@@ -282,7 +282,7 @@ bool operator==(const map<Key, T, Compare, Alloc>& lhs,
                 const map<Key, T, Compare, Alloc>& rhs)
 {
     return (lhs.size() == rhs.size() &&
-            equal(lhs.begin(), lhs.end(), rhs.begin()));
+            ft::equal(lhs.begin(), lhs.end(), rhs.begin()));
 }
 
 template<class Key, class T, class Compare, class Alloc>
