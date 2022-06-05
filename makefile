@@ -26,7 +26,8 @@ INCLUDES = Tester.hpp\
 		   pair.hpp\
 		   reverse_iterator.hpp\
 		   vector.hpp\
-		   _Rb_tree.hpp
+		   _Rb_tree.hpp\
+		   algorithm.hpp
 
 INCLUDES_PREFIXED = $(addprefix $(INCLUDES_FOLDER), $(INCLUDES))
 

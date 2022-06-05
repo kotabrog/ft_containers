@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <limits>
+#include "algorithm.hpp"
 #include "iterator.hpp"
 #include "is_integral.hpp"
 #include "reverse_iterator.hpp"
@@ -395,7 +396,7 @@ private:
                                   size_type n = 1)
     {
         size_type total_size = n + size();
-        size_type allocate_size = std::min(std::max(total_size, size() * 2), max_size());
+        size_type allocate_size = ft::min(ft::max(total_size, size() * 2), max_size());
         pointer temp = _allocate(allocate_size);
         pointer copied_pos = temp;
         try
@@ -422,7 +423,7 @@ private:
                           const value_type& value,
                           size_type n = 1)
     {
-        size_type add_iter_num = std::min(n, size() - pos);
+        size_type add_iter_num = ft::min(n, size() - pos);
         size_type add_value_num = n - add_iter_num;
         pointer copied_pos = _last;
         try
@@ -480,7 +481,7 @@ private:
                         Iter last,
                         size_type count)
     {
-        size_type add_origin_num = std::min(count, size() - pos);
+        size_type add_origin_num = ft::min(count, size() - pos);
         size_type add_iter_num = count - add_origin_num;
         size_type copy_iter_num = count - add_iter_num;
         pointer copied_pos = _last;
@@ -743,7 +744,7 @@ public:
     {
         const size_t diff_max = std::numeric_limits<std::ptrdiff_t>::max() / sizeof(value_type);
         const size_t alloc_max = _alloc_max_size();
-        return std::min(diff_max, alloc_max);
+        return ft::min(diff_max, alloc_max);
     }
 
     void reserve(size_type new_cap)
