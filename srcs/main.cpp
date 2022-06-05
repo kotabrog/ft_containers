@@ -299,13 +299,17 @@ void equal_test()
     v2[5] -= 1;
     tester.if_print("v1:[0,1,2,3,4,5], v2:[0,1,2,3,4,5], ft::equal(v1.begin(), v1.end(), v2.begin()):",
                     ft::equal(v1.begin(), v1.end(), v2.begin()), "true", "false");
+    /*
     tester.if_print("v1:[0,1,2,3,4,5], v2:[0,1,2,3,4,5], ft::equal(v1.begin(), v1.end(), v2.begin(), v2.end()):",
                     ft::equal(v1.begin(), v1.end(), v2.begin(), v2.end()), "true", "false");
+    */
     v2.push_back(6);
     tester.if_print("v1:[0,1,2,3,4,5], v2:[0,1,2,3,4,5,6], ft::equal(v1.begin(), v1.end(), v2.begin()):",
                     ft::equal(v1.begin(), v1.end(), v2.begin()), "true", "false");
+    /*
     tester.if_print("v1:[0,1,2,3,4,5], v2:[0,1,2,3,4,5,6], ft::equal(v1.begin(), v1.end(), v2.begin(), v2.end()):",
                     ft::equal(v1.begin(), v1.end(), v2.begin(), v2.end()), "true", "false");
+    */
     /*
     Because v2 is longer, it accesses places that v1 should not
     tester.if_print("v1:[0,1,2,3,4,5], v2:[0,1,2,3,4,5,6], ft::equal(v2.begin(), v2.end(), v1.begin()):",
