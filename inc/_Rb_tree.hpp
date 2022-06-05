@@ -280,19 +280,7 @@ bool operator!=(const _Rb_tree_iterator<T>& lhs,
     return !(lhs == rhs);
 }
 
-
-class _ValueCopy
-{
-public:
-    template<typename T>
-    void operator()(T& dest, T& src)
-    {
-        dest = src;
-    }
-};
-
-
-template<typename Val, typename Compare = std::less<Val>, typename Alloc = std::allocator<Val>, typename ValueCopy = _ValueCopy >
+template<typename Val, typename Compare = std::less<Val>, typename Alloc = std::allocator<Val> >
 class _Rb_tree
 {
 public:

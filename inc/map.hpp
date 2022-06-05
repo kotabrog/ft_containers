@@ -59,17 +59,7 @@ private:
         }
     };
 
-    class _PairValueCopy
-    {
-    public:
-        template<typename U>
-        void operator()(U& dest, U& src)
-        {
-            dest.second = src.second;
-        }
-    };
-
-    typedef _Rb_tree<value_type, _PairFirstCompare, allocator_type, _PairValueCopy> _Tree;
+    typedef _Rb_tree<value_type, _PairFirstCompare, allocator_type> _Tree;
 
     _Tree _tree;
 
