@@ -59,6 +59,7 @@ private:
         }
     };
 
+    typedef const key_type const_key_type;
     typedef _Rb_tree<value_type, _PairFirstCompare, allocator_type> _Tree;
 
     _Tree _tree;
@@ -90,7 +91,7 @@ public:
     {
         try
         {
-            return _tree.template search_node<key_type, mapped_type, Compare>(key);
+            return _tree.template search_node<const_key_type, mapped_type, Compare>(key);
         }
         catch(const std::exception& e)
         {
@@ -102,7 +103,7 @@ public:
     {
         try
         {
-            return _tree.template search_node<key_type, mapped_type, Compare>(key);
+            return _tree.template search_node<const_key_type, mapped_type, Compare>(key);
         }
         catch(const std::exception& e)
         {
@@ -203,7 +204,7 @@ public:
 
     size_type erase(const Key& key)
     {
-        return _tree.template delete_node<key_type, Compare>(key);
+        return _tree.template delete_node<const_key_type, Compare>(key);
     }
 
     void swap(map& other)
@@ -213,47 +214,47 @@ public:
 
     size_type count(const Key& key) const
     {
-        return _tree.template count<key_type, Compare>(key);
+        return _tree.template count<const_key_type, Compare>(key);
     }
 
     iterator find(const Key& key)
     {
-        return _tree.template find<key_type, Compare>(key);
+        return _tree.template find<const_key_type, Compare>(key);
     }
 
     const_iterator find(const Key& key) const
     {
-        return _tree.template find<key_type, Compare>(key);
+        return _tree.template find<const_key_type, Compare>(key);
     }
 
     pair<iterator, iterator> equal_range(const Key& key)
     {
-        return _tree.template equal_range<key_type, Compare>(key);
+        return _tree.template equal_range<const_key_type, Compare>(key);
     }
 
     pair<const_iterator, const_iterator> equal_range(const Key& key) const
     {
-        return _tree.template equal_range<key_type, Compare>(key);
+        return _tree.template equal_range<const_key_type, Compare>(key);
     }
 
     iterator lower_bound(const Key& key)
     {
-        return _tree.template lower_bound<key_type, Compare>(key);
+        return _tree.template lower_bound<const_key_type, Compare>(key);
     }
 
     const_iterator lower_bound(const Key& key) const
     {
-        return _tree.template lower_bound<key_type, Compare>(key);
+        return _tree.template lower_bound<const_key_type, Compare>(key);
     }
 
     iterator upper_bound(const Key& key)
     {
-        return _tree.template upper_bound<key_type, Compare>(key);
+        return _tree.template upper_bound<const_key_type, Compare>(key);
     }
 
     const_iterator upper_bound(const Key& key) const
     {
-        return _tree.template upper_bound<key_type, Compare>(key);
+        return _tree.template upper_bound<const_key_type, Compare>(key);
     }
 
     key_compare key_comp() const
