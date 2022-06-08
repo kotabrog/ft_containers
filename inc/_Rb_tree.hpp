@@ -766,6 +766,7 @@ public:
             _copy(other._head, &head_node, other._end);
             _all_destroy_and_deallocate();
             _head = head_node;
+            _node_count = other._node_count;
             _init_end_and_begin();
         }
         return *this;
