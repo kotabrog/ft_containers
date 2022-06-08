@@ -29,16 +29,16 @@ public:
     class iterator
     {
     private:
-        typedef iterator_traits<pointer> traits_type;
+        typedef iterator_traits<typename Alloc::pointer> traits_type;
 
     public:
-        pointer _current;
-
         typedef typename traits_type::iterator_category iterator_category;
         typedef typename traits_type::value_type value_type;
         typedef typename traits_type::difference_type difference_type;
         typedef typename traits_type::reference reference;
         typedef typename traits_type::pointer pointer;
+
+        pointer _current;
 
         iterator() : _current(NULL) {}
         explicit iterator(const pointer ptr) : _current(ptr) {}
